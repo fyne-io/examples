@@ -1,0 +1,5 @@
+English pattern playing cards by Dmitry Fomin.
+Downloaded from https://en.wikipedia.org/wiki/File:English_pattern_playing_cards_deck.svg .
+
+Licensed under Creative Commons CC0 1.0 Universal Public Domain Dedication.
+https://creativecommons.org/publicdomain/zero/1.0/deed.en

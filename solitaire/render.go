@@ -14,7 +14,7 @@ const bigPad = 24
 const overlap = 20
 
 func newCard(face fyne.Resource) *canvas.Image {
-	card := &canvas.Image{Alpha:1}
+	card := &canvas.Image{}
 	if face != nil {
 		card.File = face.CachePath()
 	}

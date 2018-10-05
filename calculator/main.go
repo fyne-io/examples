@@ -1,11 +1,10 @@
-package main
+package calculator
 
 import "fmt"
 import "log"
 import "strconv"
 
 import "github.com/fyne-io/fyne"
-import "github.com/fyne-io/fyne/desktop"
 import "github.com/fyne-io/fyne/layout"
 import "github.com/fyne-io/fyne/widget"
 
@@ -83,10 +82,8 @@ func (c *calc) keyDown(ev *fyne.KeyEvent) {
 	}
 }
 
-// main loads a calculator example window for the specified app context
-func main() {
-	app := desktop.NewApp()
-
+// Show loads a calculator example window for the specified app context
+func Show(app fyne.App) {
 	calc := &calc{}
 	calc.functions = make(map[string]func())
 

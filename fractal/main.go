@@ -1,10 +1,9 @@
-package main
+package fractal
 
 import "math"
 import "image/color"
 
 import "github.com/fyne-io/fyne"
-import "github.com/fyne-io/fyne/desktop"
 import "github.com/fyne-io/fyne/canvas"
 import "github.com/fyne-io/fyne/theme"
 
@@ -91,10 +90,8 @@ func (f *fractal) fractalKeyDown(ev *fyne.KeyEvent) {
 	f.refresh()
 }
 
-// main loads a Mandelbrot fractal example window for the specified app context
-func main() {
-	app := desktop.NewApp()
-
+// Show loads a Mandelbrot fractal example window for the specified app context
+func Show(app fyne.App) {
 	window := app.NewWindow("Fractal")
 	fractal := &fractal{window: window}
 	fractal.canvas = canvas.NewRaster(fractal.mandelbrot)

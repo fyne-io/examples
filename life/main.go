@@ -1,10 +1,9 @@
-package main
+package life
 
 import "image/color"
 import "time"
 
 import "github.com/fyne-io/fyne"
-import "github.com/fyne-io/fyne/desktop"
 import "github.com/fyne-io/fyne/canvas"
 import "github.com/fyne-io/fyne/theme"
 
@@ -304,10 +303,8 @@ func newGame(b *board) *game {
 	return g
 }
 
-// main starts a new game of life
-func main() {
-	app := desktop.NewApp()
-
+// Show starts a new game of life
+func Show(app fyne.App) {
 	board := newBoard()
 	board.load()
 
@@ -322,4 +319,3 @@ func main() {
 
 	window.Show()
 }
-

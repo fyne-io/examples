@@ -1,5 +1,7 @@
 package solitaire
 
+import "github.com/fyne-io/fyne"
+
 type Stack struct {
 	Cards []*Card
 }
@@ -62,4 +64,14 @@ func NewGame() *Game {
 	game.Deck = NewShuffledDeck()
 
 	return game
+}
+
+func Show(app fyne.App) {
+	game := NewGame()
+	game.Deal()
+
+	w := app.NewWindow("Solitaire")
+	w.SetContent(NewTable(game))
+
+	w.Show()
 }

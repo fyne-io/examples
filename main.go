@@ -3,21 +3,35 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/fyne-io/fyne"
-
 	"github.com/fyne-io/examples/calculator"
 	"github.com/fyne-io/examples/fractal"
 	"github.com/fyne-io/examples/life"
 	"github.com/fyne-io/examples/solitaire"
+	"github.com/fyne-io/fyne"
 	"github.com/fyne-io/fyne/desktop"
+	"github.com/fyne-io/fyne/layout"
+	"github.com/fyne-io/fyne/widget"
 )
 
-func welcome(_ fyne.App) {
-	fmt.Println("Main UI not written, launch an app directly or use \"--help\"")
+var apps map[string]func(fyne.App)
+
+func welcome(app fyne.App) {
+	w := app.NewWindow("Examples")
+	grid := fyne.NewContainerWithLayout(layout.NewGridLayout(2))
+
+	for name := range apps {
+		launch := apps[name]
+		grid.AddObject(widget.NewButton(name, func() {
+			launch(app)
+		}))
+	}
+
+	w.SetContent(grid)
+	w.Show()
 }
 
 func main() {
-	apps := make(map[string]func(fyne.App))
+	apps = make(map[string]func(fyne.App))
 	apps["calculator"] = calculator.Show
 	apps["fractal"] = fractal.Show
 	apps["life"] = life.Show

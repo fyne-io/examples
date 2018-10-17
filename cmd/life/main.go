@@ -2,10 +2,10 @@
 package main
 
 import "github.com/fyne-io/examples/life"
-import "github.com/fyne-io/fyne/examples/apps"
+import "github.com/fyne-io/fyne/desktop"
 
 func main() {
-	app := apps.NewApp()
+	app := desktop.NewApp()
 
 	life.Show(app)
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/fyne-io/examples/calculator"
 	"github.com/fyne-io/examples/fractal"
 	"github.com/fyne-io/examples/life"
+	"github.com/fyne-io/examples/bugs"
 	"github.com/fyne-io/examples/solitaire"
 	"github.com/fyne-io/fyne"
 	"github.com/fyne-io/fyne/desktop"
@@ -35,6 +36,7 @@ func main() {
 	apps["calculator"] = calculator.Show
 	apps["fractal"] = fractal.Show
 	apps["life"] = life.Show
+	apps["bugs"] = bugs.Show
 	apps["solitaire"] = solitaire.Show
 
 	flags := make(map[string]*bool)

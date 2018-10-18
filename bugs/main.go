@@ -4,8 +4,16 @@ import (
 	"github.com/fyne-io/fyne"
 	"github.com/fyne-io/fyne/dialog"
 	"github.com/fyne-io/fyne/layout"
+	"github.com/fyne-io/fyne/theme"
 	"github.com/fyne-io/fyne/widget"
 )
+
+var bug, code *theme.ThemedResource
+
+func init() {
+	bug = theme.NewThemedResource(bugDark, bugLight)
+	code = theme.NewThemedResource(codeDark, codeLight)
+}
 
 type game struct {
 	board *board

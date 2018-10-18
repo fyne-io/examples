@@ -8,9 +8,11 @@ import (
 )
 
 type square struct {
-	bug   bool
-	shown bool
-	near  int
+	bug     bool
+	shown   bool
+	flagged bool
+
+	near int
 }
 
 type board struct {
@@ -51,6 +53,7 @@ func (b *board) load(count int) {
 			for x := 0; x < b.width; x++ {
 				b.bugs[y][x].shown = false
 				b.bugs[y][x].bug = false
+				b.bugs[y][x].flagged = false
 				b.bugs[y][x].near = 0
 			}
 		}
@@ -109,7 +112,7 @@ func (b *board) reveal(x, y int) {
 	}
 
 	sq := b.bugs[y][x]
-	if sq.shown {
+	if sq.shown || sq.flagged {
 		return
 	}
 	b.bugs[y][x].shown = true
@@ -135,6 +138,34 @@ func (b *board) reveal(x, y int) {
 	if b.countHidden() == b.bugcount && b.win != nil {
 		b.win()
 	}
+}
+
+func (b *board) flag(x, y int) {
+	if x < 0 || y < 0 {
+		return
+	}
+	if x >= b.width || y >= b.height {
+		return
+	}
+
+	sq := b.bugs[y][x]
+	if sq.shown {
+		return
+	}
+
+	b.bugs[y][x].flagged = !sq.flagged
+}
+
+func (b *board) flagged(x, y int) bool {
+	if x < 0 || y < 0 {
+		return false
+	}
+	if x >= b.width || y >= b.height {
+		return false
+	}
+
+	sq := b.bugs[y][x]
+	return sq.flagged
 }
 
 func squareString(sq square) string {

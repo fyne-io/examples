@@ -5,14 +5,14 @@ import (
 	"github.com/fyne-io/fyne/dialog"
 	"github.com/fyne-io/fyne/layout"
 	"github.com/fyne-io/fyne/theme"
-	"github.com/fyne-io/fyne/widget"
 )
 
-var bug, code *theme.ThemedResource
+var bug, code, flag *theme.ThemedResource
 
 func init() {
 	bug = theme.NewThemedResource(bugDark, bugLight)
 	code = theme.NewThemedResource(codeDark, codeLight)
+	flag = theme.NewThemedResource(flagDark, flagLight)
 }
 
 type game struct {
@@ -66,7 +66,7 @@ type gameRenderer struct {
 }
 
 func (g *gameRenderer) MinSize() fyne.Size {
-	return fyne.NewSize(g.game.board.width*36, g.game.board.height*36)
+	return g.grid.MinSize()
 }
 
 func (g *gameRenderer) Layout(size fyne.Size) {
@@ -91,25 +91,31 @@ func (g *game) refreshSquare(x, y int) {
 
 	sq := g.board.bugs[y][x]
 	i := y*g.board.width + x
-	button := g.renderer.grid.Objects[i].(*widget.Button)
+	button := g.renderer.grid.Objects[i].(*bugButton)
 
-	if !sq.shown {
-		if button.Icon == code {
+	if sq.flagged {
+		if button.icon == flag {
 			return
 		}
-		button.Icon = code
-		button.Text = ""
+		button.icon = flag
+		button.text = ""
+	} else if !sq.shown {
+		if button.icon == code {
+			return
+		}
+		button.icon = code
+		button.text = ""
 	} else if sq.bug {
-		if button.Icon == bug {
+		if button.icon == bug {
 			return
 		}
-		button.Icon = bug
-		button.Text = ""
-	} else if button.Icon == nil {
+		button.icon = bug
+		button.text = ""
+	} else if button.icon == nil {
 		return
 	} else {
-		button.Icon = nil
-		button.Text = squareString(sq)
+		button.icon = nil
+		button.text = squareString(sq)
 	}
 
 	// avoid double refresh that Setxxx would cause
@@ -148,8 +154,12 @@ func (g *game) createRenderer() *gameRenderer {
 		for x := 0; x < g.board.width; x++ {
 			xx, yy := x, y
 
-			buttons = append(buttons, widget.NewButtonWithIcon(" ", code, func() {
-				g.squareTapped(xx, yy)
+			buttons = append(buttons, newButton("", code, func(reveal bool) {
+				if reveal {
+					g.squareReveal(xx, yy)
+				} else {
+					g.squareFlagged(xx, yy)
+				}
 			}))
 		}
 	}
@@ -158,9 +168,18 @@ func (g *game) createRenderer() *gameRenderer {
 	return renderer
 }
 
-func (g *game) squareTapped(x, y int) {
+func (g *game) squareReveal(x, y int) {
+	if g.board.flagged(x, y) {
+		return
+	}
+
 	g.board.reveal(x, y)
 	g.refreshFrom(x, y)
+}
+
+func (g *game) squareFlagged(x, y int) {
+	g.board.flag(x, y)
+	g.refreshSquare(x, y)
 }
 
 func (g *game) loseCallback(yes bool) {

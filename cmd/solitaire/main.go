@@ -8,4 +8,5 @@ func main() {
 	app := desktop.NewApp()
 
 	solitaire.Show(app)
+	app.Run()
 }

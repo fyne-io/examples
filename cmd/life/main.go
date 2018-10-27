@@ -8,4 +8,5 @@ func main() {
 	app := desktop.NewApp()
 
 	life.Show(app)
+	app.Run()
 }

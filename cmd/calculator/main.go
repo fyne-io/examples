@@ -8,4 +8,5 @@ func main() {
 	app := desktop.NewApp()
 
 	calculator.Show(app)
+	app.Run()
 }

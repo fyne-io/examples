@@ -8,4 +8,5 @@ func main() {
 	app := desktop.NewApp()
 
 	bugs.Show(app)
+	app.Run()
 }

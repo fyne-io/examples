@@ -8,4 +8,5 @@ func main() {
 	app := desktop.NewApp()
 
 	fractal.Show(app)
+	app.Run()
 }

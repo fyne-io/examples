@@ -190,8 +190,8 @@ type gameRenderer struct {
 	render  *canvas.Image
 	objects []fyne.CanvasObject
 
-	aliveColor color.RGBA
-	deadColor  color.RGBA
+	aliveColor color.Color
+	deadColor  color.Color
 
 	game *game
 }
@@ -217,7 +217,7 @@ func (g *gameRenderer) Objects() []fyne.CanvasObject {
 	return g.objects
 }
 
-func (g *gameRenderer) renderer(x, y, w, h int) color.RGBA {
+func (g *gameRenderer) renderer(x, y, w, h int) color.Color {
 	xpos, ypos := g.game.cellForCoord(x, y, w, h)
 
 	if xpos >= g.game.board.width || ypos >= g.game.board.height {

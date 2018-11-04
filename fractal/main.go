@@ -33,15 +33,21 @@ func (f *fractal) refresh() {
 	f.window.Canvas().Refresh(f.canvas)
 }
 
-func (f *fractal) scaleColor(c float64, start, end uint8) uint8 {
+func (f *fractal) scaleChannel(c float64, start, end uint32) uint8 {
 	if end >= start {
-		return (uint8)(c*float64(end-start)) + start
+		return (uint8)(c*float64(uint8(end-start))) + uint8(start)
 	}
 
-	return (uint8)((1-c)*float64(start-end)) + end
+	return (uint8)((1-c)*float64(uint8(start-end))) + uint8(end)
 }
 
-func (f *fractal) mandelbrot(px, py, w, h int) color.RGBA {
+func (f *fractal) scaleColor(c float64, start, end color.Color) color.Color {
+	r1, g1, b1, _ := start.RGBA()
+	r2, g2, b2, _ := end.RGBA()
+	return color.RGBA{f.scaleChannel(c, r1, r2), f.scaleChannel(c, g1, g2), f.scaleChannel(c, b1, b2), 0xff}
+}
+
+func (f *fractal) mandelbrot(px, py, w, h int) color.Color {
 	drawScale := 3.5 * f.currScale
 	aspect := (float64(h) / float64(w))
 	cRe := ((float64(px)/float64(w))-0.5)*drawScale + f.currX
@@ -66,9 +72,7 @@ func (f *fractal) mandelbrot(px, py, w, h int) color.RGBA {
 	mu := (float64(i) / float64(f.currIterations))
 	c := math.Sin((mu / 2) * math.Pi)
 
-	return color.RGBA{f.scaleColor(c, theme.PrimaryColor().R, theme.TextColor().R),
-		f.scaleColor(c, theme.PrimaryColor().G, theme.TextColor().G),
-		f.scaleColor(c, theme.PrimaryColor().B, theme.TextColor().B), 0xff}
+	return f.scaleColor(c, theme.PrimaryColor(), theme.TextColor())
 }
 
 func (f *fractal) fractalKeyDown(ev *fyne.KeyEvent) {

@@ -14,6 +14,7 @@ type Game struct {
 	Deck Deck
 
 	Draw1, Draw2, Draw3 *Card
+	Drawn Deck
 
 	Suit1 Stack
 	Suit2 Stack
@@ -45,18 +46,38 @@ func (g *Game) Deal() {
 	pushToStack(&g.Stack7, &g.Deck, 7)
 }
 
-func (g *Game) Draw() {
-	if len(g.Deck.Cards) > 0 {
-		g.Draw1 = g.Deck.Pop()
+func (g *Game) ResetDraw() {
+	for ; len(g.Deck.Cards) > 0; g.DrawThree() {
 	}
 
-	if len(g.Deck.Cards) > 0 {
-		g.Draw2 = g.Deck.Pop()
+	// Reset the draw pile
+	g.DrawThree()
+}
+
+func (g *Game) drawCard() *Card {
+	if len(g.Deck.Cards) == 0 {
+		return nil
 	}
 
-	if len(g.Deck.Cards) > 0 {
-		g.Draw3 = g.Deck.Pop()
+	popped := g.Deck.Pop()
+	g.Drawn.Push(popped)
+	return popped
+}
+
+func (g *Game) DrawThree() {
+	if len(g.Deck.Cards) == 0 {
+		g.Draw1 = nil
+		g.Draw2 = nil
+		g.Draw3 = nil
+
+		g.Deck = g.Drawn
+		g.Drawn = Deck{}
+		return
 	}
+
+	g.Draw1 = g.drawCard()
+	g.Draw2 = g.drawCard()
+	g.Draw3 = g.drawCard()
 }
 
 func NewGame() *Game {

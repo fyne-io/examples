@@ -36,7 +36,7 @@ func TestGame_Draw(t *testing.T) {
 
 	assert.Equal(t, 24, len(game.Deck.Cards))
 
-	game.Draw()
+	game.DrawThree()
 	assert.Equal(t, 21, len(game.Deck.Cards))
 	assert.NotNil(t, game.Draw1)
 	assert.NotNil(t, game.Draw2)
@@ -49,15 +49,59 @@ func TestGameDrawEnd(t *testing.T) {
 
 	assert.Equal(t, 24, len(game.Deck.Cards))
 
-	game.Draw()
-	game.Draw()
-	game.Draw()
-	game.Draw()
-	game.Draw()
-	game.Draw()
-	game.Draw()
-	game.Draw()
+	game.DrawThree()
+	game.DrawThree()
+	game.DrawThree()
+	game.DrawThree()
+	game.DrawThree()
+	game.DrawThree()
+	game.DrawThree()
+	game.DrawThree()
 	assert.Equal(t, 0, len(game.Deck.Cards))
+}
 
-	game.Draw() // this could crash
+func TestGame_DrawCycles(t *testing.T) {
+	game := NewGame()
+	game.Deal()
+
+	assert.Equal(t, 24, len(game.Deck.Cards))
+
+	game.DrawThree()
+	game.DrawThree()
+	game.DrawThree()
+	game.DrawThree()
+	game.DrawThree()
+	game.DrawThree()
+	game.DrawThree()
+	game.DrawThree()
+
+	// This is the extra one...
+	game.DrawThree()
+	assert.Equal(t, 24, len(game.Deck.Cards))
+}
+
+func TestGame_ResetDraw(t *testing.T) {
+	game := NewGame()
+	game.Deal()
+
+	assert.Equal(t, 24, len(game.Deck.Cards))
+
+	game.DrawThree()
+	game.ResetDraw()
+	assert.Equal(t, 24, len(game.Deck.Cards))
+}
+
+func TestGame_DrawSymmetric(t *testing.T) {
+	game := NewGame()
+	game.Deal()
+
+	assert.Equal(t, 24, len(game.Deck.Cards))
+
+	game.DrawThree()
+	first := game.Draw1
+	game.ResetDraw()
+
+	// first draw again
+	game.DrawThree()
+	assert.Equal(t, first, game.Draw1)
 }

@@ -8,6 +8,7 @@ import (
 type table struct {
 	size     fyne.Size
 	position fyne.Position
+	hidden   bool
 
 	game     *Game
 	renderer *tableRender
@@ -60,9 +61,21 @@ func (t *table) Renderer() fyne.WidgetRenderer {
 	return t.renderer
 }
 
+func withinBounds(pos fyne.Position, card *canvas.Image) bool {
+	if pos.X < card.Position.X || pos.Y < card.Position.Y {
+		return false
+	}
+
+	if pos.X >= card.Position.X + card.Size.Width || pos.Y >= card.Position.Y + card.Size.Height {
+		return false
+	}
+
+	return true
+}
+
 func (t *table) OnMouseDown(event *fyne.MouseEvent) {
-	if event.Position.X <= cardSize.Width+smallPad && event.Position.Y <= cardSize.Height+smallPad {
-		t.game.Draw()
+	if withinBounds(event.Position, t.renderer.deck) {
+		t.game.DrawThree()
 		t.Renderer().Refresh()
 	}
 }

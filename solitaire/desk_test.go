@@ -47,7 +47,18 @@ func TestNewShuffledDeck(t *testing.T) {
 	assertNotEqualCard(t, 1, SUIT_DIAMONDS, deck.Cards[13])
 }
 
-func TestPop(t *testing.T) {
+func TestDeck_Push(t *testing.T) {
+	deck := Deck{}
+
+	assert.Equal(t, 0, len(deck.Cards))
+	card := NewCard(1, SUIT_DIAMONDS)
+	deck.Push(card)
+
+	assert.Equal(t, 1, len(deck.Cards))
+	assert.Equal(t, card, deck.Pop())
+}
+
+func TestDeck_Pop(t *testing.T) {
 	deck := NewSortedDeck()
 
 	assert.Equal(t, 52, len(deck.Cards))

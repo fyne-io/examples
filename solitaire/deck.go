@@ -19,6 +19,10 @@ func (d *Deck) Shuffle() {
 	}
 }
 
+func (d *Deck) Push(card *Card)  {
+	d.Cards = append(d.Cards, card)
+}
+
 func (d *Deck) Pop() *Card {
 	card := d.Cards[0]
 	d.Cards = d.Cards[1:]

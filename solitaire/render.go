@@ -82,7 +82,7 @@ func (t *tableRender) Refresh() {
 	} else {
 		t.deck.File = faces.Space.CachePath()
 	}
-	fyne.RefreshObject(t.deck)
+	canvas.Refresh(t.deck)
 
 	t.pile1.Hidden = t.game.Draw1 == nil
 	if t.game.Draw1 != nil {
@@ -96,9 +96,9 @@ func (t *tableRender) Refresh() {
 	if t.game.Draw3 != nil {
 		t.pile3.File = t.game.Draw3.Face().CachePath()
 	}
-	fyne.RefreshObject(t.pile1)
-	fyne.RefreshObject(t.pile2)
-	fyne.RefreshObject(t.pile3)
+	canvas.Refresh(t.pile1)
+	canvas.Refresh(t.pile2)
+	canvas.Refresh(t.pile3)
 
 	t.stack1.Refresh(t.game.Stack1)
 	t.stack2.Refresh(t.game.Stack2)
@@ -108,7 +108,7 @@ func (t *tableRender) Refresh() {
 	t.stack6.Refresh(t.game.Stack6)
 	t.stack7.Refresh(t.game.Stack7)
 
-	fyne.RefreshObject(t.table)
+	canvas.Refresh(t.table)
 }
 
 func (t *tableRender) Objects() []fyne.CanvasObject {

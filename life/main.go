@@ -223,7 +223,7 @@ func (g *gameRenderer) ApplyTheme() {
 }
 
 func (g *gameRenderer) Refresh() {
-	fyne.RefreshObject(g.render)
+	canvas.Refresh(g.render)
 }
 
 func (g *gameRenderer) Objects() []fyne.CanvasObject {

@@ -2,6 +2,7 @@ package bugs
 
 import (
 	"github.com/fyne-io/fyne"
+	"github.com/fyne-io/fyne/canvas"
 	"github.com/fyne-io/fyne/dialog"
 	"github.com/fyne-io/fyne/layout"
 	"github.com/fyne-io/fyne/theme"
@@ -90,7 +91,7 @@ func (g *gameRenderer) ApplyTheme() {
 }
 
 func (g *gameRenderer) Refresh() {
-	fyne.RefreshObject(g.grid)
+	canvas.Refresh(g.grid)
 }
 
 func (g *gameRenderer) Objects() []fyne.CanvasObject {

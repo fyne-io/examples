@@ -49,7 +49,7 @@ func (b *bugRenderer) Refresh() {
 	}
 
 	b.Layout(b.button.CurrentSize())
-	fyne.RefreshObject(b.button)
+	canvas.Refresh(b.button)
 }
 
 func (b *bugRenderer) Objects() []fyne.CanvasObject {

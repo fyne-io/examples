@@ -2,10 +2,10 @@
 package main
 
 import "github.com/fyne-io/examples/fractal"
-import "github.com/fyne-io/fyne/desktop"
+import "github.com/fyne-io/fyne/app"
 
 func main() {
-	app := desktop.NewApp()
+	app := app.New()
 
 	fractal.Show(app)
 	app.Run()

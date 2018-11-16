@@ -19,7 +19,7 @@ func (d *Deck) Shuffle() {
 	}
 }
 
-func (d *Deck) Push(card *Card)  {
+func (d *Deck) Push(card *Card) {
 	d.Cards = append(d.Cards, card)
 }
 

@@ -66,7 +66,7 @@ func withinBounds(pos fyne.Position, card *canvas.Image) bool {
 		return false
 	}
 
-	if pos.X >= card.Position.X + card.Size.Width || pos.Y >= card.Position.Y + card.Size.Height {
+	if pos.X >= card.Position.X+card.Size.Width || pos.Y >= card.Position.Y+card.Size.Height {
 		return false
 	}
 

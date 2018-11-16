@@ -14,7 +14,7 @@ type Game struct {
 	Deck Deck
 
 	Draw1, Draw2, Draw3 *Card
-	Drawn Deck
+	Drawn               Deck
 
 	Suit1 Stack
 	Suit2 Stack

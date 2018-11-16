@@ -9,7 +9,7 @@ import (
 	"github.com/fyne-io/examples/life"
 	"github.com/fyne-io/examples/solitaire"
 	"github.com/fyne-io/fyne"
-	"github.com/fyne-io/fyne/desktop"
+	"github.com/fyne-io/fyne/app"
 	"github.com/fyne-io/fyne/layout"
 	"github.com/fyne-io/fyne/widget"
 )
@@ -53,6 +53,6 @@ func main() {
 		}
 	}
 
-	app := desktop.NewApp()
+	app := app.New()
 	launch(app)
 }

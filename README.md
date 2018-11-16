@@ -1,3 +1,8 @@
+<p align="center">
+  <a href="https://goreportcard.com/report/github.com/fyne-io/fyne"><img src="https://goreportcard.com/badge/github.com/fyne-io/examples" alt="Code Status" /></a>
+  <a href="https://travis-ci.org/fyne-io/examples"><img src="https://travis-ci.org/fyne-io/examples.svg" alt="Build Status" /></a>
+</p>
+
 # Fyne Examples
 
 Here we will gather example apps that use the [Fyne](http://fyne.io) toolkit.

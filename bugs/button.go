@@ -43,11 +43,9 @@ func (b *bugRenderer) ApplyTheme() {
 func (b *bugRenderer) Refresh() {
 	b.label.Text = b.button.text
 
+	b.icon.Hidden = b.button.icon == nil
 	if b.button.icon != nil {
-		b.icon.Translucency = 0
 		b.icon.File = b.button.icon.CachePath()
-	} else if b.icon != nil {
-		b.icon.Translucency = 1
 	}
 
 	b.Layout(b.button.CurrentSize())
@@ -67,6 +65,7 @@ type bugButton struct {
 
 	size     fyne.Size
 	pos      fyne.Position
+	hidden   bool
 	renderer fyne.WidgetRenderer
 }
 
@@ -92,6 +91,18 @@ func (b *bugButton) Move(pos fyne.Position) {
 
 func (b *bugButton) MinSize() fyne.Size {
 	return b.Renderer().MinSize()
+}
+
+func (b *bugButton) IsVisible() bool {
+	return !b.hidden
+}
+
+func (b *bugButton) Show() {
+	b.hidden = false
+}
+
+func (b *bugButton) Hide() {
+	b.hidden = true
 }
 
 // OnMouseDown is called when a mouse down event is captured and triggers any tap handler

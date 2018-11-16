@@ -148,6 +148,7 @@ type game struct {
 
 	size     fyne.Size
 	position fyne.Position
+	hidden   bool
 
 	renderer *gameRenderer
 }
@@ -172,6 +173,18 @@ func (g *game) Move(pos fyne.Position) {
 
 func (g *game) MinSize() fyne.Size {
 	return g.Renderer().MinSize()
+}
+
+func (g *game) IsVisible() bool {
+	return g.hidden
+}
+
+func (g *game) Show() {
+	g.hidden = false
+}
+
+func (g *game) Hide() {
+	g.hidden = true
 }
 
 func (g *game) ApplyTheme() {

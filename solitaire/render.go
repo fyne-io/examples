@@ -84,12 +84,15 @@ func (t *tableRender) Refresh() {
 	}
 	fyne.RefreshObject(t.deck)
 
+	t.pile1.Hidden = t.game.Draw1 == nil
 	if t.game.Draw1 != nil {
 		t.pile1.File = t.game.Draw1.Face().CachePath()
 	}
+	t.pile2.Hidden = t.game.Draw2 == nil
 	if t.game.Draw2 != nil {
 		t.pile2.File = t.game.Draw2.Face().CachePath()
 	}
+	t.pile3.Hidden = t.game.Draw3 == nil
 	if t.game.Draw3 != nil {
 		t.pile3.File = t.game.Draw3.Face().CachePath()
 	}
@@ -167,8 +170,12 @@ func (s *stackRender) Refresh(stack Stack) {
 	for i, _ := range s.cards {
 		if i < len(stack.Cards)-1 {
 			s.cards[i].(*canvas.Image).File = faces.Back.CachePath()
+			s.cards[i].Show()
 		} else if i == len(stack.Cards)-1 {
 			s.cards[i].(*canvas.Image).File = stack.Cards[i].Face().CachePath()
+			s.cards[i].Show()
+		} else {
+			s.cards[i].Hide()
 		}
 	}
 }

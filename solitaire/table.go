@@ -1,6 +1,9 @@
 package solitaire
 
-import "github.com/fyne-io/fyne"
+import (
+	"github.com/fyne-io/fyne"
+	"github.com/fyne-io/fyne/canvas"
+)
 
 type table struct {
 	size     fyne.Size
@@ -30,6 +33,18 @@ func (t *table) Move(pos fyne.Position) {
 
 func (t *table) MinSize() fyne.Size {
 	return t.Renderer().MinSize()
+}
+
+func (t *table) IsVisible() bool {
+	return t.hidden
+}
+
+func (t *table) Show() {
+	t.hidden = false
+}
+
+func (t *table) Hide() {
+	t.hidden = true
 }
 
 func (t *table) ApplyTheme() {

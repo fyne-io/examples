@@ -159,7 +159,7 @@ type stackRender struct {
 
 func (s *stackRender) Layout(pos fyne.Position, size fyne.Size) {
 	top := pos.Y
-	for i, _ := range s.cards {
+	for i := range s.cards {
 		s.cards[i].Move(fyne.NewPos(pos.X, top))
 
 		top += overlap
@@ -167,7 +167,7 @@ func (s *stackRender) Layout(pos fyne.Position, size fyne.Size) {
 }
 
 func (s *stackRender) Refresh(stack Stack) {
-	for i, _ := range s.cards {
+	for i := range s.cards {
 		if i < len(stack.Cards)-1 {
 			s.cards[i].(*canvas.Image).File = faces.Back.CachePath()
 			s.cards[i].Show()
@@ -182,7 +182,7 @@ func (s *stackRender) Refresh(stack Stack) {
 
 func newStackRender() *stackRender {
 	r := &stackRender{}
-	for i, _ := range r.cards {
+	for i := range r.cards {
 		r.cards[i] = newCard(nil)
 	}
 

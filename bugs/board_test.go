@@ -2,7 +2,6 @@ package bugs
 
 import (
 	"github.com/stretchr/testify/assert"
-	"log"
 	"testing"
 )
 
@@ -87,7 +86,6 @@ func TestBoard_reveal(t *testing.T) {
 	b.setMine(1, 1)
 
 	b.reveal(2, 1)
-	log.Println(b)
 	assert.True(t, b.bugs[1][2].shown)
 }
 

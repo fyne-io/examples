@@ -1,0 +1,26 @@
+language: go
+
+go:
+  - "1.10.x"
+
+gobuild_args: "-v -tags ci"
+
+before_script:
+  - go get golang.org/x/lint/golint
+  - go get github.com/mattn/goveralls
+  - go get github.com/fyne-io/fyne
+
+script:
+  - test -z $(gofmt -s -l .)
+  - go test -v -tags ci -race ./...
+  - go vet -tags ci ./...
+  - golint -set_exit_status $(go list -tags ci)
+
+notifications:
+  irc:
+    channels:
+      - "irc.freenode.net#fyne"
+    on_success: change
+    template:
+      - "Build %{repository_name}#%{build_number} %{result} (%{branch} %{commit} \"%{commit_subject}\")"
+

@@ -22,7 +22,6 @@ func TestNewGame(t *testing.T) {
 
 func TestGame_Deal(t *testing.T) {
 	game := NewGame()
-	game.Deal()
 
 	assert.Equal(t, 1, len(game.Stack1.Cards))
 	assert.Equal(t, 2, len(game.Stack2.Cards))
@@ -32,7 +31,6 @@ func TestGame_Deal(t *testing.T) {
 
 func TestGame_Draw(t *testing.T) {
 	game := NewGame()
-	game.Deal()
 
 	assert.Equal(t, 24, len(game.Deck.Cards))
 
@@ -45,7 +43,6 @@ func TestGame_Draw(t *testing.T) {
 
 func TestGameDrawEnd(t *testing.T) {
 	game := NewGame()
-	game.Deal()
 
 	assert.Equal(t, 24, len(game.Deck.Cards))
 
@@ -62,7 +59,6 @@ func TestGameDrawEnd(t *testing.T) {
 
 func TestGame_DrawCycles(t *testing.T) {
 	game := NewGame()
-	game.Deal()
 
 	assert.Equal(t, 24, len(game.Deck.Cards))
 
@@ -82,7 +78,6 @@ func TestGame_DrawCycles(t *testing.T) {
 
 func TestGame_ResetDraw(t *testing.T) {
 	game := NewGame()
-	game.Deal()
 
 	assert.Equal(t, 24, len(game.Deck.Cards))
 
@@ -93,7 +88,6 @@ func TestGame_ResetDraw(t *testing.T) {
 
 func TestGame_DrawSymmetric(t *testing.T) {
 	game := NewGame()
-	game.Deal()
 
 	assert.Equal(t, 24, len(game.Deck.Cards))
 

@@ -35,7 +35,7 @@ type tableRender struct {
 	stack1, stack2, stack3, stack4, stack5, stack6, stack7 *stackRender
 
 	objects []fyne.CanvasObject
-	table   *table
+	table   *Table
 }
 
 func (t *tableRender) MinSize() fyne.Size {

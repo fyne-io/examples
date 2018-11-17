@@ -2,14 +2,17 @@ package solitaire
 
 import "github.com/fyne-io/fyne"
 
+// Stack represents a number of cards in a particular order
 type Stack struct {
 	Cards []*Card
 }
 
+// Push adds a new card to the top of the stack
 func (s *Stack) Push(card *Card) {
 	s.Cards = append(s.Cards, card)
 }
 
+// Game represents a full solitaire game, starting from a standard draw
 type Game struct {
 	Deck Deck
 
@@ -36,7 +39,7 @@ func pushToStack(s *Stack, d *Deck, count int) {
 	}
 }
 
-func (g *Game) Deal() {
+func (g *Game) deal() {
 	pushToStack(&g.Stack1, &g.Deck, 1)
 	pushToStack(&g.Stack2, &g.Deck, 2)
 	pushToStack(&g.Stack3, &g.Deck, 3)
@@ -46,6 +49,7 @@ func (g *Game) Deal() {
 	pushToStack(&g.Stack7, &g.Deck, 7)
 }
 
+// ResetDraw resets the draw pile to be completely available (no cards drawn)
 func (g *Game) ResetDraw() {
 	for ; len(g.Deck.Cards) > 0; g.DrawThree() {
 	}
@@ -64,6 +68,8 @@ func (g *Game) drawCard() *Card {
 	return popped
 }
 
+// DrawThree draws three cards from the deck and adds them to the draw pile(s).
+// If there are no cards available to be drawn it will cycle back to the beginning and draw the first three.
 func (g *Game) DrawThree() {
 	if len(g.Deck.Cards) == 0 {
 		g.Draw1 = nil
@@ -80,16 +86,18 @@ func (g *Game) DrawThree() {
 	g.Draw3 = g.drawCard()
 }
 
+// NewGame starts a new solitaire game and draws to the standard configuration
 func NewGame() *Game {
 	game := &Game{}
 	game.Deck = NewShuffledDeck()
 
+	game.deal()
 	return game
 }
 
+// Show creates a new game and loads a table rendered in a new window.
 func Show(app fyne.App) {
 	game := NewGame()
-	game.Deal()
 
 	w := app.NewWindow("Solitaire")
 	w.SetContent(NewTable(game))

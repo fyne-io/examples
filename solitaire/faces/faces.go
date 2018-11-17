@@ -7,10 +7,12 @@ func ForCard(card, suit int) fyne.Resource {
 	return faceResources[card-1+(suit*13)]
 }
 
+// ForBack returns a face resource for the back of a card
 func ForBack() fyne.Resource {
 	return back
 }
 
+// ForSpace returns a special resource to use when a vacant spot should be indicated
 func ForSpace() fyne.Resource {
 	return space
 }

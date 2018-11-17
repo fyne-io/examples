@@ -5,10 +5,12 @@ import (
 	"time"
 )
 
+// Deck is standard playing card collection, it contains up to 52 unique cards.
 type Deck struct {
 	Cards []*Card
 }
 
+// Shuffle reorganises the cards in the deck to a random order
 func (d *Deck) Shuffle() {
 	rand.Seed(time.Now().UnixNano())
 	for c := 0; c < len(d.Cards); c++ {
@@ -19,10 +21,12 @@ func (d *Deck) Shuffle() {
 	}
 }
 
+// Push adds the specified card to the top of the deck
 func (d *Deck) Push(card *Card) {
 	d.Cards = append(d.Cards, card)
 }
 
+// Pop removes the top card from the deck and returns it
 func (d *Deck) Pop() *Card {
 	card := d.Cards[0]
 	d.Cards = d.Cards[1:]
@@ -30,6 +34,7 @@ func (d *Deck) Pop() *Card {
 	return card
 }
 
+// NewSortedDeck returns a standard deck in sorted order - starting with Ace of Clubs, ending with King of Spades.
 func NewSortedDeck() Deck {
 	deck := Deck{}
 
@@ -46,6 +51,7 @@ func NewSortedDeck() Deck {
 	return deck
 }
 
+// NewShuffledDeck returns a 52 card deck in random order
 func NewShuffledDeck() Deck {
 	deck := NewSortedDeck()
 	deck.Shuffle()

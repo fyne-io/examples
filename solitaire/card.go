@@ -27,8 +27,7 @@ type Card struct {
 }
 
 func (c Card) Face() fyne.Resource {
-	suitDiff := int(c.Suit - SUIT_CLUBS)
-	return faces.FACES[c.Value-1+(suitDiff*VALUE_KING)]
+	return faces.ForCard(c.Value, int(c.Suit))
 }
 
 func NewCard(value int, suit Suit) *Card {

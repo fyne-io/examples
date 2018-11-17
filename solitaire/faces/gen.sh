@@ -11,7 +11,7 @@ for suit in D H C S; do
 			append=""
 		fi
 
-		$cmd $append --name=Card$card$suit --package=faces $card$suit.svg >> $file
+		$cmd $append --name=card$card$suit --package=faces $card$suit.svg >> $file
 	done
 done
 

@@ -1,6 +1,7 @@
 <p align="center">
   <a href="https://goreportcard.com/report/github.com/fyne-io/examples"><img src="https://goreportcard.com/badge/github.com/fyne-io/examples" alt="Code Status" /></a>
   <a href="https://travis-ci.org/fyne-io/examples"><img src="https://travis-ci.org/fyne-io/examples.svg" alt="Build Status" /></a>
+  <a href='https://coveralls.io/github/fyne-io/examples?branch=develop'><img src='https://coveralls.io/repos/github/fyne-io/examples/badge.svg?branch=develop' alt='Coverage Status' /></a>
 </p>
 
 # Fyne Examples

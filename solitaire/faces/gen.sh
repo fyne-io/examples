@@ -15,5 +15,5 @@ for suit in D H C S; do
 	done
 done
 
-$cmd --append --name=Back back.svg >> $file
-$cmd --append --name=Space space.svg >> $file
+$cmd --append --name=back back.svg >> $file
+$cmd --append --name=space space.svg >> $file

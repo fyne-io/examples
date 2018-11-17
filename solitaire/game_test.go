@@ -7,7 +7,7 @@ import (
 
 func TestStack_Push(t *testing.T) {
 	stack := &Stack{}
-	card := NewCard(1, SUIT_SPADES)
+	card := NewCard(1, SuitSpades)
 
 	assert.Equal(t, 0, len(stack.Cards))
 	stack.Push(card)

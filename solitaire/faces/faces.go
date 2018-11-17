@@ -7,6 +7,14 @@ func ForCard(card, suit int) fyne.Resource {
 	return faceResources[card-1+(suit*13)]
 }
 
+func ForBack() fyne.Resource {
+	return back
+}
+
+func ForSpace() fyne.Resource {
+	return space
+}
+
 var faceResources = [52]fyne.Resource{
 	cardAC,
 	card2C,

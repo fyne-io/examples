@@ -9,16 +9,16 @@ import "github.com/fyne-io/examples/solitaire/faces"
 type Suit int
 
 const (
-	VALUE_JACK  = 11
-	VALUE_QUEEN = 12
-	VALUE_KING  = 13
+	ValueJack  = 11
+	ValueQueen = 12
+	ValueKing  = 13
 )
 
 const (
-	SUIT_CLUBS Suit = iota
-	SUIT_DIAMONDS
-	SUIT_HEARTS
-	SUIT_SPADES
+	SuitClubs Suit = iota
+	SuitDiamonds
+	SuitHearts
+	SuitSpades
 )
 
 type Card struct {

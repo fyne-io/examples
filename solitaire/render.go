@@ -78,9 +78,9 @@ func (t *tableRender) ApplyTheme() {
 
 func (t *tableRender) Refresh() {
 	if len(t.game.Deck.Cards) > 0 {
-		t.deck.File = faces.Back.CachePath()
+		t.deck.File = faces.ForBack().CachePath()
 	} else {
-		t.deck.File = faces.Space.CachePath()
+		t.deck.File = faces.ForSpace().CachePath()
 	}
 	canvas.Refresh(t.deck)
 
@@ -120,16 +120,16 @@ func newTableRender(game *Game) *tableRender {
 	render.game = game
 
 	render.bg = canvas.NewRectangle(color.RGBA{0x07, 0x63, 0x24, 0xff})
-	render.deck = newCard(faces.Back)
+	render.deck = newCard(faces.ForBack())
 
 	render.pile1 = newCard(nil)
 	render.pile2 = newCard(nil)
 	render.pile3 = newCard(nil)
 
-	render.space1 = newCard(faces.Space)
-	render.space2 = newCard(faces.Space)
-	render.space3 = newCard(faces.Space)
-	render.space4 = newCard(faces.Space)
+	render.space1 = newCard(faces.ForSpace())
+	render.space2 = newCard(faces.ForSpace())
+	render.space3 = newCard(faces.ForSpace())
+	render.space4 = newCard(faces.ForSpace())
 
 	render.stack1 = newStackRender()
 	render.stack2 = newStackRender()
@@ -169,7 +169,7 @@ func (s *stackRender) Layout(pos fyne.Position, size fyne.Size) {
 func (s *stackRender) Refresh(stack Stack) {
 	for i := range s.cards {
 		if i < len(stack.Cards)-1 {
-			s.cards[i].(*canvas.Image).File = faces.Back.CachePath()
+			s.cards[i].(*canvas.Image).File = faces.ForBack().CachePath()
 			s.cards[i].Show()
 		} else if i == len(stack.Cards)-1 {
 			s.cards[i].(*canvas.Image).File = stack.Cards[i].Face().CachePath()

@@ -34,9 +34,9 @@ func NewSortedDeck() Deck {
 	deck := Deck{}
 
 	c := 0
-	suit := SUIT_CLUBS
+	suit := SuitClubs
 	for i := 0; i < 4; i++ {
-		for value := 1; value <= VALUE_KING; value++ {
+		for value := 1; value <= ValueKing; value++ {
 			deck.Cards = append(deck.Cards, NewCard(value, suit))
 			c++
 		}

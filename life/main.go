@@ -13,38 +13,34 @@ type board struct {
 	height int
 }
 
+func (b *board) ifAlive(x, y int) int {
+	if x < 0 || x >= b.width {
+		return 0
+	}
+
+	if y < 0 || y >= b.height {
+		return 0
+	}
+
+	if b.cells[y][x] {
+		return 1
+	}
+	return 0
+}
+
 func (b *board) countNeighbours(x, y int) int {
 	sum := 0
-	if y > 0 {
-		if x > 0 && b.cells[y-1][x-1] {
-			sum++
-		}
-		if b.cells[y-1][x] {
-			sum++
-		}
-		if x < b.width-1 && b.cells[y-1][x+1] {
-			sum++
-		}
-	}
 
-	if x > 0 && b.cells[y][x-1] {
-		sum++
-	}
-	if x < b.width-1 && b.cells[y][x+1] {
-		sum++
-	}
+	sum += b.ifAlive(x-1, y-1)
+	sum += b.ifAlive(x, y-1)
+	sum += b.ifAlive(x+1, y-1)
 
-	if y < b.height-1 {
-		if x > 0 && b.cells[y+1][x-1] {
-			sum++
-		}
-		if b.cells[y+1][x] {
-			sum++
-		}
-		if x < b.width-1 && b.cells[y+1][x+1] {
-			sum++
-		}
-	}
+	sum += b.ifAlive(x-1, y)
+	sum += b.ifAlive(x+1, y)
+
+	sum += b.ifAlive(x-1, y+1)
+	sum += b.ifAlive(x, y+1)
+	sum += b.ifAlive(x+1, y+1)
 
 	return sum
 }

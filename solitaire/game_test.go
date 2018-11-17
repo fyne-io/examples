@@ -14,12 +14,6 @@ func TestStack_Push(t *testing.T) {
 	assert.Equal(t, 1, len(stack.Cards))
 }
 
-func TestNewGame(t *testing.T) {
-	game := NewGame()
-
-	assert.Equal(t, 52, len(game.Deck.Cards))
-}
-
 func TestGame_Deal(t *testing.T) {
 	game := NewGame()
 

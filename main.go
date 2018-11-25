@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+
 	"github.com/fyne-io/examples/bugs"
 	"github.com/fyne-io/examples/calculator"
 	"github.com/fyne-io/examples/fractal"
@@ -12,6 +13,7 @@ import (
 	"github.com/fyne-io/fyne/app"
 	"github.com/fyne-io/fyne/layout"
 	"github.com/fyne-io/fyne/widget"
+	xkcd "github.com/steveoc64/examples/xkcd"
 )
 
 var apps map[string]func(fyne.App)
@@ -38,6 +40,7 @@ func main() {
 	apps["life"] = life.Show
 	apps["bugs"] = bugs.Show
 	apps["solitaire"] = solitaire.Show
+	apps["xkcd"] = xkcd.Show
 
 	flags := make(map[string]*bool)
 	for name := range apps {

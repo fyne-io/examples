@@ -68,10 +68,10 @@ func (c *calc) charButton(char string) *widget.Button {
 }
 
 func (c *calc) keyDown(ev *fyne.KeyEvent) {
-	if ev.String == "=" || ev.Name == "Return" || ev.Name == "KP_Enter" {
+	if ev.String == "=" || ev.Name == fyne.KeyReturn || ev.Name == fyne.KeyEnter {
 		c.evaluate()
 		return
-	} else if ev.Name == "c" {
+	} else if ev.String == "c" {
 		c.clear()
 		return
 	}

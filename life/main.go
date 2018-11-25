@@ -289,7 +289,7 @@ func (g *game) animate() {
 }
 
 func (g *game) keyDown(ev *fyne.KeyEvent) {
-	if ev.Name == "space" {
+	if ev.Name == fyne.KeySpace {
 		g.toggleRun()
 	}
 }

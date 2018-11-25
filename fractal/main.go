@@ -77,13 +77,13 @@ func (f *fractal) mandelbrot(px, py, w, h int) color.Color {
 
 func (f *fractal) fractalKeyDown(ev *fyne.KeyEvent) {
 	delta := f.currScale * 0.2
-	if ev.Name == "Up" {
+	if ev.Name == fyne.KeyUp {
 		f.currY -= delta
-	} else if ev.Name == "Down" {
+	} else if ev.Name == fyne.KeyDown {
 		f.currY += delta
-	} else if ev.Name == "Left" {
+	} else if ev.Name == fyne.KeyLeft {
 		f.currX += delta
-	} else if ev.Name == "Right" {
+	} else if ev.Name == fyne.KeyRight {
 		f.currX -= delta
 	} else if ev.String == "+" {
 		f.currScale /= 1.1

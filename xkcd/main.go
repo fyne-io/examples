@@ -119,7 +119,11 @@ func (x *XKCD) NewForm(w fyne.Window) fyne.Widget {
 // Show starts a new xkcd widget
 func Show(app fyne.App) {
 	x := NewXKCD()
+	fmt.Println("making new window")
 	w := app.NewWindow("XKCD Viewer")
+	fmt.Println("w is", w)
 	w.SetContent(x.NewForm(w))
+	fmt.Println("set content")
 	w.Show()
+	fmt.Println("done the show")
 }

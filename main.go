@@ -25,6 +25,7 @@ func welcome(app fyne.App) {
 	for name := range apps {
 		launch := apps[name]
 		grid.AddObject(widget.NewButton(name, func() {
+			fmt.Println("Button callback")
 			launch(app)
 		}))
 	}
@@ -60,5 +61,6 @@ func main() {
 
 	// Manually kick off the xkcd app for now, because Mac Mojave bug makes it impossible to test otherwise
 	xkcd.Show(app)
+
 	launch(app)
 }

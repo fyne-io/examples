@@ -57,5 +57,8 @@ func main() {
 	}
 
 	app := app.New()
+
+	// Manually kick off the xkcd app for now, because Mac Mojave bug makes it impossible to test otherwise
+	xkcd.Show(app)
 	launch(app)
 }

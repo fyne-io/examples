@@ -9,11 +9,11 @@ import (
 	"github.com/fyne-io/examples/fractal"
 	"github.com/fyne-io/examples/life"
 	"github.com/fyne-io/examples/solitaire"
+	xkcd "github.com/fyne-io/examples/xkcd"
 	"github.com/fyne-io/fyne"
 	"github.com/fyne-io/fyne/app"
 	"github.com/fyne-io/fyne/layout"
 	"github.com/fyne-io/fyne/widget"
-	xkcd "github.com/steveoc64/examples/xkcd"
 )
 
 var apps map[string]func(fyne.App)

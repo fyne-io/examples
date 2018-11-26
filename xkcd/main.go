@@ -1,4 +1,4 @@
-package xkch
+package xkcd
 
 import (
 	"encoding/json"

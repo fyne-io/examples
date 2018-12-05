@@ -9,7 +9,7 @@ import (
 	"github.com/fyne-io/examples/fractal"
 	"github.com/fyne-io/examples/life"
 	"github.com/fyne-io/examples/solitaire"
-	xkcd "github.com/fyne-io/examples/xkcd"
+	"github.com/fyne-io/examples/xkcd"
 	"github.com/fyne-io/fyne"
 	"github.com/fyne-io/fyne/app"
 	"github.com/fyne-io/fyne/layout"

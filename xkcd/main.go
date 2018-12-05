@@ -28,12 +28,13 @@ type XKCD struct {
 	News       string `json:"news"`
 	Alt        string `json:"alt"`
 	Img        string `json:"img"`
-	entry      map[string]*widget.Entry
+	iDEntry    *widget.Entry
+	labels     map[string]*widget.Label
 }
 
-func (x *XKCD) newEntry(name string) *widget.Entry {
-	w := widget.NewEntry()
-	x.entry[name] = w
+func (x *XKCD) newLabel(name string) *widget.Label {
+	w := widget.NewLabel("")
+	x.labels[name] = w
 	return w
 }
 
@@ -41,19 +42,16 @@ func (x *XKCD) newEntry(name string) *widget.Entry {
 func NewXKCD() *XKCD {
 	rand.Seed(time.Now().UnixNano())
 	return &XKCD{
-		entry: make(map[string]*widget.Entry),
+		labels: make(map[string]*widget.Label),
 	}
 }
 
 // Submit will lookup the xkcd cartoon and do something useful with it
 func (x *XKCD) Submit() {
-	fmt.Println("Submitted")
-
 	// Get the ID
-	id, _ := strconv.Atoi(x.entry["num"].Text)
+	id, _ := strconv.Atoi(x.iDEntry.Text)
 	if id == 0 {
 		id = rand.Intn(2075)
-		fmt.Println("Getting random ID", id)
 	}
 
 	resp, err := http.Get(fmt.Sprintf("https://xkcd.com/%d/info.0.json", id))
@@ -82,13 +80,13 @@ func (x *XKCD) DataToScreen() {
 			// TODO - load the image into the img widged
 		case "num":
 			v := myValue.Field(i).Int()
-			x.entry[tag].SetText(fmt.Sprintf("%d", v))
+			x.iDEntry.SetText(fmt.Sprintf("%d", v))
 		default:
 			v := myValue.Field(i).String()
 			if newline := strings.IndexAny(v, "\n.-,"); newline > -1 {
 				v = v[:newline] + "..."
 			}
-			x.entry[tag].SetText(v)
+			x.labels[tag].SetText(v)
 		}
 	}
 }
@@ -109,8 +107,12 @@ func (x *XKCD) NewForm(w fyne.Window) fyne.Widget {
 		case "": // not a display field
 		case "img": // special field for images
 		// TODO - build an image display field here
+		case "num":
+			entry := widget.NewEntry()
+			x.iDEntry = entry
+			form.Append(fld.Name, entry)
 		default:
-			form.Append(fld.Name, x.newEntry(tag))
+			form.Append(fld.Name, x.newLabel(tag))
 		}
 	}
 	return form
@@ -119,11 +121,7 @@ func (x *XKCD) NewForm(w fyne.Window) fyne.Widget {
 // Show starts a new xkcd widget
 func Show(app fyne.App) {
 	x := NewXKCD()
-	fmt.Println("making new window")
 	w := app.NewWindow("XKCD Viewer")
-	fmt.Println("w is", w)
 	w.SetContent(x.NewForm(w))
-	fmt.Println("set content")
 	w.Show()
-	fmt.Println("done the show")
 }

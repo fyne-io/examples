@@ -3,15 +3,20 @@ package xkcd
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/fyne-io/fyne"
+	"github.com/fyne-io/fyne/canvas"
+	"github.com/fyne-io/fyne/layout"
 	"github.com/fyne-io/fyne/widget"
 )
 
@@ -28,8 +33,10 @@ type XKCD struct {
 	News       string `json:"news"`
 	Alt        string `json:"alt"`
 	Img        string `json:"img"`
-	iDEntry    *widget.Entry
-	labels     map[string]*widget.Label
+
+	image   *canvas.Image
+	iDEntry *widget.Entry
+	labels  map[string]*widget.Label
 }
 
 func (x *XKCD) newLabel(name string) *widget.Label {
@@ -68,6 +75,29 @@ func (x *XKCD) Submit() {
 	}
 }
 
+func (x *XKCD) downloadImage(url string) {
+	x.image.File = url
+	response, e := http.Get(url)
+	if e != nil {
+		log.Fatal(e)
+	}
+	defer response.Body.Close()
+
+	file, err := ioutil.TempFile(os.TempDir(), "xkcd.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	_, err = io.Copy(file, response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	x.image.File = file.Name()
+	canvas.Refresh(x.image)
+}
+
 // DataToScreen copies the data model to the screen
 func (x *XKCD) DataToScreen() {
 	myType := reflect.TypeOf(x).Elem()
@@ -77,7 +107,9 @@ func (x *XKCD) DataToScreen() {
 		switch tag {
 		case "": // not a display field
 		case "img": // special field for images
-			// TODO - load the image into the img widged
+			url := myValue.Field(i).String()
+
+			go x.downloadImage(url)
 		case "num":
 			v := myValue.Field(i).Int()
 			x.iDEntry.SetText(fmt.Sprintf("%d", v))
@@ -106,8 +138,8 @@ func (x *XKCD) NewForm(w fyne.Window) fyne.Widget {
 		switch tag {
 		case "": // not a display field
 		case "img": // special field for images
-		// TODO - build an image display field here
-		case "num":
+			// we created this in the setup
+		case "num": // special field for ID
 			entry := widget.NewEntry()
 			x.iDEntry = entry
 			form.Append(fld.Name, entry)
@@ -122,6 +154,11 @@ func (x *XKCD) NewForm(w fyne.Window) fyne.Widget {
 func Show(app fyne.App) {
 	x := NewXKCD()
 	w := app.NewWindow("XKCD Viewer")
-	w.SetContent(x.NewForm(w))
+
+	form := x.NewForm(w)
+	x.image = &canvas.Image{}
+	w.SetContent(fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(form, nil, nil, nil),
+		form, x.image))
 	w.Show()
 }

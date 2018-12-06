@@ -9,33 +9,20 @@
    width="95.25mm"
    height="142.875mm"
    viewBox="0 0 95.25 142.875"
-   version="1.1"
-   id="svg8415">
-  <defs
-     id="defs8409">
-    <linearGradient
-       id="linearGradient5333">
+   version="1.1">
+  <defs>
+    <linearGradient 
+       id="sunsetGradient" x1="0" y1="0" x2="0" y2="100%">
       <stop
          style="stop-color:#4a1200;stop-opacity:1"
-         offset="0"
-         id="stop5329" />
+         offset="0" />
       <stop
          style="stop-color:#ffeca0;stop-opacity:1"
-         offset="1"
-         id="stop5331" />
+         offset="1" />
     </linearGradient>
-    <linearGradient
-       xlink:href="#linearGradient5333"
-       id="linearGradient5335"
-       x1="100"
-       y1="48"
-       x2="100"
-       y2="192"
-       gradientUnits="userSpaceOnUse"
-       gradientTransform="translate(58.208333,14.552084)" />
     <filter
        style="color-interpolation-filters:sRGB"
-       id="filter1151"
+       id="blurFilter"
        x="-0.034354837"
        width="1.0687097"
        y="-0.026625001"
@@ -45,12 +32,10 @@
     </filter>
   </defs>
   <g
-     id="layer1"
      transform="translate(-105.83333,-64.166649)"
      style="display:inline">
     <rect
-       style="fill:url(#linearGradient5335)"
-       id="rect5301"
+       style="fill:url(#sunsetGradient)"
        width="95.25"
        height="142.875"
        x="105.83334"
@@ -58,27 +43,23 @@
        rx="7.8142576"
        ry="7.9227891" />
     <ellipse
-       style="fill:#ffd200;filter:url(#filter1151)"
+       style="fill:#ffd200;filter:url(#blurFilter)"
        cx="153.01241"
        cy="142.73987"
-       id="path5337"
        rx="41.010418"
        ry="52.916664" />
     <path
        style="fill:#3a8748"
        d="m 105.56876,162.06252 -0.008,37.18815 c -9.4e-4,4.45888 3.54461,8.05469 7.94531,8.05469 h 79.62109 c 4.40071,0 7.9145,-3.59593 7.94727,-8.05469 l 0.2733,-37.18815 z"
-       id="rect5301-5"
        mask="none"
        clip-path="none" />
     <g
        aria-label="f"
        transform="scale(0.94840164,1.0544056)"
-       style="fill:#3b87ef;stroke-width:4"
-       id="text5343">
+       style="fill:#3b87ef;stroke-width:4">
       <path
          d="m 174.25813,76.881965 q 1.64598,2.273028 3.21359,7.054223 0.86218,2.743308 9.09211,0.23514 8.3083,-2.586548 7.44612,-5.251476 -3.05683,-9.48401 -8.93535,-11.365136 -3.44873,-1.097324 -10.58133,0.940563 -5.64338,1.645985 -9.64077,4.702815 -10.89486,8.229926 -16.22472,25.473581 -1.01894,3.370355 -2.11626,6.975845 -5.01634,0.62704 -9.71915,1.64598 -8.15155,1.80275 -9.64077,4.85958 -0.78381,1.72436 2.66492,1.72436 2.11627,0 4.07578,-0.47028 5.01633,-1.09732 10.81647,-1.5676 -4.23253,15.12738 -6.3488,27.27632 -5.9569,34.95759 -5.565,48.51738 0,0.86218 2.58655,0.94056 2.50817,0 5.72176,-0.7838 8.30831,-1.95951 8.22993,-5.25148 -0.3919,-11.75704 4.70281,-42.87399 2.50817,-15.36253 5.9569,-28.13851 3.21359,0.0784 9.09211,0.31352 6.42718,0.31352 9.17049,0.3919 6.03528,0.15676 11.67866,-3.60549 1.9595,-1.33247 1.64598,-2.35141 -0.3919,-1.09732 -2.74331,-1.1757 -21.0059,-0.54867 -26.88442,-0.47029 5.56499,-18.184214 11.67865,-26.962802 0.15676,-0.235141 0.62705,-0.783803 z"
-         style="font-family:Snickles;fill:#3b87ef;stroke-width:4.01306868"
-         id="path837" />
+         style="font-family:Snickles;fill:#3b87ef;stroke-width:4.01306868" />
     </g>
   </g>
 </svg>

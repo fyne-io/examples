@@ -1,6 +1,8 @@
 package bugs
 
 import (
+	"image/color"
+
 	"github.com/fyne-io/fyne"
 	"github.com/fyne-io/fyne/canvas"
 	"github.com/fyne-io/fyne/dialog"
@@ -88,6 +90,9 @@ func (g *gameRenderer) Layout(size fyne.Size) {
 }
 
 func (g *gameRenderer) ApplyTheme() {
+}
+
+	return theme.BackgroundColor()
 }
 
 func (g *gameRenderer) Refresh() {

@@ -218,6 +218,10 @@ func (g *gameRenderer) ApplyTheme() {
 	g.deadColor = theme.BackgroundColor()
 }
 
+func (g *gameRenderer) BackgroundColor() color.Color {
+	return theme.BackgroundColor()
+}
+
 func (g *gameRenderer) Refresh() {
 	canvas.Refresh(g.render)
 }

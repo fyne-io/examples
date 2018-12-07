@@ -1,13 +1,16 @@
 package bugs
 
-import "github.com/fyne-io/fyne"
-import "github.com/fyne-io/fyne/canvas"
-import "github.com/fyne-io/fyne/theme"
+import (
+	"image/color"
+
+	"github.com/fyne-io/fyne"
+	"github.com/fyne-io/fyne/canvas"
+	"github.com/fyne-io/fyne/theme"
+)
 
 type bugRenderer struct {
-	background *canvas.Rectangle
-	icon       *canvas.Image
-	label      *canvas.Text
+	icon  *canvas.Image
+	label *canvas.Text
 
 	objects []fyne.CanvasObject
 	button  *bugButton
@@ -22,8 +25,6 @@ func (b *bugRenderer) MinSize() fyne.Size {
 
 // Layout the components of the widget
 func (b *bugRenderer) Layout(size fyne.Size) {
-	b.background.Resize(size)
-
 	inner := size.Subtract(fyne.NewSize(theme.Padding()*2, theme.Padding()*2))
 	b.label.TextSize = inner.Height - 3
 
@@ -38,6 +39,10 @@ func (b *bugRenderer) ApplyTheme() {
 	b.label.Color = theme.TextColor()
 
 	b.Refresh()
+}
+
+func (b *bugRenderer) BackgroundColor() color.Color {
+	return theme.ButtonColor()
 }
 
 func (b *bugRenderer) Refresh() {
@@ -116,15 +121,13 @@ func (b *bugButton) createRenderer() fyne.WidgetRenderer {
 	text.TextStyle.Bold = true
 
 	icon := canvas.NewImageFromResource(b.icon)
-	bg := canvas.NewRectangle(theme.ButtonColor())
 
 	objects := []fyne.CanvasObject{
-		bg,
 		text,
 		icon,
 	}
 
-	return &bugRenderer{bg, icon, text, objects, b}
+	return &bugRenderer{icon, text, objects, b}
 }
 
 // Renderer is a private method to Fyne which links this widget to it's renderer

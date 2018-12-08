@@ -92,6 +92,7 @@ func (g *gameRenderer) Layout(size fyne.Size) {
 func (g *gameRenderer) ApplyTheme() {
 }
 
+func (g *gameRenderer) BackgroundColor() color.Color {
 	return theme.BackgroundColor()
 }
 
@@ -206,7 +207,7 @@ func (g *game) loseCallback(yes bool) {
 		return
 	}
 
-	g.board.load(10)
+	g.board.load(99)
 	g.refreshFrom(g.board.width/2, g.board.height/2)
 }
 
@@ -226,12 +227,12 @@ func newGame(f *board) *game {
 
 // Show starts a new bugs game
 func Show(app fyne.App) {
-	b := newBoard(9, 9)
+	b := newBoard(20, 35)
 	game := newGame(b)
 
 	b.win = game.win
 	b.lose = game.lose
-	b.load(10)
+	b.load(99)
 
 	game.window = app.NewWindow("Bugs")
 	game.window.SetContent(game)

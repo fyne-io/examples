@@ -157,6 +157,7 @@ func Show(app fyne.App) {
 
 	form := x.NewForm(w)
 	x.image = &canvas.Image{}
+	x.image.SetMinSize(fyne.NewSize(250, 100))
 	w.SetContent(fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(form, nil, nil, nil),
 		form, x.image))

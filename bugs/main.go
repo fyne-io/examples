@@ -8,6 +8,7 @@ import (
 	"github.com/fyne-io/fyne/dialog"
 	"github.com/fyne-io/fyne/layout"
 	"github.com/fyne-io/fyne/theme"
+	"github.com/fyne-io/fyne/widget"
 )
 
 var bug, code, flag *theme.ThemedResource
@@ -25,33 +26,32 @@ type game struct {
 	position fyne.Position
 	hidden   bool
 
-	window   fyne.Window
-	renderer *gameRenderer
+	window fyne.Window
 }
 
-func (g *game) CurrentSize() fyne.Size {
+func (g *game) Size() fyne.Size {
 	return g.size
 }
 
 func (g *game) Resize(size fyne.Size) {
 	g.size = size
-	g.Renderer().Layout(size)
+	widget.Renderer(g).Layout(size)
 }
 
-func (g *game) CurrentPosition() fyne.Position {
+func (g *game) Position() fyne.Position {
 	return g.position
 }
 
 func (g *game) Move(pos fyne.Position) {
 	g.position = pos
-	g.Renderer().Layout(g.size)
+	widget.Renderer(g).Layout(g.size)
 }
 
 func (g *game) MinSize() fyne.Size {
-	return g.Renderer().MinSize()
+	return widget.Renderer(g).MinSize()
 }
 
-func (g *game) IsVisible() bool {
+func (g *game) Visible() bool {
 	return g.hidden
 }
 
@@ -61,18 +61,6 @@ func (g *game) Show() {
 
 func (g *game) Hide() {
 	g.hidden = true
-}
-
-func (g *game) ApplyTheme() {
-	g.Renderer().ApplyTheme()
-}
-
-func (g *game) Renderer() fyne.WidgetRenderer {
-	if g.renderer == nil {
-		g.renderer = g.createRenderer()
-	}
-
-	return g.renderer
 }
 
 type gameRenderer struct {
@@ -111,7 +99,7 @@ func (g *game) refreshSquare(x, y int) {
 
 	sq := g.board.bugs[y][x]
 	i := y*g.board.width + x
-	button := g.renderer.grid.Objects[i].(*bugButton)
+	button := widget.Renderer(g).(*gameRenderer).grid.Objects[i].(*bugButton)
 
 	if sq.flagged {
 		if button.icon == flag {
@@ -138,8 +126,7 @@ func (g *game) refreshSquare(x, y int) {
 		button.text = squareString(sq)
 	}
 
-	// avoid double refresh that Setxxx would cause
-	button.Renderer().Refresh()
+	widget.Renderer(button).Refresh()
 }
 
 func (g *game) refreshAround(xp, yp, d int) {
@@ -166,7 +153,7 @@ func (g *game) refreshFrom(x, y int) {
 	}
 }
 
-func (g *game) createRenderer() *gameRenderer {
+func (g *game) CreateRenderer() fyne.WidgetRenderer {
 	renderer := &gameRenderer{game: g}
 
 	buttons := []fyne.CanvasObject{}

@@ -149,6 +149,7 @@ func newTableRender(game *Game) *tableRender {
 	render.objects = append(render.objects, render.stack6.cards[0:]...)
 	render.objects = append(render.objects, render.stack7.cards[0:]...)
 
+	render.Refresh()
 	return render
 }
 

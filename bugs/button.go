@@ -1,13 +1,17 @@
 package bugs
 
-import "github.com/fyne-io/fyne"
-import "github.com/fyne-io/fyne/canvas"
-import "github.com/fyne-io/fyne/theme"
+import (
+	"image/color"
+
+	"github.com/fyne-io/fyne"
+	"github.com/fyne-io/fyne/canvas"
+	"github.com/fyne-io/fyne/theme"
+	"github.com/fyne-io/fyne/widget"
+)
 
 type bugRenderer struct {
-	background *canvas.Rectangle
-	icon       *canvas.Image
-	label      *canvas.Text
+	icon  *canvas.Image
+	label *canvas.Text
 
 	objects []fyne.CanvasObject
 	button  *bugButton
@@ -22,8 +26,6 @@ func (b *bugRenderer) MinSize() fyne.Size {
 
 // Layout the components of the widget
 func (b *bugRenderer) Layout(size fyne.Size) {
-	b.background.Resize(size)
-
 	inner := size.Subtract(fyne.NewSize(theme.Padding()*2, theme.Padding()*2))
 	b.label.TextSize = inner.Height - 3
 
@@ -40,6 +42,10 @@ func (b *bugRenderer) ApplyTheme() {
 	b.Refresh()
 }
 
+func (b *bugRenderer) BackgroundColor() color.Color {
+	return theme.ButtonColor()
+}
+
 func (b *bugRenderer) Refresh() {
 	b.label.Text = b.button.text
 
@@ -48,7 +54,7 @@ func (b *bugRenderer) Refresh() {
 		b.icon.File = b.button.icon.CachePath()
 	}
 
-	b.Layout(b.button.CurrentSize())
+	b.Layout(b.button.Size())
 	canvas.Refresh(b.button)
 }
 
@@ -63,25 +69,24 @@ type bugButton struct {
 
 	tap func(bool)
 
-	size     fyne.Size
-	pos      fyne.Position
-	hidden   bool
-	renderer fyne.WidgetRenderer
+	size   fyne.Size
+	pos    fyne.Position
+	hidden bool
 }
 
-func (b *bugButton) CurrentSize() fyne.Size {
+func (b *bugButton) Size() fyne.Size {
 	return b.size
 }
 
 func (b *bugButton) Resize(size fyne.Size) {
 	b.size = size
 
-	if b.renderer != nil {
-		b.renderer.Layout(size)
+	if widget.Renderer(b) != nil {
+		widget.Renderer(b).Layout(size)
 	}
 }
 
-func (b *bugButton) CurrentPosition() fyne.Position {
+func (b *bugButton) Position() fyne.Position {
 	return b.pos
 }
 
@@ -90,10 +95,10 @@ func (b *bugButton) Move(pos fyne.Position) {
 }
 
 func (b *bugButton) MinSize() fyne.Size {
-	return b.Renderer().MinSize()
+	return widget.Renderer(b).MinSize()
 }
 
-func (b *bugButton) IsVisible() bool {
+func (b *bugButton) Visible() bool {
 	return !b.hidden
 }
 
@@ -110,44 +115,33 @@ func (b *bugButton) OnMouseDown(ev *fyne.MouseEvent) {
 	b.tap(ev.Button == fyne.LeftMouseButton)
 }
 
-func (b *bugButton) createRenderer() fyne.WidgetRenderer {
+func (b *bugButton) CreateRenderer() fyne.WidgetRenderer {
 	text := canvas.NewText(b.text, theme.TextColor())
 	text.Alignment = fyne.TextAlignCenter
 	text.TextStyle.Bold = true
 
 	icon := canvas.NewImageFromResource(b.icon)
-	bg := canvas.NewRectangle(theme.ButtonColor())
 
 	objects := []fyne.CanvasObject{
-		bg,
 		text,
 		icon,
 	}
 
-	return &bugRenderer{bg, icon, text, objects, b}
-}
-
-// Renderer is a private method to Fyne which links this widget to it's renderer
-func (b *bugButton) Renderer() fyne.WidgetRenderer {
-	if b.renderer == nil {
-		b.renderer = b.createRenderer()
-	}
-
-	return b.renderer
+	return &bugRenderer{icon, text, objects, b}
 }
 
 // SetText allows the button label to be changed
 func (b *bugButton) SetText(text string) {
 	b.text = text
 
-	b.Renderer().Refresh()
+	widget.Renderer(b).Refresh()
 }
 
 // SetIcon updates the icon on a label - pass nil to hide an icon
 func (b *bugButton) SetIcon(icon fyne.Resource) {
 	b.icon = icon
 
-	b.Renderer().Refresh()
+	widget.Renderer(b).Refresh()
 }
 
 // newButton creates a new button widget with the specified label, themed icon and tap handler

@@ -26,7 +26,6 @@ func newCard(face fyne.Resource) *canvas.Image {
 type tableRender struct {
 	game *Game
 
-	bg   *canvas.Rectangle
 	deck *canvas.Image
 
 	pile1, pile2, pile3            *canvas.Image
@@ -43,8 +42,6 @@ func (t *tableRender) MinSize() fyne.Size {
 }
 
 func (t *tableRender) Layout(size fyne.Size) {
-	t.bg.Resize(size)
-
 	t.deck.Move(fyne.NewPos(smallPad, smallPad))
 
 	t.pile1.Move(fyne.NewPos(smallPad*2+cardSize.Width, smallPad))
@@ -74,6 +71,10 @@ func (t *tableRender) Layout(size fyne.Size) {
 
 func (t *tableRender) ApplyTheme() {
 	// no-op we are a custom UI
+}
+
+func (t *tableRender) BackgroundColor() color.Color {
+	return color.RGBA{0x07, 0x63, 0x24, 0xff}
 }
 
 func (t *tableRender) Refresh() {
@@ -118,8 +119,6 @@ func (t *tableRender) Objects() []fyne.CanvasObject {
 func newTableRender(game *Game) *tableRender {
 	render := &tableRender{}
 	render.game = game
-
-	render.bg = canvas.NewRectangle(color.RGBA{0x07, 0x63, 0x24, 0xff})
 	render.deck = newCard(faces.ForBack())
 
 	render.pile1 = newCard(nil)
@@ -139,7 +138,7 @@ func newTableRender(game *Game) *tableRender {
 	render.stack6 = newStackRender()
 	render.stack7 = newStackRender()
 
-	render.objects = []fyne.CanvasObject{render.bg, render.deck, render.pile1, render.pile2, render.pile3,
+	render.objects = []fyne.CanvasObject{render.deck, render.pile1, render.pile2, render.pile3,
 		render.space1, render.space2, render.space3, render.space4}
 
 	render.objects = append(render.objects, render.stack1.cards[0:]...)
@@ -150,6 +149,7 @@ func newTableRender(game *Game) *tableRender {
 	render.objects = append(render.objects, render.stack6.cards[0:]...)
 	render.objects = append(render.objects, render.stack7.cards[0:]...)
 
+	render.Refresh()
 	return render
 }
 

@@ -1,11 +1,14 @@
 package life
 
-import "image/color"
-import "time"
+import (
+	"image/color"
+	"time"
 
-import "github.com/fyne-io/fyne"
-import "github.com/fyne-io/fyne/canvas"
-import "github.com/fyne-io/fyne/theme"
+	"github.com/fyne-io/fyne"
+	"github.com/fyne-io/fyne/canvas"
+	"github.com/fyne-io/fyne/theme"
+	"github.com/fyne-io/fyne/widget"
+)
 
 type board struct {
 	cells  [][]bool
@@ -145,33 +148,31 @@ type game struct {
 	size     fyne.Size
 	position fyne.Position
 	hidden   bool
-
-	renderer *gameRenderer
 }
 
-func (g *game) CurrentSize() fyne.Size {
+func (g *game) Size() fyne.Size {
 	return g.size
 }
 
 func (g *game) Resize(size fyne.Size) {
 	g.size = size
-	g.Renderer().Layout(size)
+	widget.Renderer(g).Layout(size)
 }
 
-func (g *game) CurrentPosition() fyne.Position {
+func (g *game) Position() fyne.Position {
 	return g.position
 }
 
 func (g *game) Move(pos fyne.Position) {
 	g.position = pos
-	g.Renderer().Layout(g.size)
+	widget.Renderer(g).Layout(g.size)
 }
 
 func (g *game) MinSize() fyne.Size {
-	return g.Renderer().MinSize()
+	return widget.Renderer(g).MinSize()
 }
 
-func (g *game) IsVisible() bool {
+func (g *game) Visible() bool {
 	return g.hidden
 }
 
@@ -184,15 +185,7 @@ func (g *game) Hide() {
 }
 
 func (g *game) ApplyTheme() {
-	g.Renderer().ApplyTheme()
-}
-
-func (g *game) Renderer() fyne.WidgetRenderer {
-	if g.renderer == nil {
-		g.renderer = g.createRenderer()
-	}
-
-	return g.renderer
+	widget.Renderer(g).ApplyTheme()
 }
 
 type gameRenderer struct {
@@ -218,6 +211,10 @@ func (g *gameRenderer) ApplyTheme() {
 	g.deadColor = theme.BackgroundColor()
 }
 
+func (g *gameRenderer) BackgroundColor() color.Color {
+	return theme.BackgroundColor()
+}
+
 func (g *gameRenderer) Refresh() {
 	canvas.Refresh(g.render)
 }
@@ -239,7 +236,7 @@ func (g *gameRenderer) renderer(x, y, w, h int) color.Color {
 	return g.deadColor
 }
 
-func (g *game) createRenderer() *gameRenderer {
+func (g *game) CreateRenderer() fyne.WidgetRenderer {
 	renderer := &gameRenderer{game: g}
 
 	render := canvas.NewRaster(renderer.renderer)
@@ -282,7 +279,7 @@ func (g *game) animate() {
 
 				state := g.board.nextGen()
 				g.board.renderState(state)
-				g.Renderer().Refresh()
+				widget.Renderer(g).Refresh()
 			}
 		}
 	}()
@@ -303,7 +300,7 @@ func (g *game) OnMouseDown(ev *fyne.MouseEvent) {
 
 	g.board.cells[ypos][xpos] = !g.board.cells[ypos][xpos]
 
-	g.Renderer().Refresh()
+	widget.Renderer(g).Refresh()
 }
 
 func newGame(b *board) *game {

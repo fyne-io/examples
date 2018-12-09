@@ -3,6 +3,7 @@ package solitaire
 import (
 	"github.com/fyne-io/fyne"
 	"github.com/fyne-io/fyne/canvas"
+	"github.com/fyne-io/fyne/widget"
 )
 
 // Table represents the rendering of a game in progress
@@ -11,39 +12,38 @@ type Table struct {
 	position fyne.Position
 	hidden   bool
 
-	game     *Game
-	renderer *tableRender
+	game *Game
 }
 
-// CurrentSize gets the current size of the table
-func (t *Table) CurrentSize() fyne.Size {
+// Size gets the current size of the table
+func (t *Table) Size() fyne.Size {
 	return t.size
 }
 
 // Resize sets the current size of the table
 func (t *Table) Resize(size fyne.Size) {
 	t.size = size
-	t.Renderer().Layout(size)
+	widget.Renderer(t).Layout(size)
 }
 
-// CurrentPosition gets the current position of the table
-func (t *Table) CurrentPosition() fyne.Position {
+// Position gets the current position of the table
+func (t *Table) Position() fyne.Position {
 	return t.position
 }
 
 // Move sets the current position of the table
 func (t *Table) Move(pos fyne.Position) {
 	t.position = pos
-	t.Renderer().Layout(t.size)
+	widget.Renderer(t).Layout(t.size)
 }
 
 // MinSize specifies the minimum size of a table
 func (t *Table) MinSize() fyne.Size {
-	return t.Renderer().MinSize()
+	return widget.Renderer(t).MinSize()
 }
 
-// IsVisible returns true if the table widget is currently visible
-func (t *Table) IsVisible() bool {
+// Visible returns true if the table widget is currently visible
+func (t *Table) Visible() bool {
 	return !t.hidden
 }
 
@@ -59,25 +59,20 @@ func (t *Table) Hide() {
 
 // ApplyTheme updates the widget with the current theme
 func (t *Table) ApplyTheme() {
-	t.Renderer().ApplyTheme()
+	widget.Renderer(t).ApplyTheme()
 }
 
-// Renderer gets the widget renderer for this table - internal use only
-func (t *Table) Renderer() fyne.WidgetRenderer {
-	if t.renderer == nil {
-		t.renderer = newTableRender(t.game)
-	}
-
-	t.renderer.Refresh()
-	return t.renderer
+// CreateRenderer gets the widget renderer for this table - internal use only
+func (t *Table) CreateRenderer() fyne.WidgetRenderer {
+	return newTableRender(t.game)
 }
 
 func withinBounds(pos fyne.Position, card *canvas.Image) bool {
-	if pos.X < card.Position.X || pos.Y < card.Position.Y {
+	if pos.X < card.Position().X || pos.Y < card.Position().Y {
 		return false
 	}
 
-	if pos.X >= card.Position.X+card.Size.Width || pos.Y >= card.Position.Y+card.Size.Height {
+	if pos.X >= card.Position().X+card.Size().Width || pos.Y >= card.Position().Y+card.Size().Height {
 		return false
 	}
 
@@ -86,9 +81,9 @@ func withinBounds(pos fyne.Position, card *canvas.Image) bool {
 
 // OnMouseDown is called when the user taps the table widget
 func (t *Table) OnMouseDown(event *fyne.MouseEvent) {
-	if withinBounds(event.Position, t.renderer.deck) {
+	if withinBounds(event.Position, widget.Renderer(t).(*tableRender).deck) {
 		t.game.DrawThree()
-		t.Renderer().Refresh()
+		widget.Renderer(t).Refresh()
 	}
 }
 

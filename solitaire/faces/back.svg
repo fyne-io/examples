@@ -14,7 +14,7 @@
     <linearGradient 
        id="sunsetGradient" x1="0" y1="0" x2="0" y2="100%">
       <stop
-         stop-colors=":#4a1200"
+         stop-color="#4a1200"
          stop-opacity="1"
          offset="0" />
       <stop

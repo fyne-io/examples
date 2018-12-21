@@ -76,7 +76,6 @@ func (x *XKCD) Submit() {
 }
 
 func (x *XKCD) downloadImage(url string) {
-	x.image.File = url
 	response, e := http.Get(url)
 	if e != nil {
 		log.Fatal(e)

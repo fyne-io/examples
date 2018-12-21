@@ -14,4 +14,3 @@ var BugBitmap = bugBitmap
 
 // XKCDBitmap an icon for the XKCD example
 var XKCDBitmap = xkcdBitmap
-

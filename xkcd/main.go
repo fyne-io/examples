@@ -82,7 +82,11 @@ func (x *XKCD) downloadImage(url string) {
 	}
 	defer response.Body.Close()
 
-	file, err := ioutil.TempFile(os.TempDir(), "xkcd.png")
+	suffix := ".png"
+	if strings.HasSuffix(url, ".jpg") {
+		suffix = ".jpg"
+	}
+	file, err := ioutil.TempFile(os.TempDir(), "xkcd"+suffix)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -155,8 +159,8 @@ func Show(app fyne.App) {
 	w := app.NewWindow("XKCD Viewer")
 
 	form := x.NewForm(w)
-	x.image = &canvas.Image{}
-	x.image.SetMinSize(fyne.NewSize(250, 100))
+	x.image = &canvas.Image{FillMode: canvas.ImageFillResize}
+	x.image.SetMinSize(fyne.NewSize(50, 50))
 	w.SetContent(fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(form, nil, nil, nil),
 		form, x.image))

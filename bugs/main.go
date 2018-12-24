@@ -156,7 +156,7 @@ func (g *game) refreshFrom(x, y int) {
 func (g *game) CreateRenderer() fyne.WidgetRenderer {
 	renderer := &gameRenderer{game: g}
 
-	buttons := []fyne.CanvasObject{}
+	var buttons []fyne.CanvasObject
 	for y := 0; y < g.board.height; y++ {
 		for x := 0; x < g.board.width; x++ {
 			xx, yy := x, y

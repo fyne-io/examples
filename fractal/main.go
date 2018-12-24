@@ -97,6 +97,7 @@ func (f *fractal) fractalKeyDown(ev *fyne.KeyEvent) {
 // Show loads a Mandelbrot fractal example window for the specified app context
 func Show(app fyne.App) {
 	window := app.NewWindow("Fractal")
+	window.SetPadded(false)
 	fractal := &fractal{window: window}
 	fractal.canvas = canvas.NewRaster(fractal.mandelbrot)
 

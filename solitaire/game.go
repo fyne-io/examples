@@ -100,6 +100,7 @@ func Show(app fyne.App) {
 	game := NewGame()
 
 	w := app.NewWindow("Solitaire")
+	w.SetPadded(false)
 	w.SetContent(NewTable(game))
 
 	w.Show()

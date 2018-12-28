@@ -112,7 +112,7 @@ func (b *bugButton) Hide() {
 
 // OnMouseDown is called when a mouse down event is captured and triggers any tap handler
 func (b *bugButton) OnMouseDown(ev *fyne.MouseEvent) {
-	b.tap(ev.Button == fyne.LeftMouseButton)
+	go b.tap(ev.Button == fyne.LeftMouseButton)
 }
 
 func (b *bugButton) CreateRenderer() fyne.WidgetRenderer {

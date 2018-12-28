@@ -9,6 +9,7 @@ import (
 	"github.com/fyne-io/examples/fractal"
 	"github.com/fyne-io/examples/life"
 	"github.com/fyne-io/examples/solitaire"
+	"github.com/fyne-io/examples/sudoku"
 	"github.com/fyne-io/examples/xkcd"
 	"github.com/fyne-io/fyne"
 	"github.com/fyne-io/fyne/app"
@@ -41,6 +42,7 @@ func main() {
 	apps["bugs"] = bugs.Show
 	apps["solitaire"] = solitaire.Show
 	apps["xkcd"] = xkcd.Show
+	apps["sudoku"] = sudoku.Show
 
 	flags := make(map[string]*bool)
 	for name := range apps {

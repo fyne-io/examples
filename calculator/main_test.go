@@ -29,3 +29,14 @@ func TestClear(t *testing.T) {
 
 	assert.Equal(t, "", calc.output.Text)
 }
+
+func TestKeyboard(t *testing.T) {
+	calc := newCalculator()
+	calc.loadUI(test.NewApp())
+
+	test.TypeOnCanvas(calc.window.Canvas(), "1+1")
+	assert.Equal(t, "1+1", calc.output.Text)
+
+	test.TypeOnCanvas(calc.window.Canvas(), "=")
+	assert.Equal(t, "2", calc.output.Text)
+}

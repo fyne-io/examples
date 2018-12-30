@@ -17,6 +17,7 @@ type calc struct {
 
 	output  *widget.Label
 	buttons map[string]*widget.Button
+	window  fyne.Window
 }
 
 func (c *calc) display(newtext string) {
@@ -103,8 +104,8 @@ func (c *calc) loadUI(app fyne.App) {
 	})
 	equals.Style = widget.PrimaryButton
 
-	window := app.NewWindow("Calc")
-	window.SetContent(fyne.NewContainerWithLayout(layout.NewGridLayout(1),
+	c.window = app.NewWindow("Calc")
+	c.window.SetContent(fyne.NewContainerWithLayout(layout.NewGridLayout(1),
 		c.output,
 		fyne.NewContainerWithLayout(layout.NewGridLayout(4),
 			c.charButton("+"),
@@ -135,9 +136,10 @@ func (c *calc) loadUI(app fyne.App) {
 			equals)),
 	)
 
-	window.Canvas().SetOnKeyDown(c.keyDown)
-	window.Show()
+	c.window.Canvas().SetOnKeyDown(c.keyDown)
+	c.window.Show()
 }
+
 func newCalculator() *calc {
 	c := &calc{}
 	c.functions = make(map[string]func())

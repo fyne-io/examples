@@ -1,7 +1,7 @@
 #!/bin/sh
 
 file="bundled.go"
-cmd=`go env GOPATH`/bin/bundler
+cmd=`go env GOPATH`/bin/fyne_bundle
 
 rm $file
 for suit in D H C S; do

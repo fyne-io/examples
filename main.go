@@ -32,7 +32,7 @@ func welcome(app fyne.App) {
 	}
 
 	w.SetContent(grid)
-	w.ShowAndRun()
+	w.Show()
 }
 
 func main() {
@@ -61,4 +61,5 @@ func main() {
 
 	app := app.New()
 	launch(app)
+	app.Run()
 }

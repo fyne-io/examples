@@ -1,7 +1,7 @@
 #!/bin/sh
 
 file="bundled.go"
-cmd=`go env GOPATH`/bin/fyne_bundle
+cmd=`go env GOPATH`/bin/fyne
 
 rm $file
 for suit in D H C S; do
@@ -11,9 +11,9 @@ for suit in D H C S; do
 			append=""
 		fi
 
-		$cmd $append --name=card$card$suit --package=faces $card$suit.svg >> $file
+		$cmd bundle $append --name=card$card$suit --package=faces $card$suit.svg >> $file
 	done
 done
 
-$cmd --append --name=back back.svg >> $file
-$cmd --append --name=space space.svg >> $file
+$cmd bundle --append --name=back back.svg >> $file
+$cmd bundle --append --name=space space.svg >> $file

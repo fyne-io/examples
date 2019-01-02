@@ -1,7 +1,7 @@
 package solitaire
 
 import (
-	"github.com/fyne-io/fyne"
+	"fyne.io/fyne"
 	"log"
 )
 import "github.com/fyne-io/examples/solitaire/faces"

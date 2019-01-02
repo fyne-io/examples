@@ -1,6 +1,6 @@
 package bugs
 
-import "github.com/fyne-io/fyne"
+import "fyne.io/fyne"
 
 var codeDark = &fyne.StaticResource{
 	StaticName: "code-dark.svg",

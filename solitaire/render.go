@@ -1,10 +1,12 @@
 package solitaire
 
 import (
-	"github.com/fyne-io/examples/solitaire/faces"
-	"github.com/fyne-io/fyne"
-	"github.com/fyne-io/fyne/canvas"
 	"image/color"
+
+	"fyne.io/fyne"
+	"fyne.io/fyne/canvas"
+
+	"github.com/fyne-io/examples/solitaire/faces"
 )
 
 var cardSize = fyne.Size{Width: 95, Height: 142}

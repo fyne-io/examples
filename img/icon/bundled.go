@@ -1,6 +1,6 @@
 package icon
 
-import "github.com/fyne-io/fyne"
+import "fyne.io/fyne"
 
 var life = &fyne.StaticResource{
 	StaticName: "life.svg",

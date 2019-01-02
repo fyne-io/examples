@@ -2,8 +2,9 @@
 package main
 
 import (
+	"fyne.io/fyne/app"
+
 	"github.com/fyne-io/examples/sudoku"
-	"github.com/fyne-io/fyne/app"
 )
 
 func main() {

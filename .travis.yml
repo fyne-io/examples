@@ -9,7 +9,7 @@ gobuild_args: "-v -tags ci"
 before_script:
   - go get golang.org/x/lint/golint
   - go get github.com/mattn/goveralls
-  - go get github.com/fyne-io/fyne
+  - go get fyne.io/fyne
 
 script:
   - test -z $(gofmt -s -l .)

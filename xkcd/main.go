@@ -14,10 +14,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fyne-io/fyne"
-	"github.com/fyne-io/fyne/canvas"
-	"github.com/fyne-io/fyne/layout"
-	"github.com/fyne-io/fyne/widget"
+	"fyne.io/fyne"
+	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/layout"
+	"fyne.io/fyne/widget"
 )
 
 // XKCD is an app to get xkcd images and display them

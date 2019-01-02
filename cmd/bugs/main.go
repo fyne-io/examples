@@ -2,9 +2,9 @@
 package main
 
 import (
-	"github.com/fyne-io/examples/bugs"
-	"github.com/fyne-io/fyne/app"
+	"fyne.io/fyne/app"
 
+	"github.com/fyne-io/examples/bugs"
 	"github.com/fyne-io/examples/img/icon"
 )
 

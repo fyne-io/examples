@@ -5,10 +5,11 @@ import (
 	"log"
 	"strconv"
 
+	"fyne.io/fyne"
+	"fyne.io/fyne/layout"
+	"fyne.io/fyne/widget"
+
 	"github.com/Knetic/govaluate"
-	"github.com/fyne-io/fyne"
-	"github.com/fyne-io/fyne/layout"
-	"github.com/fyne-io/fyne/widget"
 )
 
 type calc struct {

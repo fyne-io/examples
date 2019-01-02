@@ -7,10 +7,8 @@
 # Fyne Examples
 
 Here we will gather example apps that use the [Fyne](http://fyne.io) toolkit.
-This is a new repository and many existing examples can still be found
-in the main Fyne repo at [https://github.com/fyne-io/fyne/tree/develop/examples].
 
-You can start the main example app by running 
+You can start the main example app that links to all the others by running
 
 ```bash 
 go run main.go

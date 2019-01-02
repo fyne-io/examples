@@ -3,7 +3,8 @@ package calculator
 import (
 	"testing"
 
-	"github.com/fyne-io/fyne/test"
+	"fyne.io/fyne/test"
+
 	"github.com/stretchr/testify/assert"
 )
 

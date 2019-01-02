@@ -1,6 +1,6 @@
 package solitaire
 
-import "github.com/fyne-io/fyne"
+import "fyne.io/fyne"
 
 // Stack represents a number of cards in a particular order
 type Stack struct {

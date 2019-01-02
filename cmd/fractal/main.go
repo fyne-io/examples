@@ -5,7 +5,7 @@ import (
 	"github.com/fyne-io/examples/fractal"
 	"github.com/fyne-io/examples/img/icon"
 )
-import "github.com/fyne-io/fyne/app"
+import "fyne.io/fyne/app"
 
 func main() {
 	app := app.New()

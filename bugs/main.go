@@ -3,12 +3,12 @@ package bugs
 import (
 	"image/color"
 
-	"github.com/fyne-io/fyne"
-	"github.com/fyne-io/fyne/canvas"
-	"github.com/fyne-io/fyne/dialog"
-	"github.com/fyne-io/fyne/layout"
-	"github.com/fyne-io/fyne/theme"
-	"github.com/fyne-io/fyne/widget"
+	"fyne.io/fyne"
+	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/dialog"
+	"fyne.io/fyne/layout"
+	"fyne.io/fyne/theme"
+	"fyne.io/fyne/widget"
 )
 
 var bug, code, flag *theme.ThemedResource

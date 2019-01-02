@@ -4,6 +4,11 @@ import (
 	"flag"
 	"fmt"
 
+	"fyne.io/fyne"
+	"fyne.io/fyne/app"
+	"fyne.io/fyne/layout"
+	"fyne.io/fyne/widget"
+
 	"github.com/fyne-io/examples/bugs"
 	"github.com/fyne-io/examples/calculator"
 	"github.com/fyne-io/examples/fractal"
@@ -11,10 +16,6 @@ import (
 	"github.com/fyne-io/examples/solitaire"
 	"github.com/fyne-io/examples/sudoku"
 	"github.com/fyne-io/examples/xkcd"
-	"github.com/fyne-io/fyne"
-	"github.com/fyne-io/fyne/app"
-	"github.com/fyne-io/fyne/layout"
-	"github.com/fyne-io/fyne/widget"
 )
 
 var apps map[string]func(fyne.App)

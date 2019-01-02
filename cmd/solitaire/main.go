@@ -1,8 +1,11 @@
 // Package main launches a basic solitaire application
 package main
 
-import "github.com/fyne-io/examples/solitaire"
-import "github.com/fyne-io/fyne/app"
+import (
+	"fyne.io/fyne/app"
+
+	"github.com/fyne-io/examples/solitaire"
+)
 
 func main() {
 	app := app.New()

@@ -1,10 +1,12 @@
 package solitaire
 
 import (
-	"fyne.io/fyne"
 	"log"
+
+	"fyne.io/fyne"
+
+	"github.com/fyne-io/examples/solitaire/faces"
 )
-import "github.com/fyne-io/examples/solitaire/faces"
 
 // Suit encodes one of the four possible suits for a playing card
 type Suit int

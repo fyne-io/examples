@@ -18,7 +18,7 @@ const overlap = 20
 func newCard(face fyne.Resource) *canvas.Image {
 	card := &canvas.Image{}
 	if face != nil {
-		card.File = face.CachePath()
+		card.Resource = face
 	}
 	card.Resize(cardSize)
 
@@ -81,23 +81,23 @@ func (t *tableRender) BackgroundColor() color.Color {
 
 func (t *tableRender) Refresh() {
 	if len(t.game.Deck.Cards) > 0 {
-		t.deck.File = faces.ForBack().CachePath()
+		t.deck.Resource = faces.ForBack()
 	} else {
-		t.deck.File = faces.ForSpace().CachePath()
+		t.deck.Resource = faces.ForSpace()
 	}
 	canvas.Refresh(t.deck)
 
 	t.pile1.Hidden = t.game.Draw1 == nil
 	if t.game.Draw1 != nil {
-		t.pile1.File = t.game.Draw1.Face().CachePath()
+		t.pile1.Resource = t.game.Draw1.Face()
 	}
 	t.pile2.Hidden = t.game.Draw2 == nil
 	if t.game.Draw2 != nil {
-		t.pile2.File = t.game.Draw2.Face().CachePath()
+		t.pile2.Resource = t.game.Draw2.Face()
 	}
 	t.pile3.Hidden = t.game.Draw3 == nil
 	if t.game.Draw3 != nil {
-		t.pile3.File = t.game.Draw3.Face().CachePath()
+		t.pile3.Resource = t.game.Draw3.Face()
 	}
 	canvas.Refresh(t.pile1)
 	canvas.Refresh(t.pile2)
@@ -171,10 +171,10 @@ func (s *stackRender) Layout(pos fyne.Position, size fyne.Size) {
 func (s *stackRender) Refresh(stack Stack) {
 	for i := range s.cards {
 		if i < len(stack.Cards)-1 {
-			s.cards[i].(*canvas.Image).File = faces.ForBack().CachePath()
+			s.cards[i].(*canvas.Image).Resource = faces.ForBack()
 			s.cards[i].Show()
 		} else if i == len(stack.Cards)-1 {
-			s.cards[i].(*canvas.Image).File = stack.Cards[i].Face().CachePath()
+			s.cards[i].(*canvas.Image).Resource = stack.Cards[i].Face()
 			s.cards[i].Show()
 		} else {
 			s.cards[i].Hide()

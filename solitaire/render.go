@@ -9,11 +9,20 @@ import (
 	"github.com/fyne-io/examples/solitaire/faces"
 )
 
-var cardSize = fyne.Size{Width: 95, Height: 142}
+const minCardWidth = 95
+const minPadding = 4
+const cardRatio = 142.0 / minCardWidth
 
-const smallPad = 4
-const bigPad = 24
-const overlap = 20
+var (
+	cardSize = fyne.Size{Width: minCardWidth, Height: minCardWidth * cardRatio}
+
+	smallPad = minPadding
+	overlap  = smallPad * 5
+	bigPad   = smallPad + overlap
+
+	minWidth  = cardSize.Width*7 + smallPad*8
+	minHeight = cardSize.Height*3 + bigPad + smallPad*2
+)
 
 func newCard(face fyne.Resource) *canvas.Image {
 	card := &canvas.Image{}
@@ -39,21 +48,39 @@ type tableRender struct {
 	table   *Table
 }
 
+func updateSizes(pad int) {
+	smallPad = pad
+	overlap = smallPad * 5
+	bigPad = smallPad + overlap
+}
+
+func updateCard(face fyne.CanvasObject, x, y int) {
+	face.Resize(cardSize)
+	face.Move(fyne.NewPos(x, y))
+}
+
 func (t *tableRender) MinSize() fyne.Size {
-	return fyne.NewSize(cardSize.Width*7+smallPad*8, cardSize.Height*3+bigPad+smallPad*2)
+	return fyne.NewSize(minWidth, minHeight)
 }
 
 func (t *tableRender) Layout(size fyne.Size) {
-	t.deck.Move(fyne.NewPos(smallPad, smallPad))
+	padding := int(float32(size.Width) * .006)
+	updateSizes(padding)
 
-	t.pile1.Move(fyne.NewPos(smallPad*2+cardSize.Width, smallPad))
-	t.pile2.Move(fyne.NewPos(smallPad*2+cardSize.Width+overlap, smallPad))
-	t.pile3.Move(fyne.NewPos(smallPad*2+cardSize.Width+overlap*2, smallPad))
+	newWidth := (size.Width - smallPad*8) / 7.0
+	newWidth = fyne.Max(newWidth, minCardWidth)
+	cardSize = fyne.NewSize(newWidth, int(float32(newWidth)*cardRatio))
 
-	t.space1.Move(fyne.NewPos(size.Width-(smallPad+cardSize.Width)*4, smallPad))
-	t.space2.Move(fyne.NewPos(size.Width-(smallPad+cardSize.Width)*3, smallPad))
-	t.space3.Move(fyne.NewPos(size.Width-(smallPad+cardSize.Width)*2, smallPad))
-	t.space4.Move(fyne.NewPos(size.Width-(smallPad+cardSize.Width), smallPad))
+	updateCard(t.deck, smallPad, smallPad)
+
+	updateCard(t.pile1, smallPad*2+cardSize.Width, smallPad)
+	updateCard(t.pile2, smallPad*2+cardSize.Width+overlap, smallPad)
+	updateCard(t.pile3, smallPad*2+cardSize.Width+overlap*2, smallPad)
+
+	updateCard(t.space1, size.Width-(smallPad+cardSize.Width)*4, smallPad)
+	updateCard(t.space2, size.Width-(smallPad+cardSize.Width)*3, smallPad)
+	updateCard(t.space3, size.Width-(smallPad+cardSize.Width)*2, smallPad)
+	updateCard(t.space4, size.Width-(smallPad+cardSize.Width), smallPad)
 
 	t.stack1.Layout(fyne.NewPos(smallPad, smallPad+bigPad+cardSize.Height),
 		fyne.NewSize(cardSize.Width, size.Height-(smallPad+bigPad+cardSize.Height)))
@@ -162,7 +189,7 @@ type stackRender struct {
 func (s *stackRender) Layout(pos fyne.Position, size fyne.Size) {
 	top := pos.Y
 	for i := range s.cards {
-		s.cards[i].Move(fyne.NewPos(pos.X, top))
+		updateCard(s.cards[i], pos.X, top)
 
 		top += overlap
 	}

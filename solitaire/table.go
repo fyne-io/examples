@@ -2,7 +2,6 @@ package solitaire
 
 import (
 	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/widget"
 )
 
@@ -12,7 +11,8 @@ type Table struct {
 	position fyne.Position
 	hidden   bool
 
-	game *Game
+	game     *Game
+	selected *Card
 }
 
 // Size gets the current size of the table
@@ -67,24 +67,93 @@ func (t *Table) CreateRenderer() fyne.WidgetRenderer {
 	return newTableRender(t.game)
 }
 
-func withinBounds(pos fyne.Position, card *canvas.Image) bool {
-	if pos.X < card.Position().X || pos.Y < card.Position().Y {
+func (t *Table) selectCard(card *cardPosition) {
+	render := widget.Renderer(t).(*tableRender)
+	if card == nil || t.selected == card.card {
+		t.selected = nil
+		render.selectCard(nil)
+		return // don'd reselect the same card
+	}
+
+	t.selected = card.card
+	render.selectCard(card)
+}
+
+func (t *Table) cardTapped(card *cardPosition, pos fyne.Position) bool {
+	if !card.card.FaceUp {
 		return false
 	}
 
-	if pos.X >= card.Position().X+card.Size().Width || pos.Y >= card.Position().Y+card.Size().Height {
-		return false
+	if card.withinBounds(pos) {
+		t.selectCard(card)
+		return true
 	}
 
-	return true
+	return false
+}
+
+func (t *Table) checkStackTapped(render *stackRender, stack Stack, pos fyne.Position) bool {
+	for i := len(stack.Cards) - 1; i >= 0; i-- {
+		card := stack.Cards[i]
+		if !card.FaceUp {
+			return false
+		}
+
+		if t.cardTapped(render.cards[i], pos) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // OnMouseDown is called when the user taps the table widget
 func (t *Table) OnMouseDown(event *fyne.MouseEvent) {
-	if withinBounds(event.Position, widget.Renderer(t).(*tableRender).deck) {
+	render := widget.Renderer(t).(*tableRender)
+	if render.deck.withinBounds(event.Position) {
+		t.selectCard(nil)
 		t.game.DrawThree()
-		widget.Renderer(t).Refresh()
+
+		// TODO consier moving this
+		render.pile1.card = t.game.Draw1
+		render.pile2.card = t.game.Draw2
+		render.pile3.card = t.game.Draw3
+		render.Refresh()
+		return
 	}
+
+	// TODO check this!
+	if t.game.Draw3 != nil {
+		if t.cardTapped(render.pile3, event.Position) {
+			return
+		}
+	} else if t.game.Draw2 != nil {
+		if t.cardTapped(render.pile2, event.Position) {
+			return
+		}
+	} else if t.game.Draw1 != nil {
+		if t.cardTapped(render.pile1, event.Position) {
+			return
+		}
+	}
+
+	if t.checkStackTapped(render.stack1, t.game.Stack1, event.Position) {
+		return
+	} else if t.checkStackTapped(render.stack2, t.game.Stack2, event.Position) {
+		return
+	} else if t.checkStackTapped(render.stack3, t.game.Stack3, event.Position) {
+		return
+	} else if t.checkStackTapped(render.stack4, t.game.Stack4, event.Position) {
+		return
+	} else if t.checkStackTapped(render.stack5, t.game.Stack5, event.Position) {
+		return
+	} else if t.checkStackTapped(render.stack6, t.game.Stack6, event.Position) {
+		return
+	} else if t.checkStackTapped(render.stack7, t.game.Stack7, event.Position) {
+		return
+	}
+
+	t.selectCard(nil) // clicked elsewhere
 }
 
 // NewTable creates a new table widget for the specified game

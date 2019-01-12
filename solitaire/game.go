@@ -35,7 +35,11 @@ type Game struct {
 
 func pushToStack(s *Stack, d *Deck, count int) {
 	for i := 0; i < count; i++ {
-		s.Push(d.Pop())
+		card := d.Pop()
+		if i == count-1 {
+			card.FaceUp = true
+		}
+		s.Push(card)
 	}
 }
 
@@ -64,6 +68,7 @@ func (g *Game) drawCard() *Card {
 	}
 
 	popped := g.Deck.Pop()
+	popped.FaceUp = true
 	g.Drawn.Push(popped)
 	return popped
 }
@@ -76,7 +81,10 @@ func (g *Game) DrawThree() {
 		g.Draw2 = nil
 		g.Draw3 = nil
 
-		g.Deck = g.Drawn
+		g.Deck = g.Drawn // todo turn g.Deck down...
+		for _, card := range g.Deck.Cards {
+			card.TurnFaceDown()
+		}
 		g.Drawn = Deck{}
 		return
 	}

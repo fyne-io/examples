@@ -35,11 +35,23 @@ const (
 type Card struct {
 	Value int
 	Suit  Suit
+
+	FaceUp bool
 }
 
 // Face returns a resource that can be used to render the associated card
-func (c Card) Face() fyne.Resource {
+func (c *Card) Face() fyne.Resource {
 	return faces.ForCard(c.Value, int(c.Suit))
+}
+
+// TurnFaceUp sets the FaceUp field to true - so the card value can be seen
+func (c *Card) TurnFaceUp() {
+	c.FaceUp = true
+}
+
+// TurnFaceDown sets the FaceUp field to false - so the card should be hidden
+func (c *Card) TurnFaceDown() {
+	c.FaceUp = false
 }
 
 // NewCard returns a new card instance with the specified suit and value (1 based for Ace, 2 is 2 and so on).
@@ -48,5 +60,5 @@ func NewCard(value int, suit Suit) *Card {
 		log.Fatal("Invalid card face value")
 	}
 
-	return &Card{value, suit}
+	return &Card{Value: value, Suit: suit}
 }

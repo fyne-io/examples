@@ -24,6 +24,15 @@ func TestGame_Deal(t *testing.T) {
 	assert.Equal(t, 24, len(game.Deck.Cards))
 }
 
+func TestGame_Deal_FaceUp(t *testing.T) {
+	game := NewGame()
+
+	assert.Equal(t, true, game.Stack1.Cards[0].FaceUp)
+
+	assert.Equal(t, false, game.Stack2.Cards[0].FaceUp)
+	assert.Equal(t, true, game.Stack2.Cards[1].FaceUp)
+}
+
 func TestGame_Draw(t *testing.T) {
 	game := NewGame()
 

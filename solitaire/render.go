@@ -24,23 +24,61 @@ var (
 	minHeight = cardSize.Height*3 + bigPad + smallPad*2
 )
 
-func newCard(face fyne.Resource) *canvas.Image {
-	card := &canvas.Image{}
-	if face != nil {
-		card.Resource = face
-	}
-	card.Resize(cardSize)
+type cardPosition struct {
+	card  *Card
+	image *canvas.Image
+}
 
-	return card
+func (c *cardPosition) updatePosition(x, y int) {
+	c.image.Resize(cardSize)
+	c.image.Move(fyne.NewPos(x, y))
+}
+
+func (c *cardPosition) withinBounds(pos fyne.Position) bool {
+	if pos.X < c.image.Position().X || pos.Y < c.image.Position().Y {
+		return false
+	}
+
+	if pos.X >= c.image.Position().X+c.image.Size().Width || pos.Y >= c.image.Position().Y+c.image.Size().Height {
+		return false
+	}
+
+	return true
+}
+
+func newCardPos(card *Card) *cardPosition {
+	if card == nil {
+		return &cardPosition{nil, &canvas.Image{}}
+	}
+
+	var face fyne.Resource
+	if card.FaceUp {
+		face = card.Face()
+	} else {
+		face = faces.ForBack()
+	}
+	image := &canvas.Image{Resource: face}
+	image.Resize(cardSize)
+
+	return &cardPosition{card, image}
+}
+
+func newCardSpace() *cardPosition {
+	space := faces.ForSpace()
+	image := &canvas.Image{Resource: space}
+	image.Resize(cardSize)
+
+	return &cardPosition{nil, image}
 }
 
 type tableRender struct {
 	game *Game
 
-	deck *canvas.Image
+	deck     *cardPosition
+	selected *cardPosition
 
-	pile1, pile2, pile3            *canvas.Image
-	space1, space2, space3, space4 *canvas.Image
+	pile1, pile2, pile3            *cardPosition
+	space1, space2, space3, space4 *cardPosition
 
 	stack1, stack2, stack3, stack4, stack5, stack6, stack7 *stackRender
 
@@ -54,9 +92,17 @@ func updateSizes(pad int) {
 	bigPad = smallPad + overlap
 }
 
-func updateCard(face fyne.CanvasObject, x, y int) {
-	face.Resize(cardSize)
-	face.Move(fyne.NewPos(x, y))
+func (t *tableRender) selectCard(card *cardPosition) {
+	if t.selected != nil {
+		t.selected.image.Translucency = 0.0
+		canvas.Refresh(t.selected.image)
+	}
+
+	if card != nil {
+		t.selected = card
+		card.image.Translucency = 0.25
+		canvas.Refresh(card.image)
+	}
 }
 
 func (t *tableRender) MinSize() fyne.Size {
@@ -71,16 +117,16 @@ func (t *tableRender) Layout(size fyne.Size) {
 	newWidth = fyne.Max(newWidth, minCardWidth)
 	cardSize = fyne.NewSize(newWidth, int(float32(newWidth)*cardRatio))
 
-	updateCard(t.deck, smallPad, smallPad)
+	t.deck.updatePosition(smallPad, smallPad)
 
-	updateCard(t.pile1, smallPad*2+cardSize.Width, smallPad)
-	updateCard(t.pile2, smallPad*2+cardSize.Width+overlap, smallPad)
-	updateCard(t.pile3, smallPad*2+cardSize.Width+overlap*2, smallPad)
+	t.pile1.updatePosition(smallPad*2+cardSize.Width, smallPad)
+	t.pile2.updatePosition(smallPad*2+cardSize.Width+overlap, smallPad)
+	t.pile3.updatePosition(smallPad*2+cardSize.Width+overlap*2, smallPad)
 
-	updateCard(t.space1, size.Width-(smallPad+cardSize.Width)*4, smallPad)
-	updateCard(t.space2, size.Width-(smallPad+cardSize.Width)*3, smallPad)
-	updateCard(t.space3, size.Width-(smallPad+cardSize.Width)*2, smallPad)
-	updateCard(t.space4, size.Width-(smallPad+cardSize.Width), smallPad)
+	t.space1.updatePosition(size.Width-(smallPad+cardSize.Width)*4, smallPad)
+	t.space2.updatePosition(size.Width-(smallPad+cardSize.Width)*3, smallPad)
+	t.space3.updatePosition(size.Width-(smallPad+cardSize.Width)*2, smallPad)
+	t.space4.updatePosition(size.Width-(smallPad+cardSize.Width), smallPad)
 
 	t.stack1.Layout(fyne.NewPos(smallPad, smallPad+bigPad+cardSize.Height),
 		fyne.NewSize(cardSize.Width, size.Height-(smallPad+bigPad+cardSize.Height)))
@@ -108,27 +154,27 @@ func (t *tableRender) BackgroundColor() color.Color {
 
 func (t *tableRender) Refresh() {
 	if len(t.game.Deck.Cards) > 0 {
-		t.deck.Resource = faces.ForBack()
+		t.deck.image.Resource = faces.ForBack()
 	} else {
-		t.deck.Resource = faces.ForSpace()
+		t.deck.image.Resource = faces.ForSpace()
 	}
-	canvas.Refresh(t.deck)
+	canvas.Refresh(t.deck.image)
 
-	t.pile1.Hidden = t.game.Draw1 == nil
-	if t.game.Draw1 != nil {
-		t.pile1.Resource = t.game.Draw1.Face()
+	t.pile1.image.Hidden = t.pile1.card == nil
+	if t.pile1.card != nil {
+		t.pile1.image.Resource = t.game.Draw1.Face()
 	}
-	t.pile2.Hidden = t.game.Draw2 == nil
-	if t.game.Draw2 != nil {
-		t.pile2.Resource = t.game.Draw2.Face()
+	t.pile2.image.Hidden = t.pile2.card == nil
+	if t.pile2.card != nil {
+		t.pile2.image.Resource = t.game.Draw2.Face()
 	}
-	t.pile3.Hidden = t.game.Draw3 == nil
-	if t.game.Draw3 != nil {
-		t.pile3.Resource = t.game.Draw3.Face()
+	t.pile3.image.Hidden = t.pile3.card == nil
+	if t.pile3.card != nil {
+		t.pile3.image.Resource = t.game.Draw3.Face()
 	}
-	canvas.Refresh(t.pile1)
-	canvas.Refresh(t.pile2)
-	canvas.Refresh(t.pile3)
+	canvas.Refresh(t.pile1.image)
+	canvas.Refresh(t.pile2.image)
+	canvas.Refresh(t.pile3.image)
 
 	t.stack1.Refresh(t.game.Stack1)
 	t.stack2.Refresh(t.game.Stack2)
@@ -145,19 +191,30 @@ func (t *tableRender) Objects() []fyne.CanvasObject {
 	return t.objects
 }
 
+func (t *tableRender) appendStack(stack *stackRender) {
+	for _, card := range stack.cards {
+		t.objects = append(t.objects, card.image)
+	}
+}
+
+func (t *tableRender) positionForCard(card *Card) *cardPosition {
+
+	return nil
+}
+
 func newTableRender(game *Game) *tableRender {
 	render := &tableRender{}
 	render.game = game
-	render.deck = newCard(faces.ForBack())
+	render.deck = newCardPos(nil)
 
-	render.pile1 = newCard(nil)
-	render.pile2 = newCard(nil)
-	render.pile3 = newCard(nil)
+	render.pile1 = newCardPos(nil)
+	render.pile2 = newCardPos(nil)
+	render.pile3 = newCardPos(nil)
 
-	render.space1 = newCard(faces.ForSpace())
-	render.space2 = newCard(faces.ForSpace())
-	render.space3 = newCard(faces.ForSpace())
-	render.space4 = newCard(faces.ForSpace())
+	render.space1 = newCardSpace()
+	render.space2 = newCardSpace()
+	render.space3 = newCardSpace()
+	render.space4 = newCardSpace()
 
 	render.stack1 = newStackRender()
 	render.stack2 = newStackRender()
@@ -167,52 +224,58 @@ func newTableRender(game *Game) *tableRender {
 	render.stack6 = newStackRender()
 	render.stack7 = newStackRender()
 
-	render.objects = []fyne.CanvasObject{render.deck, render.pile1, render.pile2, render.pile3,
-		render.space1, render.space2, render.space3, render.space4}
+	render.objects = []fyne.CanvasObject{render.deck.image, render.pile1.image, render.pile2.image, render.pile3.image,
+		render.space1.image, render.space2.image, render.space3.image, render.space4.image}
 
-	render.objects = append(render.objects, render.stack1.cards[0:]...)
-	render.objects = append(render.objects, render.stack2.cards[0:]...)
-	render.objects = append(render.objects, render.stack3.cards[0:]...)
-	render.objects = append(render.objects, render.stack4.cards[0:]...)
-	render.objects = append(render.objects, render.stack5.cards[0:]...)
-	render.objects = append(render.objects, render.stack6.cards[0:]...)
-	render.objects = append(render.objects, render.stack7.cards[0:]...)
+	render.appendStack(render.stack1)
+	render.appendStack(render.stack2)
+	render.appendStack(render.stack3)
+	render.appendStack(render.stack4)
+	render.appendStack(render.stack5)
+	render.appendStack(render.stack6)
+	render.appendStack(render.stack7)
 
 	render.Refresh()
 	return render
 }
 
 type stackRender struct {
-	cards [13]fyne.CanvasObject
+	cards [13]*cardPosition
 }
 
 func (s *stackRender) Layout(pos fyne.Position, size fyne.Size) {
 	top := pos.Y
 	for i := range s.cards {
-		updateCard(s.cards[i], pos.X, top)
+		s.cards[i].updatePosition(pos.X, top)
 
 		top += overlap
 	}
 }
 
 func (s *stackRender) Refresh(stack Stack) {
-	for i := range s.cards {
-		if i < len(stack.Cards)-1 {
-			s.cards[i].(*canvas.Image).Resource = faces.ForBack()
-			s.cards[i].Show()
-		} else if i == len(stack.Cards)-1 {
-			s.cards[i].(*canvas.Image).Resource = stack.Cards[i].Face()
-			s.cards[i].Show()
+	var i int
+	var card *Card
+	for i, card = range stack.Cards {
+		s.cards[i].card = card
+		if card.FaceUp {
+			s.cards[i].image.Resource = card.Face()
+			s.cards[i].image.Show()
 		} else {
-			s.cards[i].Hide()
+			s.cards[i].image.Resource = faces.ForBack()
+			s.cards[i].image.Show()
 		}
+	}
+
+	for i = i + 1; i < len(s.cards); i++ {
+		s.cards[i].card = nil
+		s.cards[i].image.Hide()
 	}
 }
 
 func newStackRender() *stackRender {
 	r := &stackRender{}
 	for i := range r.cards {
-		r.cards[i] = newCard(nil)
+		r.cards[i] = newCardPos(nil)
 	}
 
 	return r

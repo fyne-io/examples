@@ -21,7 +21,7 @@ func TestGame_Deal(t *testing.T) {
 	assert.Equal(t, 1, len(game.Stack1.Cards))
 	assert.Equal(t, 2, len(game.Stack2.Cards))
 	assert.Equal(t, 7, len(game.Stack7.Cards))
-	assert.Equal(t, 24, len(game.Deck.Cards))
+	assert.Equal(t, 24, len(game.Hand.Cards))
 }
 
 func TestGame_Deal_FaceUp(t *testing.T) {
@@ -36,19 +36,22 @@ func TestGame_Deal_FaceUp(t *testing.T) {
 func TestGame_Draw(t *testing.T) {
 	game := NewGame()
 
-	assert.Equal(t, 24, len(game.Deck.Cards))
+	assert.Equal(t, 24, len(game.Hand.Cards))
 
 	game.DrawThree()
-	assert.Equal(t, 21, len(game.Deck.Cards))
+	assert.Equal(t, 21, len(game.Hand.Cards))
 	assert.NotNil(t, game.Draw1)
+	assert.True(t, game.Draw1.FaceUp)
 	assert.NotNil(t, game.Draw2)
+	assert.True(t, game.Draw2.FaceUp)
 	assert.NotNil(t, game.Draw3)
+	assert.True(t, game.Draw3.FaceUp)
 }
 
 func TestGameDrawEnd(t *testing.T) {
 	game := NewGame()
 
-	assert.Equal(t, 24, len(game.Deck.Cards))
+	assert.Equal(t, 24, len(game.Hand.Cards))
 
 	game.DrawThree()
 	game.DrawThree()
@@ -58,13 +61,13 @@ func TestGameDrawEnd(t *testing.T) {
 	game.DrawThree()
 	game.DrawThree()
 	game.DrawThree()
-	assert.Equal(t, 0, len(game.Deck.Cards))
+	assert.Equal(t, 0, len(game.Hand.Cards))
 }
 
 func TestGame_DrawCycles(t *testing.T) {
 	game := NewGame()
 
-	assert.Equal(t, 24, len(game.Deck.Cards))
+	assert.Equal(t, 24, len(game.Hand.Cards))
 
 	game.DrawThree()
 	game.DrawThree()
@@ -77,23 +80,23 @@ func TestGame_DrawCycles(t *testing.T) {
 
 	// This is the extra one...
 	game.DrawThree()
-	assert.Equal(t, 24, len(game.Deck.Cards))
+	assert.Equal(t, 24, len(game.Hand.Cards))
 }
 
 func TestGame_ResetDraw(t *testing.T) {
 	game := NewGame()
 
-	assert.Equal(t, 24, len(game.Deck.Cards))
+	assert.Equal(t, 24, len(game.Hand.Cards))
 
 	game.DrawThree()
 	game.ResetDraw()
-	assert.Equal(t, 24, len(game.Deck.Cards))
+	assert.Equal(t, 24, len(game.Hand.Cards))
 }
 
 func TestGame_DrawSymmetric(t *testing.T) {
 	game := NewGame()
 
-	assert.Equal(t, 24, len(game.Deck.Cards))
+	assert.Equal(t, 24, len(game.Hand.Cards))
 
 	game.DrawThree()
 	first := game.Draw1

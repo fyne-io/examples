@@ -35,8 +35,8 @@ func (d *Deck) Pop() *Card {
 }
 
 // NewSortedDeck returns a standard deck in sorted order - starting with Ace of Clubs, ending with King of Spades.
-func NewSortedDeck() Deck {
-	deck := Deck{}
+func NewSortedDeck() *Deck {
+	deck := &Deck{}
 
 	c := 0
 	suit := SuitClubs
@@ -52,7 +52,7 @@ func NewSortedDeck() Deck {
 }
 
 // NewShuffledDeck returns a 52 card deck in random order
-func NewShuffledDeck() Deck {
+func NewShuffledDeck() *Deck {
 	deck := NewSortedDeck()
 	deck.Shuffle()
 

@@ -12,25 +12,34 @@ func (s *Stack) Push(card *Card) {
 	s.Cards = append(s.Cards, card)
 }
 
+// Top gets the top card of a stack, or nil if the stack is empty
+func (s *Stack) Top() *Card {
+	if len(s.Cards) == 0 {
+		return nil
+	}
+
+	return s.Cards[len(s.Cards)-1]
+}
+
 // Game represents a full solitaire game, starting from a standard draw
 type Game struct {
-	Deck Deck
+	Hand *Deck
 
 	Draw1, Draw2, Draw3 *Card
-	Drawn               Deck
+	Drawn               *Deck
 
-	Suit1 Stack
-	Suit2 Stack
-	Suit3 Stack
-	Suit4 Stack
+	Build1 *Stack
+	Build2 *Stack
+	Build3 *Stack
+	Build4 *Stack
 
-	Stack1 Stack
-	Stack2 Stack
-	Stack3 Stack
-	Stack4 Stack
-	Stack5 Stack
-	Stack6 Stack
-	Stack7 Stack
+	Stack1 *Stack
+	Stack2 *Stack
+	Stack3 *Stack
+	Stack4 *Stack
+	Stack5 *Stack
+	Stack6 *Stack
+	Stack7 *Stack
 }
 
 func pushToStack(s *Stack, d *Deck, count int) {
@@ -44,18 +53,18 @@ func pushToStack(s *Stack, d *Deck, count int) {
 }
 
 func (g *Game) deal() {
-	pushToStack(&g.Stack1, &g.Deck, 1)
-	pushToStack(&g.Stack2, &g.Deck, 2)
-	pushToStack(&g.Stack3, &g.Deck, 3)
-	pushToStack(&g.Stack4, &g.Deck, 4)
-	pushToStack(&g.Stack5, &g.Deck, 5)
-	pushToStack(&g.Stack6, &g.Deck, 6)
-	pushToStack(&g.Stack7, &g.Deck, 7)
+	pushToStack(g.Stack1, g.Hand, 1)
+	pushToStack(g.Stack2, g.Hand, 2)
+	pushToStack(g.Stack3, g.Hand, 3)
+	pushToStack(g.Stack4, g.Hand, 4)
+	pushToStack(g.Stack5, g.Hand, 5)
+	pushToStack(g.Stack6, g.Hand, 6)
+	pushToStack(g.Stack7, g.Hand, 7)
 }
 
 // ResetDraw resets the draw pile to be completely available (no cards drawn)
 func (g *Game) ResetDraw() {
-	for ; len(g.Deck.Cards) > 0; g.DrawThree() {
+	for ; len(g.Hand.Cards) > 0; g.DrawThree() {
 	}
 
 	// Reset the draw pile
@@ -63,11 +72,11 @@ func (g *Game) ResetDraw() {
 }
 
 func (g *Game) drawCard() *Card {
-	if len(g.Deck.Cards) == 0 {
+	if len(g.Hand.Cards) == 0 {
 		return nil
 	}
 
-	popped := g.Deck.Pop()
+	popped := g.Hand.Pop()
 	popped.FaceUp = true
 	g.Drawn.Push(popped)
 	return popped
@@ -76,16 +85,16 @@ func (g *Game) drawCard() *Card {
 // DrawThree draws three cards from the deck and adds them to the draw pile(s).
 // If there are no cards available to be drawn it will cycle back to the beginning and draw the first three.
 func (g *Game) DrawThree() {
-	if len(g.Deck.Cards) == 0 {
+	if len(g.Hand.Cards) == 0 {
 		g.Draw1 = nil
 		g.Draw2 = nil
 		g.Draw3 = nil
 
-		g.Deck = g.Drawn // todo turn g.Deck down...
-		for _, card := range g.Deck.Cards {
+		g.Hand = g.Drawn
+		for _, card := range g.Hand.Cards {
 			card.TurnFaceDown()
 		}
-		g.Drawn = Deck{}
+		g.Drawn = &Deck{}
 		return
 	}
 
@@ -94,10 +103,46 @@ func (g *Game) DrawThree() {
 	g.Draw3 = g.drawCard()
 }
 
+// MoveCardToBuild attempts to move the currently selected card to a build stack.
+// If the move is not possible it will return.
+func (g *Game) MoveCardToBuild(build *Stack, card *Card) {
+	if !g.ruleCanMoveToBuild(build, card) {
+		return
+	}
+
+	g.removeCard(card)
+	build.Push(card)
+}
+
+// MoveCardToStack attempts to move the currently selected card to a table stack.
+// If the move is not possible it will return.
+func (g *Game) MoveCardToStack(stack *Stack, card *Card) {
+	// TODO if we can then move - and everything under the card too...
+}
+
+func (g *Game) removeCard(card *Card) {
+	// TODO find it and nil out
+}
+
 // NewGame starts a new solitaire game and draws to the standard configuration
 func NewGame() *Game {
 	game := &Game{}
-	game.Deck = NewShuffledDeck()
+	game.Hand = NewShuffledDeck()
+
+	game.Drawn = &Deck{}
+
+	game.Stack1 = &Stack{}
+	game.Stack2 = &Stack{}
+	game.Stack3 = &Stack{}
+	game.Stack4 = &Stack{}
+	game.Stack5 = &Stack{}
+	game.Stack6 = &Stack{}
+	game.Stack7 = &Stack{}
+
+	game.Build1 = &Stack{}
+	game.Build2 = &Stack{}
+	game.Build3 = &Stack{}
+	game.Build4 = &Stack{}
 
 	game.deal()
 	return game

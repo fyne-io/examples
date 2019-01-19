@@ -11,6 +11,9 @@ import (
 // Suit encodes one of the four possible suits for a playing card
 type Suit int
 
+// SuitColor represents the red/black of a suit
+type SuitColor int
+
 const (
 	// SuitClubs is the "Clubs" playing card suit
 	SuitClubs Suit = iota
@@ -20,6 +23,11 @@ const (
 	SuitHearts
 	// SuitSpades is the "Spades" playing card suit
 	SuitSpades
+
+	// SuitColorBlack is returned from Color() if the suit is Clubs or Spades
+	SuitColorBlack SuitColor = iota
+	// SuitColorRed is returned from Color() if the suit is Diamonds or Hearts
+	SuitColorRed
 )
 
 const (
@@ -52,6 +60,15 @@ func (c *Card) TurnFaceUp() {
 // TurnFaceDown sets the FaceUp field to false - so the card should be hidden
 func (c *Card) TurnFaceDown() {
 	c.FaceUp = false
+}
+
+// Color returns the red or black color of the card suit
+func (c *Card) Color() SuitColor {
+	if c.Suit == SuitClubs || c.Suit == SuitSpades {
+		return SuitColorBlack
+	}
+
+	return SuitColorRed
 }
 
 // NewCard returns a new card instance with the specified suit and value (1 based for Ace, 2 is 2 and so on).

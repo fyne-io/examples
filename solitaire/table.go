@@ -134,7 +134,9 @@ func (t *Table) checkStackTapped(render *stackRender, stack *Stack, pos fyne.Pos
 		}
 	}
 
-	return false
+	return t.cardTapped(render.cards[0], pos, func() {
+		t.game.MoveCardToStack(stack, t.selected)
+	})
 }
 
 // OnMouseDown is called when the user taps the table widget

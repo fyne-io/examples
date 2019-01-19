@@ -36,6 +36,17 @@ func (s *Stack) Pop() *Card {
 	return ret
 }
 
+// Contains will return true if the stack contains the specified card
+func (s *Stack) Contains(card *Card) bool {
+	for _, c := range s.Cards {
+		if cardEquals(c, card) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // Game represents a full solitaire game, starting from a standard draw
 type Game struct {
 	Hand *Deck
@@ -132,7 +143,54 @@ func (g *Game) MoveCardToBuild(build *Stack, card *Card) {
 // MoveCardToStack attempts to move the currently selected card to a table stack.
 // If the move is not possible it will return.
 func (g *Game) MoveCardToStack(stack *Stack, card *Card) {
-	// TODO if we can then move - and everything under the card too...
+	if !g.ruleCanMoveToStack(stack, card) {
+		return
+	}
+
+	oldStack := g.stackForCard(card)
+	if oldStack == nil {
+		g.removeCard(card)
+		stack.Push(card)
+		return
+	}
+
+	found := false
+	for _, c := range oldStack.Cards {
+		if cardEquals(c, card) {
+			found = true
+		}
+
+		if found {
+			defer oldStack.Pop()
+			stack.Push(c)
+		}
+	}
+}
+
+func (g *Game) stackForCard(card *Card) *Stack {
+	if g.Stack1.Contains(card) {
+		return g.Stack1
+	}
+	if g.Stack2.Contains(card) {
+		return g.Stack2
+	}
+	if g.Stack3.Contains(card) {
+		return g.Stack3
+	}
+	if g.Stack4.Contains(card) {
+		return g.Stack4
+	}
+	if g.Stack5.Contains(card) {
+		return g.Stack5
+	}
+	if g.Stack6.Contains(card) {
+		return g.Stack6
+	}
+	if g.Stack7.Contains(card) {
+		return g.Stack7
+	}
+
+	return nil
 }
 
 func (g *Game) removeCard(card *Card) {
@@ -142,9 +200,20 @@ func (g *Game) removeCard(card *Card) {
 	} else if cardEquals(card, g.Draw2) {
 		g.Drawn.Remove(card)
 		g.Draw2 = nil
-	} else if cardEquals(card, g.Draw2) {
+	} else if cardEquals(card, g.Draw1) {
+		// TODO what if it's empty - the previous draw?
 		g.Drawn.Remove(card)
-		g.Draw2 = nil
+		g.Draw1 = nil
+
+	} else if cardEquals(card, g.Build1.Top()) {
+		g.Build1.Pop()
+	} else if cardEquals(card, g.Build2.Top()) {
+		g.Build2.Pop()
+	} else if cardEquals(card, g.Build3.Top()) {
+		g.Build3.Pop()
+	} else if cardEquals(card, g.Build4.Top()) {
+		g.Build4.Pop()
+
 	} else if cardEquals(card, g.Stack1.Top()) {
 		g.Stack1.Pop()
 	} else if cardEquals(card, g.Stack2.Top()) {

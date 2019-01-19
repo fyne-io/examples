@@ -139,6 +139,8 @@ func (t *tableRender) refreshCard(img *canvas.Image, card *Card) {
 }
 
 func (t *tableRender) refreshCardOrBlank(img *canvas.Image, card *Card) {
+	img.Resource = faces.ForSpace()
+	img.Translucency = 0
 	if card == nil {
 		img.Resource = faces.ForSpace()
 		return
@@ -171,7 +173,6 @@ func (t *tableRender) Refresh() {
 	t.refreshCard(t.pile2, t.game.Draw2)
 	t.refreshCard(t.pile3, t.game.Draw3)
 
-	// TODO get it to not-hide
 	t.refreshCardOrBlank(t.build1, t.game.Build1.Top())
 	t.refreshCardOrBlank(t.build2, t.game.Build2.Top())
 	t.refreshCardOrBlank(t.build3, t.game.Build3.Top())
@@ -242,7 +243,7 @@ func newTableRender(table *Table) *tableRender {
 }
 
 type stackRender struct {
-	cards [13]*canvas.Image
+	cards [19]*canvas.Image
 	table *tableRender
 }
 
@@ -258,10 +259,12 @@ func (s *stackRender) Layout(pos fyne.Position, size fyne.Size) {
 func (s *stackRender) Refresh(stack *Stack) {
 	var i int
 	var card *Card
-	for i, card = range stack.Cards {
-		if i == 0 {
-			s.table.refreshCardOrBlank(s.cards[i], card)
-		} else {
+	if len(stack.Cards) == 0 {
+		s.cards[0].Resource = faces.ForSpace()
+		s.cards[0].Translucency = 0
+		i = 1
+	} else {
+		for i, card = range stack.Cards {
 			s.table.refreshCard(s.cards[i], card)
 		}
 	}

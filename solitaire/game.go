@@ -21,6 +21,21 @@ func (s *Stack) Top() *Card {
 	return s.Cards[len(s.Cards)-1]
 }
 
+// Pop removes the top card of a stack, turning up any card immediately underneath and returning the removed card
+func (s *Stack) Pop() *Card {
+	if len(s.Cards) == 0 {
+		return nil
+	}
+
+	ret := s.Top()
+	s.Cards = s.Cards[0 : len(s.Cards)-1]
+
+	if len(s.Cards) > 0 {
+		s.Cards[len(s.Cards)-1].TurnFaceUp()
+	}
+	return ret
+}
+
 // Game represents a full solitaire game, starting from a standard draw
 type Game struct {
 	Hand *Deck
@@ -121,7 +136,30 @@ func (g *Game) MoveCardToStack(stack *Stack, card *Card) {
 }
 
 func (g *Game) removeCard(card *Card) {
-	// TODO find it and nil out
+	if cardEquals(card, g.Draw3) {
+		g.Drawn.Remove(card)
+		g.Draw3 = nil
+	} else if cardEquals(card, g.Draw2) {
+		g.Drawn.Remove(card)
+		g.Draw2 = nil
+	} else if cardEquals(card, g.Draw2) {
+		g.Drawn.Remove(card)
+		g.Draw2 = nil
+	} else if cardEquals(card, g.Stack1.Top()) {
+		g.Stack1.Pop()
+	} else if cardEquals(card, g.Stack2.Top()) {
+		g.Stack2.Pop()
+	} else if cardEquals(card, g.Stack3.Top()) {
+		g.Stack3.Pop()
+	} else if cardEquals(card, g.Stack4.Top()) {
+		g.Stack4.Pop()
+	} else if cardEquals(card, g.Stack5.Top()) {
+		g.Stack5.Pop()
+	} else if cardEquals(card, g.Stack6.Top()) {
+		g.Stack6.Pop()
+	} else if cardEquals(card, g.Stack7.Top()) {
+		g.Stack7.Pop()
+	}
 }
 
 // NewGame starts a new solitaire game and draws to the standard configuration

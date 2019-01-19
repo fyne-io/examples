@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRuleCanMoveToBuild1_Empty(t *testing.T) {
+func TestRuleCanMoveToBuild_Empty(t *testing.T) {
 	g := NewGame()
 	card := NewCard(1, SuitClubs)
 
@@ -15,7 +15,7 @@ func TestRuleCanMoveToBuild1_Empty(t *testing.T) {
 	assert.False(t, g.ruleCanMoveToBuild(g.Build1, card))
 }
 
-func TestRuleCanMoveToBuild1_Over(t *testing.T) {
+func TestRuleCanMoveToBuild_Over(t *testing.T) {
 	g := NewGame()
 	card := NewCard(1, SuitClubs)
 	g.Build1.Push(card)

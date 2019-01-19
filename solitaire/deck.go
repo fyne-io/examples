@@ -34,6 +34,15 @@ func (d *Deck) Pop() *Card {
 	return card
 }
 
+// Remove takes the specified card out of the deck
+func (d *Deck) Remove(card *Card) {
+	for i, c := range d.Cards {
+		if cardEquals(c, card) {
+			d.Cards = append(d.Cards[:i], d.Cards[i+1:]...)
+		}
+	}
+}
+
 // NewSortedDeck returns a standard deck in sorted order - starting with Ace of Clubs, ending with King of Spades.
 func NewSortedDeck() *Deck {
 	deck := &Deck{}

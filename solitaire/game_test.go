@@ -106,3 +106,32 @@ func TestGame_DrawSymmetric(t *testing.T) {
 	game.DrawThree()
 	assert.Equal(t, first, game.Draw1)
 }
+
+func TestGame_MoveCardToBuildFromHand(t *testing.T) {
+	game := NewGame()
+	game.DrawThree()
+
+	for game.Draw3.Value != 1 {
+		game = NewGame()
+		game.DrawThree()
+	}
+
+	game.MoveCardToBuild(game.Build1, game.Draw3)
+	assert.Equal(t, 1, len(game.Build1.Cards))
+	assert.Nil(t, game.Draw3)
+}
+
+func TestGame_MoveCardToBuildFromStack2(t *testing.T) {
+	game := NewGame()
+
+	for game.Stack2.Cards[1].Value != 1 {
+		game = NewGame()
+	}
+	assert.Equal(t, 2, len(game.Stack2.Cards))
+	assert.False(t, game.Stack2.Cards[0].FaceUp)
+
+	game.MoveCardToBuild(game.Build2, game.Stack2.Cards[1])
+	assert.Equal(t, 1, len(game.Build2.Cards))
+	assert.Equal(t, 1, len(game.Stack2.Cards))
+	assert.True(t, game.Stack2.Cards[0].FaceUp)
+}

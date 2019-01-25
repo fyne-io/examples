@@ -28,6 +28,7 @@ func (t *Table) Size() fyne.Size {
 func (t *Table) Resize(size fyne.Size) {
 	t.size = size
 	widget.Renderer(t).Layout(size)
+	canvas.Refresh(t)
 }
 
 // Position gets the current position of the table

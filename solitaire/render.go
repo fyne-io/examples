@@ -262,7 +262,7 @@ func (s *stackRender) Refresh(stack *Stack) {
 	if len(stack.Cards) == 0 {
 		s.cards[0].Resource = faces.ForSpace()
 		s.cards[0].Translucency = 0
-		i = 1
+		i = 0
 	} else {
 		for i, card = range stack.Cards {
 			s.table.refreshCard(s.cards[i], card)

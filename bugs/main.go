@@ -126,7 +126,7 @@ func (g *game) refreshSquare(x, y int) {
 		button.text = squareString(sq)
 	}
 
-	widget.Renderer(button).Refresh()
+	widget.Refresh(button)
 }
 
 func (g *game) refreshAround(xp, yp, d int) {

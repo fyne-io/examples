@@ -279,7 +279,7 @@ func (g *game) animate() {
 
 				state := g.board.nextGen()
 				g.board.renderState(state)
-				widget.Renderer(g).Refresh()
+				widget.Refresh(g)
 			}
 		}
 	}()
@@ -300,7 +300,7 @@ func (g *game) OnMouseDown(ev *fyne.MouseEvent) {
 
 	g.board.cells[ypos][xpos] = !g.board.cells[ypos][xpos]
 
-	widget.Renderer(g).Refresh()
+	widget.Refresh(g)
 }
 
 func newGame(b *board) *game {

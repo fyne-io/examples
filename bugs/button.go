@@ -134,14 +134,14 @@ func (b *bugButton) CreateRenderer() fyne.WidgetRenderer {
 func (b *bugButton) SetText(text string) {
 	b.text = text
 
-	widget.Renderer(b).Refresh()
+	widget.Refresh(b)
 }
 
 // SetIcon updates the icon on a label - pass nil to hide an icon
 func (b *bugButton) SetIcon(icon fyne.Resource) {
 	b.icon = icon
 
-	widget.Renderer(b).Refresh()
+	widget.Refresh(b)
 }
 
 // newButton creates a new button widget with the specified label, themed icon and tap handler

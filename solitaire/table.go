@@ -103,7 +103,7 @@ func (t *Table) cardTapped(cardPos *canvas.Image, pos fyne.Position, move func()
 	card := t.cardForPos(cardPos)
 	if cardPos.Resource != faces.ForSpace() && (card == nil || !card.FaceUp) {
 		t.selected = nil
-		widget.Renderer(t).(*tableRender).Refresh()
+		widget.Refresh(t)
 
 		return true
 	}
@@ -120,7 +120,7 @@ func (t *Table) cardTapped(cardPos *canvas.Image, pos fyne.Position, move func()
 		t.selected = nil
 	}
 
-	widget.Renderer(t).(*tableRender).Refresh()
+	widget.Refresh(t)
 	return true
 }
 
@@ -199,7 +199,7 @@ func (t *Table) OnMouseDown(event *fyne.MouseEvent) {
 	}
 
 	t.selected = nil // clicked elsewhere
-	widget.Renderer(t).(*tableRender).Refresh()
+	widget.Refresh(t)
 }
 
 // NewTable creates a new table widget for the specified game

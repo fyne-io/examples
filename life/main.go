@@ -8,12 +8,14 @@ import (
 	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
+	"github.com/steveoc64/memdebug"
 )
 
 type board struct {
-	cells  [][]bool
-	width  int
-	height int
+	cells   [][]bool // display grid for the board
+	backing [][]bool // backing store for calculating next iteration
+	width   int
+	height  int
 }
 
 func (b *board) ifAlive(x, y int) int {
@@ -48,32 +50,26 @@ func (b *board) countNeighbours(x, y int) int {
 	return sum
 }
 
-func (b *board) nextGen() [][]bool {
-	state := make([][]bool, b.height)
+func (b *board) nextGen() {
+	t1 := time.Now()
 
 	for y := 0; y < b.height; y++ {
-		state[y] = make([]bool, b.width)
-
 		for x := 0; x < b.width; x++ {
 			n := b.countNeighbours(x, y)
 
 			if b.cells[y][x] {
-				state[y][x] = n == 2 || n == 3
+				b.backing[y][x] = n == 2 || n == 3
 			} else {
-				state[y][x] = n == 3
+				b.backing[y][x] = n == 3
 			}
 		}
 	}
-
-	return state
-}
-
-func (b *board) renderState(state [][]bool) {
 	for y := 0; y < b.height; y++ {
 		for x := 0; x < b.width; x++ {
-			b.cells[y][x] = state[y][x]
+			b.cells[y][x] = b.backing[y][x]
 		}
 	}
+	memdebug.Print(t1, "generated new state", b)
 }
 
 func (b *board) load() {
@@ -131,11 +127,13 @@ func (b *board) load() {
 }
 
 func newBoard() *board {
-	b := &board{nil, 60, 50}
+	b := &board{nil, nil, 60, 50}
 	b.cells = make([][]bool, b.height)
+	b.backing = make([][]bool, b.height)
 
 	for y := 0; y < b.height; y++ {
 		b.cells[y] = make([]bool, b.width)
+		b.backing[y] = make([]bool, b.width)
 	}
 
 	return b
@@ -277,8 +275,7 @@ func (g *game) animate() {
 					continue
 				}
 
-				state := g.board.nextGen()
-				g.board.renderState(state)
+				g.board.nextGen()
 				widget.Renderer(g).Refresh()
 			}
 		}

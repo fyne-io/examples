@@ -110,9 +110,14 @@ func (b *bugButton) Hide() {
 	b.hidden = true
 }
 
-// OnMouseDown is called when a mouse down event is captured and triggers any tap handler
-func (b *bugButton) OnMouseDown(ev *fyne.MouseEvent) {
-	b.tap(ev.Button == fyne.LeftMouseButton)
+// Tapped is called when a regular tap is reported
+func (b *bugButton) Tapped(ev *fyne.PointEvent) {
+	b.tap(true)
+}
+
+// TappedSecondary is called when an alternative tap is reported
+func (b *bugButton) TappedSecondary(ev *fyne.PointEvent) {
+	b.tap(false)
 }
 
 func (b *bugButton) CreateRenderer() fyne.WidgetRenderer {

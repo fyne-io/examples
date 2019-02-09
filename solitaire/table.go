@@ -140,8 +140,8 @@ func (t *Table) checkStackTapped(render *stackRender, stack *Stack, pos fyne.Pos
 	})
 }
 
-// OnMouseDown is called when the user taps the table widget
-func (t *Table) OnMouseDown(event *fyne.MouseEvent) {
+// Tapped is called when the user taps the table widget
+func (t *Table) Tapped(event *fyne.PointEvent) {
 	render := widget.Renderer(t).(*tableRender)
 	if withinCardBounds(render.deck, event.Position) {
 		t.selected = nil
@@ -200,6 +200,10 @@ func (t *Table) OnMouseDown(event *fyne.MouseEvent) {
 
 	t.selected = nil // clicked elsewhere
 	widget.Refresh(t)
+}
+
+// TappedSecondary is called when the user right-taps the table widget
+func (t *Table) TappedSecondary(event *fyne.PointEvent) {
 }
 
 // NewTable creates a new table widget for the specified game

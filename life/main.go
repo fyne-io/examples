@@ -291,7 +291,7 @@ func (g *game) keyDown(ev *fyne.KeyEvent) {
 	}
 }
 
-func (g *game) OnMouseDown(ev *fyne.MouseEvent) {
+func (g *game) Tapped(ev *fyne.PointEvent) {
 	xpos, ypos := g.cellForCoord(ev.Position.X, ev.Position.Y, g.size.Width, g.size.Height)
 
 	if xpos >= g.board.width || ypos >= g.board.height {
@@ -301,6 +301,9 @@ func (g *game) OnMouseDown(ev *fyne.MouseEvent) {
 	g.board.cells[ypos][xpos] = !g.board.cells[ypos][xpos]
 
 	widget.Refresh(g)
+}
+
+func (g *game) TappedSecondary(ev *fyne.PointEvent) {
 }
 
 func newGame(b *board) *game {

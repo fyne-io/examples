@@ -70,7 +70,6 @@ func (c *clockLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {
 }
 
 func (c *clockLayout) render() *fyne.Container {
-	// TODO scale width to clock face size
 	c.hourdot = &canvas.Circle{StrokeColor: theme.TextColor(), StrokeWidth: 5}
 	c.seconddot = &canvas.Circle{StrokeColor: theme.PrimaryColor(), StrokeWidth: 3}
 	c.face = &canvas.Circle{StrokeColor: theme.TextColor(), StrokeWidth: 1}

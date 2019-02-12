@@ -63,6 +63,7 @@ func (c *clockLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 	c.seconddot.StrokeWidth = smallStroke
 	c.seconddot.Resize(fyne.NewSize(smallDotRadius*2, smallDotRadius*2))
 	c.seconddot.Move(fyne.NewPos(middle.X-smallDotRadius, middle.Y-smallDotRadius))
+	c.face.StrokeWidth = smallStroke
 }
 
 func (c *clockLayout) MinSize(objects []fyne.CanvasObject) fyne.Size {

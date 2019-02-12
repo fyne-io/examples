@@ -184,10 +184,6 @@ func (g *game) Hide() {
 	g.hidden = true
 }
 
-func (g *game) ApplyTheme() {
-	widget.Renderer(g).ApplyTheme()
-}
-
 type gameRenderer struct {
 	render  *canvas.Image
 	objects []fyne.CanvasObject

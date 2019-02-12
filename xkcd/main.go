@@ -124,12 +124,7 @@ func (x *XKCD) DataToScreen() {
 
 // NewForm generates a new XKCD form
 func (x *XKCD) NewForm(w fyne.Window) fyne.Widget {
-	form := &widget.Form{
-		OnCancel: func() {
-			w.Close()
-		},
-		OnSubmit: x.Submit,
-	}
+	form := &widget.Form{}
 	tt := reflect.TypeOf(x).Elem()
 	for i := 0; i < tt.NumField(); i++ {
 		fld := tt.Field(i)
@@ -155,9 +150,23 @@ func Show(app fyne.App) {
 	w := app.NewWindow("XKCD Viewer")
 
 	form := x.NewForm(w)
+	submit := widget.NewButton("Submit", func() {
+		x.Submit()
+	})
+	submit.Style = widget.PrimaryButton
+	buttons := widget.NewHBox(
+		widget.NewButton("Cancel", func() {
+			w.Close()
+		}),
+		layout.NewSpacer(),
+		widget.NewButton("Random", func() {
+			x.iDEntry.Text = ""
+			x.Submit()
+		}),
+		submit)
 	x.image = &canvas.Image{FillMode: canvas.ImageFillOriginal}
 	w.SetContent(fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(form, nil, nil, nil),
-		form, x.image))
+		layout.NewBorderLayout(form, buttons, nil, nil),
+		form, buttons, x.image))
 	w.Show()
 }

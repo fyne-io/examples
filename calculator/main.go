@@ -26,12 +26,14 @@ func (c *calc) display(newtext string) {
 	c.output.SetText(newtext)
 }
 
-func (c *calc) character(char string) {
-	c.display(c.equation + char)
+func (c *calc) character(char rune) {
+	c.display(c.equation + string(char))
 }
 
 func (c *calc) digit(d int) {
-	c.character(strconv.Itoa(d))
+	r := rune(d)
+	r += '0'
+	c.character(r)
 }
 
 func (c *calc) clear() {
@@ -72,27 +74,34 @@ func (c *calc) digitButton(number int) *widget.Button {
 	return c.addButton(str, action)
 }
 
-func (c *calc) charButton(char string) *widget.Button {
+func (c *calc) charButton(char rune) *widget.Button {
 	action := func() {
 		c.character(char)
 	}
-	c.functions[char] = action
+	c.functions[string(char)] = action
 
-	return c.addButton(char, action)
+	return c.addButton(string(char), action)
 }
 
-func (c *calc) keyDown(ev *fyne.KeyEvent) {
-	if ev.String == "=" || ev.Name == fyne.KeyReturn || ev.Name == fyne.KeyEnter {
+func (c *calc) typedRune(r rune) {
+	if r == '=' {
 		c.evaluate()
 		return
-	} else if ev.String == "c" {
+	} else if r == 'c' {
 		c.clear()
 		return
 	}
 
-	action := c.functions[ev.String]
+	action := c.functions[string(r)]
 	if action != nil {
 		action()
+	}
+}
+
+func (c *calc) typedKey(ev *fyne.KeyEvent) {
+	if ev.Name == fyne.KeyReturn || ev.Name == fyne.KeyEnter {
+		c.evaluate()
+		return
 	}
 }
 
@@ -109,10 +118,10 @@ func (c *calc) loadUI(app fyne.App) {
 	c.window.SetContent(fyne.NewContainerWithLayout(layout.NewGridLayout(1),
 		c.output,
 		fyne.NewContainerWithLayout(layout.NewGridLayout(4),
-			c.charButton("+"),
-			c.charButton("-"),
-			c.charButton("*"),
-			c.charButton("/")),
+			c.charButton('+'),
+			c.charButton('-'),
+			c.charButton('*'),
+			c.charButton('/')),
 		fyne.NewContainerWithLayout(layout.NewGridLayout(4),
 			c.digitButton(7),
 			c.digitButton(8),
@@ -124,20 +133,21 @@ func (c *calc) loadUI(app fyne.App) {
 			c.digitButton(4),
 			c.digitButton(5),
 			c.digitButton(6),
-			c.charButton("(")),
+			c.charButton('(')),
 		fyne.NewContainerWithLayout(layout.NewGridLayout(4),
 			c.digitButton(1),
 			c.digitButton(2),
 			c.digitButton(3),
-			c.charButton(")")),
+			c.charButton(')')),
 		fyne.NewContainerWithLayout(layout.NewGridLayout(2),
 			fyne.NewContainerWithLayout(layout.NewGridLayout(2),
 				c.digitButton(0),
-				c.charButton(".")),
+				c.charButton('.')),
 			equals)),
 	)
 
-	c.window.Canvas().SetOnKeyDown(c.keyDown)
+	c.window.Canvas().SetOnTypedRune(c.typedRune)
+	c.window.Canvas().SetOnTypedKey(c.typedKey)
 	c.window.Show()
 }
 

@@ -281,8 +281,8 @@ func (g *game) animate() {
 	}()
 }
 
-func (g *game) keyDown(ev *fyne.KeyEvent) {
-	if ev.Name == fyne.KeySpace {
+func (g *game) typedRune(r rune) {
+	if r == ' ' {
 		g.toggleRun()
 	}
 }
@@ -317,7 +317,7 @@ func Show(app fyne.App) {
 
 	window := app.NewWindow("Life")
 	window.SetContent(game)
-	window.Canvas().SetOnKeyDown(game.keyDown)
+	window.Canvas().SetOnTypedRune(game.typedRune)
 
 	// start the board animation before we show the window - it will block
 	game.animate()

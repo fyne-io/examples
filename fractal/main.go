@@ -1,11 +1,13 @@
 package fractal
 
-import "math"
-import "image/color"
+import (
+	"image/color"
+	"math"
 
-import "fyne.io/fyne"
-import "fyne.io/fyne/canvas"
-import "fyne.io/fyne/theme"
+	"fyne.io/fyne"
+	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/theme"
+)
 
 type fractal struct {
 	currIterations          uint
@@ -75,7 +77,17 @@ func (f *fractal) mandelbrot(px, py, w, h int) color.Color {
 	return f.scaleColor(c, theme.PrimaryColor(), theme.TextColor())
 }
 
-func (f *fractal) fractalKeyDown(ev *fyne.KeyEvent) {
+func (f *fractal) fractalRune(r rune) {
+	if r == '+' {
+		f.currScale /= 1.1
+	} else if r == '-' {
+		f.currScale *= 1.1
+	}
+
+	f.refresh()
+}
+
+func (f *fractal) fractalKey(ev *fyne.KeyEvent) {
 	delta := f.currScale * 0.2
 	if ev.Name == fyne.KeyUp {
 		f.currY -= delta
@@ -85,10 +97,6 @@ func (f *fractal) fractalKeyDown(ev *fyne.KeyEvent) {
 		f.currX += delta
 	} else if ev.Name == fyne.KeyRight {
 		f.currX -= delta
-	} else if ev.String == "+" {
-		f.currScale /= 1.1
-	} else if ev.String == "-" {
-		f.currScale *= 1.1
 	}
 
 	f.refresh()
@@ -107,6 +115,7 @@ func Show(app fyne.App) {
 	fractal.currY = 0.0
 
 	window.SetContent(fyne.NewContainerWithLayout(fractal, fractal.canvas))
-	window.Canvas().SetOnKeyDown(fractal.fractalKeyDown)
+	window.Canvas().SetOnTypedRune(fractal.fractalRune)
+	window.Canvas().SetOnTypedKey(fractal.fractalKey)
 	window.Show()
 }

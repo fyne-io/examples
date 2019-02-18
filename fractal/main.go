@@ -107,7 +107,7 @@ func Show(app fyne.App) {
 	window := app.NewWindow("Fractal")
 	window.SetPadded(false)
 	fractal := &fractal{window: window}
-	fractal.canvas = canvas.NewRaster(fractal.mandelbrot)
+	fractal.canvas = canvas.NewRasterWithPixels(fractal.mandelbrot)
 
 	fractal.currIterations = 100
 	fractal.currScale = 1.0

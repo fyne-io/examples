@@ -185,7 +185,7 @@ func (g *game) Hide() {
 }
 
 type gameRenderer struct {
-	render  *canvas.Image
+	render  *canvas.Raster
 	objects []fyne.CanvasObject
 
 	aliveColor color.Color
@@ -235,7 +235,7 @@ func (g *gameRenderer) renderer(x, y, w, h int) color.Color {
 func (g *game) CreateRenderer() fyne.WidgetRenderer {
 	renderer := &gameRenderer{game: g}
 
-	render := canvas.NewRaster(renderer.renderer)
+	render := canvas.NewRasterWithPixels(renderer.renderer)
 	renderer.render = render
 	renderer.objects = []fyne.CanvasObject{render}
 	renderer.ApplyTheme()

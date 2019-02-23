@@ -20,8 +20,8 @@ const (
 )
 
 type coord struct {
-	x int
-	y int
+	x float64
+	y float64
 }
 
 type ball struct {
@@ -35,8 +35,8 @@ func (b *ball) move() {
 }
 
 func (b *ball) newServe(w, h int) {
-	b.location.x = w / 2
-	b.location.y = h / 2
+	b.location.x = float64(w / 2)
+	b.location.y = float64(h / 2)
 	switch rand.Intn(4) {
 	case 0:
 		b.velocity = coord{x: 1, y: 1}
@@ -142,17 +142,43 @@ func (g *game) moveBat(bat int, direction int) {
 
 func (g *game) moveBall() {
 	g.ball.move()
+
+	// does left score ?
 	if g.ball.location.x < 1 {
 		memdebug.Print(time.Now(), "left !!")
-		time.Sleep(time.Second)
-		g.ball.newServe(g.tv.w, g.tv.h)
+		//time.Sleep(time.Second)
+		//g.ball.newServe(g.tv.w, g.tv.h)
+		g.ball.location.x = 1
+		g.ball.location.y = float64(g.batLeft + (g.batHeight / 2))
+		g.ball.velocity.x = 1
+		g.ball.velocity.y = g.ball.velocity.y * -1.1
+		return
 	}
-	if g.ball.location.x >= g.tv.w {
-		memdebug.Print(time.Now(), "right !!")
-		time.Sleep(time.Second)
-		g.ball.newServe(g.tv.w, g.tv.h)
 
+	// does right score ?
+	if g.ball.location.x >= float64(g.tv.w) {
+		memdebug.Print(time.Now(), "right !!")
+		//time.Sleep(time.Second)
+		//g.ball.newServe(g.tv.w, g.tv.h)
+		g.ball.location.x = float64(g.tv.w - 1)
+		g.ball.location.y = float64(g.batRight + (g.batHeight / 2))
+		g.ball.velocity.x = -1
+		g.ball.velocity.y = g.ball.velocity.y * -1.1
+		return
 	}
+
+	// top bounce ?
+	if g.ball.location.y <= 8 {
+		g.ball.location.y++
+		g.ball.velocity.y *= -0.9
+	}
+
+	// bottom bounce ?
+	if g.ball.location.y >= float64(g.tv.h-1) {
+		g.ball.location.y--
+		g.ball.velocity.y *= -0.9
+	}
+
 }
 
 ////////////////////////////
@@ -274,7 +300,7 @@ func (g *gameRenderer) renderer(x, y, w, h int) color.Color {
 	}
 
 	// is it the ball ?
-	if cx == g.game.ball.location.x && cy == g.game.ball.location.y {
+	if cx == int(g.game.ball.location.x) && cy == int(g.game.ball.location.y) {
 		return g.color
 	}
 

@@ -9,7 +9,6 @@ import (
 	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
-	"github.com/steveoc64/memdebug"
 )
 
 const (
@@ -57,9 +56,11 @@ func newBall(w, h int) *ball {
 
 // tv emulation of a potato TV with a resolution of 64x64
 type tv struct {
-	dots    []bool
-	w, h    int
-	booting bool
+	dots        []bool
+	w, h        int
+	booting     bool
+	glitchStart int
+	glitchEnd   int
 }
 
 func newTV(w, h int) *tv {
@@ -68,19 +69,39 @@ func newTV(w, h int) *tv {
 		w:    w,
 		h:    h,
 	}
-	// the PotatoTV needs some random time to boot
-	go func(t *tv) {
-		t.booting = true
-		rand.Seed(time.Now().UnixNano())
-		for i := 0; i < (w * h); i++ {
-			if rand.Intn(1) == 1 {
-				t.dots[i] = true
-			}
+
+	t.reboot()
+	return t
+}
+
+func (t *tv) reboot() {
+	t.booting = true
+
+	// Init the static
+	rand.Seed(time.Now().UnixNano())
+	for i := 0; i < (t.w * t.h); i++ {
+		if rand.Intn(2) == 1 {
+			t.dots[i] = true
 		}
+	}
+
+	// the PotatoTV needs some random time to boot, its not very quick
+	go func(t *tv) {
 		time.Sleep(time.Millisecond * time.Duration(rand.Intn(1000)+2500))
 		t.booting = false
 	}(t)
-	return t
+}
+
+func (t *tv) glitch(size fyne.Size) {
+	if rand.Intn(100) == 1 {
+		t.glitchStart = rand.Intn(size.Width * size.Height)
+		t.glitchEnd = rand.Intn(size.Width * size.Height)
+		if t.glitchStart > t.glitchEnd {
+			t.glitchStart = 1
+		}
+		return
+	}
+	t.glitchStart = 0
 }
 
 type game struct {
@@ -145,25 +166,25 @@ func (g *game) moveBall() {
 
 	// does left score ?
 	if g.ball.location.x < 1 {
-		memdebug.Print(time.Now(), "left !!")
+		//memdebug.Print(time.Now(), "left !!")
 		//time.Sleep(time.Second)
 		//g.ball.newServe(g.tv.w, g.tv.h)
 		g.ball.location.x = 1
 		g.ball.location.y = float64(g.batLeft + (g.batHeight / 2))
 		g.ball.velocity.x = 1
-		g.ball.velocity.y = g.ball.velocity.y * -1.1
+		g.ball.velocity.y = g.ball.velocity.y * 1.1
 		return
 	}
 
 	// does right score ?
 	if g.ball.location.x >= float64(g.tv.w) {
-		memdebug.Print(time.Now(), "right !!")
+		//memdebug.Print(time.Now(), "right !!")
 		//time.Sleep(time.Second)
 		//g.ball.newServe(g.tv.w, g.tv.h)
 		g.ball.location.x = float64(g.tv.w - 1)
 		g.ball.location.y = float64(g.batRight + (g.batHeight / 2))
 		g.ball.velocity.x = -1
-		g.ball.velocity.y = g.ball.velocity.y * -1.1
+		g.ball.velocity.y = g.ball.velocity.y * 1.1
 		return
 	}
 
@@ -227,6 +248,7 @@ type gameRenderer struct {
 	color     color.Color
 	backColor color.Color
 	game      *game
+	size      fyne.Size
 }
 
 func (g *gameRenderer) MinSize() fyne.Size {
@@ -235,6 +257,7 @@ func (g *gameRenderer) MinSize() fyne.Size {
 
 func (g *gameRenderer) Layout(size fyne.Size) {
 	g.render.Resize(size)
+	g.size = size
 }
 
 func (g *gameRenderer) ApplyTheme() {
@@ -247,6 +270,7 @@ func (g *gameRenderer) BackgroundColor() color.Color {
 }
 
 func (g *gameRenderer) Refresh() {
+	g.game.tv.glitch(g.size)
 	canvas.Refresh(g.render)
 }
 
@@ -263,17 +287,30 @@ func (g *gameRenderer) renderer(x, y, w, h int) color.Color {
 		if g.game.tv.dots[cy*g.game.tv.w+cx] {
 			retval = g.color
 		}
+
+		// now rotate that static
+		g.game.tv.dots = append(g.game.tv.dots[1:], rand.Intn(2) == 1)
 		return retval
 	}
 
-	// TV is booted
+	// static burst
+	if g.game.tv.glitchStart > 0 {
+		offset := y*w + x
+		if offset >= g.game.tv.glitchStart && offset <= g.game.tv.glitchEnd {
+			if rand.Intn(2) == 1 {
+				return g.color
+			}
+			return g.backColor
+		}
+	}
 
-	// so assume its black, and then look for reasons for the pixel to be lit
+	// so assume each pixel is black, and then look for reasons for the pixel to be lit
 
 	// top 8 pixels is the scoreline
+	// TODO - render scores here, using old school pixelmap
 
-	// top bar at pixel 8
-	if cy == 8 {
+	// top bar at the 8th pixel
+	if cy == 7 {
 		return g.color
 	}
 
@@ -364,8 +401,10 @@ func (g *game) typedRune(r rune) {
 }
 
 func (g *game) typedKey(k *fyne.KeyEvent) {
-	memdebug.Print(time.Now(), "typed", *k)
+	//memdebug.Print(time.Now(), "typed", *k)
 	switch k.Name {
+	case "Escape":
+		g.tv.reboot()
 	case "Up":
 		g.moveBat(RIGHT, UP)
 	case "Down":
@@ -378,14 +417,14 @@ func (g *game) typedKey(k *fyne.KeyEvent) {
 }
 
 func (g *game) releaseKey(k *fyne.KeyEvent) {
-	memdebug.Print(time.Now(), "released", *k)
+	// TODO - we can do something in here maybe
 }
 
 // Show starts a new game of pong
 func Show(app fyne.App) {
 	game := newGame(64, 64)
 
-	window := app.NewWindow("Pong")
+	window := app.NewWindow("Potato Arcade Pong")
 	window.SetContent(game)
 	window.Canvas().SetOnTypedRune(game.typedRune)
 	window.Canvas().SetOnTypedKey(game.typedKey)

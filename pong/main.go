@@ -428,7 +428,7 @@ func Show(app fyne.App) {
 	window.SetContent(game)
 	window.Canvas().SetOnTypedRune(game.typedRune)
 	window.Canvas().SetOnTypedKey(game.typedKey)
-	window.Canvas().SetOnReleaseKey(game.releaseKey)
+	//window.Canvas().SetOnReleaseKey(game.releaseKey)
 
 	// start the board animation before we show the window - it will block
 	game.animate()

@@ -369,7 +369,7 @@ func (g *game) toggleRun() {
 
 func (g *game) animate() {
 	go func() {
-		tick := time.NewTicker(time.Second / 12)
+		tick := time.NewTicker(time.Second / 24)
 
 		for {
 			select {

@@ -290,7 +290,7 @@ func (g *game) typedRune(r rune) {
 func (g *game) Tapped(ev *fyne.PointEvent) {
 	xpos, ypos := g.cellForCoord(ev.Position.X, ev.Position.Y, g.size.Width, g.size.Height)
 
-	if xpos >= g.board.width || ypos >= g.board.height {
+	if ev.Position.X < 0 || ev.Position.Y < 0 || xpos >= g.board.width || ypos >= g.board.height {
 		return
 	}
 

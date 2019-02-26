@@ -1,6 +1,7 @@
 package life
 
 import (
+	"image"
 	"image/color"
 	"time"
 
@@ -185,8 +186,9 @@ func (g *game) Hide() {
 }
 
 type gameRenderer struct {
-	render  *canvas.Raster
-	objects []fyne.CanvasObject
+	render   *canvas.Raster
+	objects  []fyne.CanvasObject
+	imgCache *image.RGBA
 
 	aliveColor color.Color
 	deadColor  color.Color
@@ -219,23 +221,32 @@ func (g *gameRenderer) Objects() []fyne.CanvasObject {
 	return g.objects
 }
 
-func (g *gameRenderer) renderer(x, y, w, h int) color.Color {
-	xpos, ypos := g.game.cellForCoord(x, y, w, h)
-
-	if xpos >= g.game.board.width || ypos >= g.game.board.height {
-		return g.deadColor
-	}
-	if g.game.board.cells[ypos][xpos] {
-		return g.aliveColor
+func (g *gameRenderer) draw(w, h int) image.Image {
+	img := g.imgCache
+	if img == nil || img.Bounds().Size().X != w || img.Bounds().Size().Y != h {
+		img = image.NewRGBA(image.Rect(0, 0, w, h))
+		g.imgCache = img
 	}
 
-	return g.deadColor
+	for y := 0; y < h; y++ {
+		for x := 0; x < w; x++ {
+			xpos, ypos := g.game.cellForCoord(x, y, w, h)
+
+			if xpos < g.game.board.width && ypos < g.game.board.height && g.game.board.cells[ypos][xpos] {
+				img.Set(x, y, g.aliveColor)
+			} else {
+				img.Set(x, y, g.deadColor)
+			}
+		}
+	}
+
+	return img
 }
 
 func (g *game) CreateRenderer() fyne.WidgetRenderer {
 	renderer := &gameRenderer{game: g}
 
-	render := canvas.NewRasterWithPixels(renderer.renderer)
+	render := canvas.NewRaster(renderer.draw)
 	renderer.render = render
 	renderer.objects = []fyne.CanvasObject{render}
 	renderer.ApplyTheme()

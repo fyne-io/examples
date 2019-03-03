@@ -54,14 +54,14 @@ func welcome(app fyne.App) {
 }
 
 func main() {
-	apps = append(apps, appInfo{"Calculator", nil, false, calculator.Show})
+	apps = append(apps, appInfo{"Calculator", icon.CalculatorBitmap, false, calculator.Show})
 	apps = append(apps, appInfo{"Bugs", icon.BugBitmap, false, bugs.Show})
-	apps = append(apps, appInfo{"Sudoku", nil, false, sudoku.Show})
+	apps = append(apps, appInfo{"Sudoku", icon.SudokuBitmap, false, sudoku.Show})
 	apps = append(apps, appInfo{"XKCD", icon.XKCDBitmap, false, xkcd.Show})
-	apps = append(apps, appInfo{"Clock", nil, true, clock.Show})
+	apps = append(apps, appInfo{"Clock", icon.ClockBitmap, true, clock.Show})
 	apps = append(apps, appInfo{"Fractal", icon.FractalBitmap, true, fractal.Show})
 	apps = append(apps, appInfo{"Life", icon.Life, true, life.Show})
-	apps = append(apps, appInfo{"Solitaire", nil, true, solitaire.Show})
+	apps = append(apps, appInfo{"Solitaire", icon.SolitaireBitmap, true, solitaire.Show})
 
 	flags := make(map[string]*bool)
 	for _, launch := range apps {

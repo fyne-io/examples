@@ -1,5 +1,14 @@
 package icon
 
+// BugBitmap an icon for the bug example
+var BugBitmap = bugBitmap
+
+// CalculatorBitmap an icon for the calculator example
+var CalculatorBitmap = calculatorBitmap
+
+// ClockBitmap an icon for the clock example
+var ClockBitmap = clockBitmap
+
 // Life is the vector life icon
 var Life = life
 
@@ -9,8 +18,11 @@ var LifeBitmap = lifeBitmap
 // FractalBitmap an icon for the fractal example
 var FractalBitmap = fractalBitmap
 
-// BugBitmap an icon for the bug example
-var BugBitmap = bugBitmap
+// SolitaireBitmap an icon for the solitare example
+var SolitaireBitmap = solitaireBitmap
+
+// SudokuBitmap an icon for the sudoku example
+var SudokuBitmap = sudokuBitmap
 
 // XKCDBitmap an icon for the XKCD example
 var XKCDBitmap = xkcdBitmap

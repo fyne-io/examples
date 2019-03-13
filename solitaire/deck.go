@@ -12,7 +12,13 @@ type Deck struct {
 
 // Shuffle reorganises the cards in the deck to a random order
 func (d *Deck) Shuffle() {
-	rand.Seed(time.Now().UnixNano())
+	d.ShuffleFromSeed(time.Now().UnixNano())
+}
+
+// ShuffleFromSeed reorganises the cards in the deck to a random order using
+// the specified seed for rand.Seed().
+func (d *Deck) ShuffleFromSeed(seed int64) {
+	rand.Seed(seed)
 	for c := 0; c < len(d.Cards); c++ {
 		swap := rand.Intn(len(d.Cards))
 		if swap != c {
@@ -60,10 +66,19 @@ func NewSortedDeck() *Deck {
 	return deck
 }
 
-// NewShuffledDeck returns a 52 card deck in random order
+// NewShuffledDeck returns a 52 card deck in random order.
 func NewShuffledDeck() *Deck {
 	deck := NewSortedDeck()
 	deck.Shuffle()
+
+	return deck
+}
+
+// NewShuffledDeckFromSeed returns a 52 card deck in random order.
+// The randomness is seeded using the seed parameter.
+func NewShuffledDeckFromSeed(seed int64) *Deck {
+	deck := NewSortedDeck()
+	deck.ShuffleFromSeed(seed)
 
 	return deck
 }

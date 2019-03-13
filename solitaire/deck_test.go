@@ -40,12 +40,20 @@ func TestNewSortedDeck(t *testing.T) {
 }
 
 func TestNewShuffledDeck(t *testing.T) {
-	deck := NewShuffledDeck()
+	deck := NewShuffledDeckFromSeed(1337)
 
-	// TODO make this more predictable!
 	assertNotEqualCard(t, 1, SuitClubs, deck.Cards[0])
 	assertNotEqualCard(t, 13, SuitClubs, deck.Cards[12])
 	assertNotEqualCard(t, 1, SuitDiamonds, deck.Cards[13])
+}
+
+func TestNewShuffledDeckFromSeed(t *testing.T) {
+	deck1 := NewShuffledDeckFromSeed(1337)
+	deck2 := NewShuffledDeckFromSeed(0xcafe)
+
+	assertNotEqualCard(t, deck1.Cards[0].Value, deck1.Cards[0].Suit, deck2.Cards[0])
+	assertNotEqualCard(t, deck1.Cards[1].Value, deck1.Cards[1].Suit, deck2.Cards[1])
+	assertNotEqualCard(t, deck1.Cards[2].Value, deck1.Cards[2].Suit, deck2.Cards[2])
 }
 
 func TestDeck_Push(t *testing.T) {

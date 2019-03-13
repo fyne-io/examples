@@ -6,6 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func newTestGame() *Game {
+	return NewGameFromSeed(0xace)
+}
+
 func TestStack_Push(t *testing.T) {
 	stack := &Stack{}
 	card := NewCard(1, SuitSpades)
@@ -16,7 +20,7 @@ func TestStack_Push(t *testing.T) {
 }
 
 func TestGame_Deal(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 
 	assert.Equal(t, 1, len(game.Stack1.Cards))
 	assert.Equal(t, 2, len(game.Stack2.Cards))
@@ -25,7 +29,7 @@ func TestGame_Deal(t *testing.T) {
 }
 
 func TestGame_Deal_FaceUp(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 
 	assert.Equal(t, true, game.Stack1.Cards[0].FaceUp)
 
@@ -34,7 +38,7 @@ func TestGame_Deal_FaceUp(t *testing.T) {
 }
 
 func TestGame_Draw(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 
 	assert.Equal(t, 24, len(game.Hand.Cards))
 
@@ -49,7 +53,7 @@ func TestGame_Draw(t *testing.T) {
 }
 
 func TestGameDrawEnd(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 
 	assert.Equal(t, 24, len(game.Hand.Cards))
 
@@ -65,7 +69,7 @@ func TestGameDrawEnd(t *testing.T) {
 }
 
 func TestGame_DrawCycles(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 
 	assert.Equal(t, 24, len(game.Hand.Cards))
 
@@ -84,7 +88,7 @@ func TestGame_DrawCycles(t *testing.T) {
 }
 
 func TestGame_ResetDraw(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 
 	assert.Equal(t, 24, len(game.Hand.Cards))
 
@@ -94,7 +98,7 @@ func TestGame_ResetDraw(t *testing.T) {
 }
 
 func TestGame_DrawSymmetric(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 
 	assert.Equal(t, 24, len(game.Hand.Cards))
 
@@ -108,7 +112,7 @@ func TestGame_DrawSymmetric(t *testing.T) {
 }
 
 func TestGame_MoveCardToBuildFromHand(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 	game.DrawThree()
 	game.Draw3.Value = 1
 
@@ -118,7 +122,7 @@ func TestGame_MoveCardToBuildFromHand(t *testing.T) {
 }
 
 func TestGame_MoveCardToBuildFromStack2(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 	game.Stack2.Cards[1].Value = 1
 
 	assert.Equal(t, 2, len(game.Stack2.Cards))
@@ -131,7 +135,7 @@ func TestGame_MoveCardToBuildFromStack2(t *testing.T) {
 }
 
 func TestGame_MoveCardToStack(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 
 	game.Stack1.Cards[0].Value = 3
 	game.Stack1.Cards[0].Suit = SuitClubs
@@ -146,7 +150,7 @@ func TestGame_MoveCardToStack(t *testing.T) {
 }
 
 func TestGame_MoveCardToStack_Empty(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 
 	game.Stack1.Cards = []*Card{}
 	game.Stack2.Cards[1].Value = ValueKing
@@ -159,7 +163,7 @@ func TestGame_MoveCardToStack_Empty(t *testing.T) {
 }
 
 func TestGame_MoveCardToStack_EmptyEmpty(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 
 	game.Stack3.Cards = []*Card{}
 	king := NewCard(ValueKing, SuitDiamonds)
@@ -171,7 +175,7 @@ func TestGame_MoveCardToStack_EmptyEmpty(t *testing.T) {
 }
 
 func TestGame_MoveCardToStack_Stack(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 
 	game.Stack1.Cards[0].Value = 7
 	game.Stack1.Cards[0].Suit = SuitClubs
@@ -186,7 +190,7 @@ func TestGame_MoveCardToStack_Stack(t *testing.T) {
 }
 
 func TestGame_MoveCardToStack_KingStack(t *testing.T) {
-	game := NewGame()
+	game := newTestGame()
 
 	game.Stack1.Cards = []*Card{}
 	game.Stack3.Cards[1].Value = ValueKing

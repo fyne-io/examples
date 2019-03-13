@@ -1,6 +1,10 @@
 package solitaire
 
-import "fyne.io/fyne"
+import (
+	"time"
+
+	"fyne.io/fyne"
+)
 
 // Stack represents a number of cards in a particular order
 type Stack struct {
@@ -231,10 +235,16 @@ func (g *Game) removeCard(card *Card) {
 	}
 }
 
-// NewGame starts a new solitaire game and draws to the standard configuration
+// NewGame starts a new solitaire game and draws to the standard configuration.
 func NewGame() *Game {
+	return NewGameFromSeed(time.Now().UnixNano())
+}
+
+// NewGameFromSeed starts a new solitaire game and draws to the standard configuration.
+// The randomness of the desk is seeded using the specified value.
+func NewGameFromSeed(seed int64) *Game {
 	game := &Game{}
-	game.Hand = NewShuffledDeck()
+	game.Hand = NewShuffledDeckFromSeed(seed)
 
 	game.Drawn = &Deck{}
 

@@ -193,6 +193,9 @@ func (t *tableRender) Objects() []fyne.CanvasObject {
 	return t.objects
 }
 
+func (t *tableRender) Destroy() {
+}
+
 func (t *tableRender) appendStack(stack *stackRender) {
 	for _, card := range stack.cards {
 		t.objects = append(t.objects, card)

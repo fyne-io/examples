@@ -62,6 +62,9 @@ func (b *bugRenderer) Objects() []fyne.CanvasObject {
 	return b.objects
 }
 
+func (b *bugRenderer) Destroy() {
+}
+
 // bugButton widget is a scalable button that has a text label and icon and triggers an event func when clicked
 type bugButton struct {
 	text string

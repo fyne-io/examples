@@ -92,6 +92,9 @@ func (g *gameRenderer) Objects() []fyne.CanvasObject {
 	return g.grid.Objects
 }
 
+func (g *gameRenderer) Destroy() {
+}
+
 func (g *game) refreshSquare(x, y int) {
 	if x < 0 || y < 0 || x >= g.board.width || y >= g.board.height {
 		return

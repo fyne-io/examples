@@ -135,6 +135,9 @@ func (b *exampleButtonRenderer) Objects() []fyne.CanvasObject {
 	return b.objects
 }
 
+func (b *exampleButtonRenderer) Destroy() {
+}
+
 type exampleButton struct {
 	Text string
 	Icon fyne.Resource

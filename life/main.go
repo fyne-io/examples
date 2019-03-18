@@ -221,6 +221,9 @@ func (g *gameRenderer) Objects() []fyne.CanvasObject {
 	return g.objects
 }
 
+func (g *gameRenderer) Destroy() {
+}
+
 func (g *gameRenderer) draw(w, h int) image.Image {
 	img := g.imgCache
 	if img == nil || img.Bounds().Size().X != w || img.Bounds().Size().Y != h {

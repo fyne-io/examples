@@ -24,20 +24,56 @@ Alternatively each app has a direct main executable in the cmd/* folders.
 
 All these examples are fully scalable - try setting the `FYNE_SCALE`
 environment variable to override the detection of your screen's density.
+Many also respond to the current theme (this is default behaviour for
+apps built using Fyne widgets) - you can try setting `FYNE_THEME=light`
+to change from the default dark theme.
 
-## Calculator
+## Widget based examples
 
-![](img/calc-linux-dark.png) &nbsp; ![](img/calc-linux-light.png)
+The following examples use mostly built in widgets making applications
+trivial to build :).
 
+### Calculator
 
-## Fractal
+![](img/calc-dark.png) &nbsp; ![](img/calc-light.png)
 
-![](img/fractal-dark.png)
+### Bugs game (like MineSweeper)
 
-## Solitaire
+Hunt the squares to reveal everything apart from the bugs!
 
-This is a work in progress
+![](img/bugs.png)
+
+### XKCD
+
+An XKCD comic browser with random and lookup features.
+
+![](img/xkcd.png)
+
+## Graphics based examples
+
+These examples use the Fyne canvas API to draw primitive shapes,
+text and images to create custom user interfaces.
+
+### Clock
+
+A simple analog clock that matches the current theme.
+
+![](img/clock-dark.png) &nbsp; ![](img/clock-light.png)
+
+### Fractal
+
+A fratal viewer that can be panned and zoomed
+
+![](img/fractal.png)
+
+### Solitaire
+
+A simple game of solitaire.
 
 ![](img/solitaire.png)
 
+### Life
 
+A basic visualisation of Conway's game of life.
+
+![](img/life.png)

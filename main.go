@@ -71,10 +71,10 @@ func main() {
 	flag.Parse()
 
 	launch := welcome
-	for app, set := range flags {
+	for ex, set := range flags {
 		if *set {
 			for _, a := range apps {
-				if strings.ToLower(a.name) == app {
+				if strings.ToLower(a.name) == ex {
 					launch = a.run
 				}
 			}
@@ -82,9 +82,9 @@ func main() {
 		}
 	}
 
-	app := app.New()
-	launch(app)
-	app.Run()
+	ex := app.New()
+	launch(ex)
+	ex.Run()
 }
 
 type exampleButtonRenderer struct {
@@ -191,12 +191,12 @@ func (b *exampleButton) TappedSecondary(*fyne.PointEvent) {
 }
 
 func (b *exampleButton) CreateRenderer() fyne.WidgetRenderer {
-	objects := []fyne.CanvasObject{}
-	var icon *canvas.Image
+	var objects []fyne.CanvasObject
+	var img *canvas.Image
 	if b.Icon != nil {
-		icon = canvas.NewImageFromResource(b.Icon)
-		icon.Translucency = 0.25
-		objects = append(objects, icon)
+		img = canvas.NewImageFromResource(b.Icon)
+		img.Translucency = 0.25
+		objects = append(objects, img)
 	}
 
 	text := canvas.NewText(b.Text, theme.TextColor())
@@ -204,7 +204,7 @@ func (b *exampleButton) CreateRenderer() fyne.WidgetRenderer {
 	text.Alignment = fyne.TextAlignTrailing
 
 	objects = append(objects, text)
-	return &exampleButtonRenderer{icon, text, objects, b}
+	return &exampleButtonRenderer{img, text, objects, b}
 }
 
 func newExampleButton(info appInfo, app fyne.App) *exampleButton {

@@ -130,7 +130,7 @@ func (t *tableRender) ApplyTheme() {
 }
 
 func (t *tableRender) BackgroundColor() color.Color {
-	return color.RGBA{0x07, 0x63, 0x24, 0xff}
+	return color.RGBA{R: 0x07, G: 0x63, B: 0x24, A: 0xff}
 }
 
 func (t *tableRender) refreshCard(img *canvas.Image, card *Card) {

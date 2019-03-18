@@ -165,6 +165,7 @@ func (g *Game) MoveCardToStack(stack *Stack, card *Card) {
 		}
 
 		if found {
+			// noinspection GoDeferInLoop
 			defer oldStack.Pop()
 			stack.Push(c)
 		}

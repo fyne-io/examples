@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"fyne.io/fyne"
+	"github.com/fyne-io/examples/img/icon"
 )
 
 // Stack represents a number of cards in a particular order
@@ -271,6 +272,7 @@ func Show(app fyne.App) {
 	game := NewGame()
 
 	w := app.NewWindow("Solitaire")
+	w.SetIcon(icon.SolitaireBitmap)
 	w.SetPadded(false)
 	w.SetContent(NewTable(game))
 

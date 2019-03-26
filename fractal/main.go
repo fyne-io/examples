@@ -7,6 +7,7 @@ import (
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/theme"
+	"github.com/fyne-io/examples/img/icon"
 )
 
 type fractal struct {
@@ -105,6 +106,7 @@ func (f *fractal) fractalKey(ev *fyne.KeyEvent) {
 // Show loads a Mandelbrot fractal example window for the specified app context
 func Show(app fyne.App) {
 	window := app.NewWindow("Fractal")
+	window.SetIcon(icon.FractalBitmap)
 	window.SetPadded(false)
 	fractal := &fractal{window: window}
 	fractal.canvas = canvas.NewRasterWithPixels(fractal.mandelbrot)

@@ -18,6 +18,7 @@ import (
 	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/widget"
+	"github.com/fyne-io/examples/img/icon"
 )
 
 // XKCD is an app to get xkcd images and display them
@@ -148,6 +149,7 @@ func (x *XKCD) NewForm(w fyne.Window) fyne.Widget {
 func Show(app fyne.App) {
 	x := NewXKCD()
 	w := app.NewWindow("XKCD Viewer")
+	w.SetIcon(icon.XKCDBitmap)
 
 	form := x.NewForm(w)
 	submit := widget.NewButton("Submit", func() {

@@ -7,6 +7,7 @@ import (
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/theme"
+	"github.com/fyne-io/examples/img/icon"
 )
 
 type clockLayout struct {
@@ -110,6 +111,7 @@ func (c *clockLayout) applyTheme(setting fyne.Settings) {
 // Show loads a clock example window for the specified app context
 func Show(app fyne.App) {
 	clockWindow := app.NewWindow("Clock")
+	clockWindow.SetIcon(icon.ClockBitmap)
 	clock := &clockLayout{}
 	clockWindow.SetOnClosed(func() {
 		clock.stop = true

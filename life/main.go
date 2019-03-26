@@ -9,6 +9,7 @@ import (
 	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
+	"github.com/fyne-io/examples/img/icon"
 )
 
 type board struct {
@@ -330,6 +331,7 @@ func Show(app fyne.App) {
 	game := newGame(board)
 
 	window := app.NewWindow("Life")
+	window.SetIcon(icon.LifeBitmap)
 	window.SetContent(game)
 	window.Canvas().SetOnTypedRune(game.typedRune)
 

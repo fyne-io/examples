@@ -8,6 +8,7 @@ import (
 	"fyne.io/fyne"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/widget"
+	"github.com/fyne-io/examples/img/icon"
 
 	"github.com/Knetic/govaluate"
 )
@@ -115,6 +116,7 @@ func (c *calc) loadUI(app fyne.App) {
 	equals.Style = widget.PrimaryButton
 
 	c.window = app.NewWindow("Calc")
+	c.window.SetIcon(icon.CalculatorBitmap)
 	c.window.SetContent(fyne.NewContainerWithLayout(layout.NewGridLayout(1),
 		c.output,
 		fyne.NewContainerWithLayout(layout.NewGridLayout(4),

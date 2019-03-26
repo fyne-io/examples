@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/widget"
+	"github.com/fyne-io/examples/img/icon"
 
 	"github.com/andydotxyz/sudokgo"
 )
@@ -24,6 +25,7 @@ func Show(a fyne.App) {
 	go gui.generate()
 
 	win := a.NewWindow("Sudoku")
+	win.SetIcon(icon.SudokuBitmap)
 	win.SetContent(content)
 	win.Show()
 }

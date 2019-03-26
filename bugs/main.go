@@ -9,6 +9,7 @@ import (
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
+	"github.com/fyne-io/examples/img/icon"
 )
 
 var bug, code, flag *theme.ThemedResource
@@ -225,6 +226,7 @@ func Show(app fyne.App) {
 	b.load(40)
 
 	game.window = app.NewWindow("Bugs")
+	game.window.SetIcon(icon.BugBitmap)
 	game.window.SetContent(game)
 
 	game.window.Show()

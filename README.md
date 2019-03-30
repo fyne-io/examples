@@ -14,7 +14,7 @@ You can start the main example app that links to all the others by running
 go run main.go
 ```
 
-or you can specify a particular exapmple by naming it in the parameter list, like:
+or you can specify a particular example by naming it in the parameter list, like:
 
 ```bash
 go run main.go -calculator

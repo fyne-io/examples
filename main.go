@@ -20,7 +20,6 @@ import (
 	"github.com/fyne-io/examples/img/icon"
 	"github.com/fyne-io/examples/life"
 	"github.com/fyne-io/examples/solitaire"
-	"github.com/fyne-io/examples/sudoku"
 	"github.com/fyne-io/examples/xkcd"
 )
 
@@ -56,7 +55,6 @@ func welcome(app fyne.App) {
 func main() {
 	apps = append(apps, appInfo{"Calculator", icon.CalculatorBitmap, false, calculator.Show})
 	apps = append(apps, appInfo{"Bugs", icon.BugBitmap, false, bugs.Show})
-	apps = append(apps, appInfo{"Sudoku", icon.SudokuBitmap, false, sudoku.Show})
 	apps = append(apps, appInfo{"XKCD", icon.XKCDBitmap, false, xkcd.Show})
 	apps = append(apps, appInfo{"Clock", icon.ClockBitmap, true, clock.Show})
 	apps = append(apps, appInfo{"Fractal", icon.FractalBitmap, true, fractal.Show})

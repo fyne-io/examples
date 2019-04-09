@@ -21,8 +21,5 @@ var FractalBitmap = fractalBitmap
 // SolitaireBitmap an icon for the solitare example
 var SolitaireBitmap = solitaireBitmap
 
-// SudokuBitmap an icon for the sudoku example
-var SudokuBitmap = sudokuBitmap
-
 // XKCDBitmap an icon for the XKCD example
 var XKCDBitmap = xkcdBitmap

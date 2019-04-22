@@ -1,4 +1,4 @@
-// Package main launches the xkcd example game directly
+// Package main launches the xkcd example directly
 package main
 
 import (

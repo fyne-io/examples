@@ -15,5 +15,6 @@ $BIN/fyne bundle -package icon -append -name calculatorBitmap calculator.png >> 
 $BIN/fyne bundle -package icon -append -name clockBitmap clock.png >> $FILE
 $BIN/fyne bundle -package icon -append -name fractalBitmap fractal.png >> $FILE
 $BIN/fyne bundle -package icon -append -name solitaireBitmap solitaire.png >> $FILE
+$BIN/fyne bundle -package icon -append -name textEditorBitmap texteditor.png >> $FILE
 $BIN/fyne bundle -package icon -append -name xkcdBitmap xkcd.png >> $FILE
 

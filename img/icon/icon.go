@@ -21,5 +21,8 @@ var FractalBitmap = fractalBitmap
 // SolitaireBitmap an icon for the solitare example
 var SolitaireBitmap = solitaireBitmap
 
+// TextEditorBitmap an icon for the text editor example
+var TextEditorBitmap = textEditorBitmap
+
 // XKCDBitmap an icon for the XKCD example
 var XKCDBitmap = xkcdBitmap

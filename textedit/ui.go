@@ -2,7 +2,6 @@ package textedit
 
 import (
 	"fmt"
-	"log"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/layout"
@@ -30,10 +29,10 @@ func Show(app fyne.App) {
 	}),
 		widget.NewToolbarSeparator(),
 		widget.NewToolbarAction(theme.ContentCutIcon(), func() {
-			log.Println("TODO")
+			entry.TypedShortcut(&fyne.ShortcutCut{Clipboard: window.Clipboard()})
 		}),
 		widget.NewToolbarAction(theme.ContentCopyIcon(), func() {
-			log.Println("TODO")
+			entry.TypedShortcut(&fyne.ShortcutCopy{Clipboard: window.Clipboard()})
 		}),
 		widget.NewToolbarAction(theme.ContentPasteIcon(), func() {
 			entry.TypedShortcut(&fyne.ShortcutPaste{Clipboard: window.Clipboard()})

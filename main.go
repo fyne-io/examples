@@ -52,6 +52,11 @@ func welcome(app fyne.App) {
 	w.Show()
 }
 
+func flagFromName(name string) string {
+	lower := strings.ToLower(name)
+	return strings.ReplaceAll(lower, " ", "")
+}
+
 func main() {
 	apps = append(apps, appInfo{"Calculator", icon.CalculatorBitmap, false, calculator.Show})
 	apps = append(apps, appInfo{"Bugs", icon.BugBitmap, false, bugs.Show})
@@ -64,7 +69,7 @@ func main() {
 
 	flags := make(map[string]*bool)
 	for _, launch := range apps {
-		name := strings.ToLower(launch.name)
+		name := flagFromName(launch.name)
 		flags[name] = flag.Bool(name, false, fmt.Sprintf("Launch %s app directly", name))
 	}
 	flag.Parse()
@@ -73,7 +78,7 @@ func main() {
 	for ex, set := range flags {
 		if *set {
 			for _, a := range apps {
-				if strings.ToLower(a.name) == ex {
+				if flagFromName(a.name) == ex {
 					launch = a.run
 				}
 			}

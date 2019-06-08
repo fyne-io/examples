@@ -54,7 +54,7 @@ func welcome(app fyne.App) {
 
 func flagFromName(name string) string {
 	lower := strings.ToLower(name)
-	return strings.ReplaceAll(lower, " ", "")
+	return strings.Replace(lower, " ", "", -1)
 }
 
 func main() {

@@ -15,9 +15,9 @@ import (
 var bug, code, flag *theme.ThemedResource
 
 func init() {
-	bug = theme.NewThemedResource(bugDark, bugLight)
-	code = theme.NewThemedResource(codeDark, codeLight)
-	flag = theme.NewThemedResource(flagDark, flagLight)
+	bug = theme.NewThemedResource(bugIcon, nil)
+	code = theme.NewThemedResource(codeIcon, nil)
+	flag = theme.NewThemedResource(flagIcon, nil)
 }
 
 type game struct {

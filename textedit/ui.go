@@ -7,6 +7,8 @@ import (
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
+
+	"github.com/fyne-io/examples/img/icon"
 )
 
 type textEdit struct {
@@ -22,6 +24,7 @@ func (e *textEdit) updateStatus() {
 // Show loads a new text editor
 func Show(app fyne.App) {
 	window := app.NewWindow("Text Editor")
+	window.SetIcon(icon.TextEditorBitmap)
 
 	entry := widget.NewMultiLineEntry()
 	toolbar := widget.NewToolbar(widget.NewToolbarAction(theme.DocumentCreateIcon(), func() {

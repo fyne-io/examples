@@ -36,8 +36,8 @@ func (e *textEdit) paste() {
 
 func (e *textEdit) buildToolbar() *widget.Toolbar {
 	return widget.NewToolbar(widget.NewToolbarAction(theme.DocumentCreateIcon(), func() {
-			e.entry.SetText("")
-		}),
+		e.entry.SetText("")
+	}),
 		widget.NewToolbarSeparator(),
 		widget.NewToolbarAction(theme.ContentCutIcon(), func() {
 			e.cut()

@@ -53,7 +53,7 @@ func (g *game) MinSize() fyne.Size {
 }
 
 func (g *game) Visible() bool {
-	return g.hidden
+	return !g.hidden
 }
 
 func (g *game) Show() {

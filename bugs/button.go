@@ -30,12 +30,12 @@ func (b *bugRenderer) Layout(size fyne.Size) {
 	b.icon.Resize(inner)
 	b.icon.Move(fyne.NewPos(theme.Padding(), theme.Padding()))
 
-	textSize := int(float32(size.Height)*.67)
+	textSize := int(float32(size.Height) * .67)
 	textMin := fyne.CurrentApp().Driver().RenderedTextSize(b.label.Text, textSize, fyne.TextStyle{Bold: true})
 
 	b.label.TextSize = textSize
 	b.label.Resize(fyne.NewSize(size.Width, textMin.Height))
-	b.label.Move(fyne.NewPos(0, (size.Height - textMin.Height)/2))
+	b.label.Move(fyne.NewPos(0, (size.Height-textMin.Height)/2))
 }
 
 // ApplyTheme is called when the bugButton may need to update it's look

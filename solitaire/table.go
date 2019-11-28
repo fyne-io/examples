@@ -11,60 +11,10 @@ import (
 
 // Table represents the rendering of a game in progress
 type Table struct {
-	size     fyne.Size
-	position fyne.Position
-	hidden   bool
+	widget.BaseWidget
 
 	game     *Game
 	selected *Card
-}
-
-// Size gets the current size of the table
-func (t *Table) Size() fyne.Size {
-	return t.size
-}
-
-// Resize sets the current size of the table
-func (t *Table) Resize(size fyne.Size) {
-	t.size = size
-	widget.Renderer(t).Layout(size)
-	canvas.Refresh(t)
-}
-
-// Position gets the current position of the table
-func (t *Table) Position() fyne.Position {
-	return t.position
-}
-
-// Move sets the current position of the table
-func (t *Table) Move(pos fyne.Position) {
-	t.position = pos
-	widget.Renderer(t).Layout(t.size)
-}
-
-// MinSize specifies the minimum size of a table
-func (t *Table) MinSize() fyne.Size {
-	return widget.Renderer(t).MinSize()
-}
-
-// Visible returns true if the table widget is currently visible
-func (t *Table) Visible() bool {
-	return !t.hidden
-}
-
-// Show sets the table widget to be visible
-func (t *Table) Show() {
-	t.hidden = false
-}
-
-// Hide sets the table widget to be hidden
-func (t *Table) Hide() {
-	t.hidden = true
-}
-
-// ApplyTheme updates the widget with the current theme
-func (t *Table) ApplyTheme() {
-	widget.Renderer(t).ApplyTheme()
 }
 
 // CreateRenderer gets the widget renderer for this table - internal use only
@@ -103,7 +53,7 @@ func (t *Table) cardTapped(cardPos *canvas.Image, pos fyne.Position, move func()
 	card := t.cardForPos(cardPos)
 	if cardPos.Resource != faces.ForSpace() && (card == nil || !card.FaceUp) {
 		t.selected = nil
-		widget.Refresh(t)
+		t.Refresh()
 
 		return true
 	}
@@ -120,7 +70,7 @@ func (t *Table) cardTapped(cardPos *canvas.Image, pos fyne.Position, move func()
 		t.selected = nil
 	}
 
-	widget.Refresh(t)
+	t.Refresh()
 	return true
 }
 
@@ -199,7 +149,7 @@ func (t *Table) Tapped(event *fyne.PointEvent) {
 	}
 
 	t.selected = nil // clicked elsewhere
-	widget.Refresh(t)
+	t.Refresh()
 }
 
 // TappedSecondary is called when the user right-taps the table widget
@@ -208,5 +158,7 @@ func (t *Table) TappedSecondary(event *fyne.PointEvent) {
 
 // NewTable creates a new table widget for the specified game
 func NewTable(g *Game) *Table {
-	return &Table{game: g}
+	table := &Table{game: g}
+	table.ExtendBaseWidget(table)
+	return table
 }

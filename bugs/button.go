@@ -70,50 +70,11 @@ func (b *bugRenderer) Destroy() {
 
 // bugButton widget is a scalable button that has a text label and icon and triggers an event func when clicked
 type bugButton struct {
+	widget.BaseWidget
 	text string
 	icon fyne.Resource
 
 	tap func(bool)
-
-	size   fyne.Size
-	pos    fyne.Position
-	hidden bool
-}
-
-func (b *bugButton) Size() fyne.Size {
-	return b.size
-}
-
-func (b *bugButton) Resize(size fyne.Size) {
-	b.size = size
-
-	if widget.Renderer(b) != nil {
-		widget.Renderer(b).Layout(size)
-	}
-}
-
-func (b *bugButton) Position() fyne.Position {
-	return b.pos
-}
-
-func (b *bugButton) Move(pos fyne.Position) {
-	b.pos = pos
-}
-
-func (b *bugButton) MinSize() fyne.Size {
-	return widget.Renderer(b).MinSize()
-}
-
-func (b *bugButton) Visible() bool {
-	return !b.hidden
-}
-
-func (b *bugButton) Show() {
-	b.hidden = false
-}
-
-func (b *bugButton) Hide() {
-	b.hidden = true
 }
 
 // Tapped is called when a regular tap is reported
@@ -145,17 +106,19 @@ func (b *bugButton) CreateRenderer() fyne.WidgetRenderer {
 func (b *bugButton) SetText(text string) {
 	b.text = text
 
-	widget.Refresh(b)
+	b.Refresh()
 }
 
 // SetIcon updates the icon on a label - pass nil to hide an icon
 func (b *bugButton) SetIcon(icon fyne.Resource) {
 	b.icon = icon
 
-	widget.Refresh(b)
+	b.Refresh()
 }
 
 // newButton creates a new button widget with the specified label, themed icon and tap handler
 func newButton(label string, icon fyne.Resource, tap func(bool)) *bugButton {
-	return &bugButton{text: label, icon: icon, tap: tap}
+	button := &bugButton{text: label, icon: icon, tap: tap}
+	button.ExtendBaseWidget(button)
+	return button
 }

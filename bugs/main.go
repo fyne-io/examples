@@ -20,50 +20,6 @@ func init() {
 	flag = theme.NewThemedResource(flagIcon, nil)
 }
 
-type game struct {
-	board *board
-
-	size     fyne.Size
-	position fyne.Position
-	hidden   bool
-
-	window fyne.Window
-}
-
-func (g *game) Size() fyne.Size {
-	return g.size
-}
-
-func (g *game) Resize(size fyne.Size) {
-	g.size = size
-	widget.Renderer(g).Layout(size)
-}
-
-func (g *game) Position() fyne.Position {
-	return g.position
-}
-
-func (g *game) Move(pos fyne.Position) {
-	g.position = pos
-	widget.Renderer(g).Layout(g.size)
-}
-
-func (g *game) MinSize() fyne.Size {
-	return widget.Renderer(g).MinSize()
-}
-
-func (g *game) Visible() bool {
-	return !g.hidden
-}
-
-func (g *game) Show() {
-	g.hidden = false
-}
-
-func (g *game) Hide() {
-	g.hidden = true
-}
-
 type gameRenderer struct {
 	grid *fyne.Container
 
@@ -94,6 +50,13 @@ func (g *gameRenderer) Objects() []fyne.CanvasObject {
 }
 
 func (g *gameRenderer) Destroy() {
+}
+
+type game struct {
+	widget.BaseWidget
+	board *board
+
+	window fyne.Window
 }
 
 func (g *game) refreshSquare(x, y int) {
@@ -212,6 +175,7 @@ func (g *game) lose() {
 
 func newGame(f *board) *game {
 	g := &game{board: f}
+	g.ExtendBaseWidget(g)
 
 	return g
 }

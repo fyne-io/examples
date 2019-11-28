@@ -108,7 +108,7 @@ func (b *exampleButtonRenderer) MinSize() fyne.Size {
 func (b *exampleButtonRenderer) Layout(size fyne.Size) {
 	inner := size.Subtract(fyne.NewSize(theme.Padding()*4, theme.Padding()*2))
 	inner = inner.Subtract(fyne.NewSize(24, 24))
-	height := b.button.size.Height
+	height := b.button.Size().Height
 
 	b.label.Resize(inner)
 	b.label.Move(fyne.NewPos(theme.Padding()*2+24, theme.Padding()+24))
@@ -143,48 +143,11 @@ func (b *exampleButtonRenderer) Destroy() {
 }
 
 type exampleButton struct {
+	widget.BaseWidget
 	Text string
 	Icon fyne.Resource
 
 	OnTapped func()
-
-	size fyne.Size
-	pos  fyne.Position
-}
-
-func (b *exampleButton) Size() fyne.Size {
-	return b.size
-}
-
-func (b *exampleButton) Resize(size fyne.Size) {
-	b.size = size
-	widget.Renderer(b).Layout(size)
-}
-
-func (b *exampleButton) Position() fyne.Position {
-	return b.pos
-}
-
-func (b *exampleButton) Move(pos fyne.Position) {
-	b.pos = pos
-	widget.Renderer(b).Refresh()
-}
-
-func (b *exampleButton) MinSize() fyne.Size {
-	if widget.Renderer(b) == nil {
-		return fyne.NewSize(0, 0)
-	}
-	return widget.Renderer(b).MinSize()
-}
-
-func (b *exampleButton) Show() {
-}
-
-func (b *exampleButton) Hide() {
-}
-
-func (b *exampleButton) Visible() bool {
-	return true
 }
 
 func (b *exampleButton) Tapped(*fyne.PointEvent) {
@@ -212,11 +175,10 @@ func (b *exampleButton) CreateRenderer() fyne.WidgetRenderer {
 }
 
 func newExampleButton(info appInfo, app fyne.App) *exampleButton {
-
 	button := &exampleButton{Text: info.name, Icon: info.icon, OnTapped: func() {
 		info.run(app)
 	}}
+	button.ExtendBaseWidget(button)
 
-	widget.Renderer(button).Layout(button.MinSize())
 	return button
 }

@@ -7,6 +7,7 @@ import (
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 	"github.com/fyne-io/examples/img/icon"
@@ -143,49 +144,6 @@ func newBoard() *board {
 	return b
 }
 
-type game struct {
-	board  *board
-	paused bool
-
-	size     fyne.Size
-	position fyne.Position
-	hidden   bool
-}
-
-func (g *game) Size() fyne.Size {
-	return g.size
-}
-
-func (g *game) Resize(size fyne.Size) {
-	g.size = size
-	widget.Renderer(g).Layout(size)
-}
-
-func (g *game) Position() fyne.Position {
-	return g.position
-}
-
-func (g *game) Move(pos fyne.Position) {
-	g.position = pos
-	widget.Renderer(g).Layout(g.size)
-}
-
-func (g *game) MinSize() fyne.Size {
-	return widget.Renderer(g).MinSize()
-}
-
-func (g *game) Visible() bool {
-	return !g.hidden
-}
-
-func (g *game) Show() {
-	g.hidden = false
-}
-
-func (g *game) Hide() {
-	g.hidden = true
-}
-
 type gameRenderer struct {
 	render   *canvas.Raster
 	objects  []fyne.CanvasObject
@@ -247,6 +205,12 @@ func (g *gameRenderer) draw(w, h int) image.Image {
 	return img
 }
 
+type game struct {
+	widget.BaseWidget
+	board  *board
+	paused bool
+}
+
 func (g *game) CreateRenderer() fyne.WidgetRenderer {
 	renderer := &gameRenderer{game: g}
 
@@ -303,7 +267,7 @@ func (g *game) typedRune(r rune) {
 }
 
 func (g *game) Tapped(ev *fyne.PointEvent) {
-	xpos, ypos := g.cellForCoord(ev.Position.X, ev.Position.Y, g.size.Width, g.size.Height)
+	xpos, ypos := g.cellForCoord(ev.Position.X, ev.Position.Y, g.Size().Width, g.Size().Height)
 
 	if ev.Position.X < 0 || ev.Position.Y < 0 || xpos >= g.board.width || ypos >= g.board.height {
 		return
@@ -319,6 +283,7 @@ func (g *game) TappedSecondary(ev *fyne.PointEvent) {
 
 func newGame(b *board) *game {
 	g := &game{board: b}
+	g.ExtendBaseWidget(g)
 
 	return g
 }

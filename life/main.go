@@ -297,7 +297,10 @@ func Show(app fyne.App) {
 
 	window := app.NewWindow("Life")
 	window.SetIcon(icon.LifeBitmap)
-	window.SetContent(game)
+	pause := widget.NewButton("Pause", func() {
+		game.paused = !game.paused
+	})
+	window.SetContent(fyne.NewContainerWithLayout(layout.NewBorderLayout(nil, pause, nil, nil), pause, game))
 	window.Canvas().SetOnTypedRune(game.typedRune)
 
 	// start the board animation before we show the window - it will block

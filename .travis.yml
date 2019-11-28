@@ -7,7 +7,7 @@ go:
 gobuild_args: "-v -tags ci"
 
 before_script:
-  - NO_VENDOR=$(find . -iname '*.go' -type f | grep -v /vendor/
+  - NO_VENDOR=$(find . -iname '*.go' -type f | grep -v /vendor/)
   - go get golang.org/x/lint/golint
   - go get github.com/mattn/goveralls
   - go get fyne.io/fyne

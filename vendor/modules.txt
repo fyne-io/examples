@@ -1,4 +1,4 @@
-# fyne.io/fyne v1.2.0-beta1
+# fyne.io/fyne v1.2.0
 fyne.io/fyne
 fyne.io/fyne/app
 fyne.io/fyne/canvas
@@ -70,7 +70,7 @@ golang.org/x/mobile/app/internal/callfn
 golang.org/x/mobile/event/mouse
 golang.org/x/mobile/geom
 golang.org/x/mobile/internal/mobileinit
-# golang.org/x/net v0.0.0-20191028085509-fe3aa8a45271
+# golang.org/x/net v0.0.0-20191204025024-5ee1b9f4859a
 golang.org/x/net/html/charset
 golang.org/x/net/html
 golang.org/x/net/html/atom

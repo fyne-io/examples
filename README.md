@@ -66,7 +66,7 @@ A simple analog clock that matches the current theme.
 
 ### Fractal
 
-A fratal viewer that can be panned and zoomed
+A fractal viewer that can be panned and zoomed
 
 ![](img/fractal.png)
 

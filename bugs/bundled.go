@@ -1,3 +1,5 @@
+// auto-generated
+
 package bugs
 
 import "fyne.io/fyne"

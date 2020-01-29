@@ -1,4 +1,4 @@
-# fyne.io/fyne v1.2.0
+# fyne.io/fyne v1.2.2
 fyne.io/fyne
 fyne.io/fyne/app
 fyne.io/fyne/canvas
@@ -17,6 +17,7 @@ fyne.io/fyne/internal/cache
 fyne.io/fyne/internal/driver
 fyne.io/fyne/internal/painter
 fyne.io/fyne/internal/painter/gl
+fyne.io/fyne/driver/mobile
 # github.com/Knetic/govaluate v3.0.0+incompatible
 github.com/Knetic/govaluate
 # github.com/davecgh/go-spew v1.1.0

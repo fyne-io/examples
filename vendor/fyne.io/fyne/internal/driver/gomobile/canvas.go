@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"fyne.io/fyne"
+	"fyne.io/fyne/driver/mobile"
 	"fyne.io/fyne/internal/app"
 	"fyne.io/fyne/internal/driver"
 	"fyne.io/fyne/internal/painter/gl"
@@ -21,6 +22,7 @@ type mobileCanvas struct {
 	size             fyne.Size
 
 	focused fyne.Focusable
+	touched map[int]mobile.Touchable
 	padded  bool
 
 	onTypedRune func(rune)
@@ -28,8 +30,8 @@ type mobileCanvas struct {
 	shortcut    fyne.ShortcutHandler
 
 	inited         bool
-	lastTapDown    time.Time
-	lastTapDownPos fyne.Position
+	lastTapDown    map[int]time.Time
+	lastTapDownPos map[int]fyne.Position
 	dragging       fyne.Draggable
 	refreshQueue   chan fyne.CanvasObject
 }
@@ -125,14 +127,9 @@ func (c *mobileCanvas) Scale() float32 {
 	return c.scale
 }
 
-func (c *mobileCanvas) SetScale(scale float32) {
-	if scale == fyne.SettingsScaleAuto {
-		c.scale = deviceScale()
-	} else if scale == 0 { // not set in the config
-		return
-	} else {
-		c.scale = scale
-	}
+// Deprecated: Settings are now calculated solely on the user configuration and system setup.
+func (c *mobileCanvas) SetScale(_ float32) {
+	c.scale = fyne.CurrentDevice().SystemScale()
 }
 
 func (c *mobileCanvas) Overlay() fyne.CanvasObject {
@@ -183,21 +180,23 @@ func (c *mobileCanvas) walkTree(
 	}
 }
 
-func (c *mobileCanvas) findObjectMatching(test func(object fyne.CanvasObject) bool) (fyne.CanvasObject, fyne.Position) {
+func (c *mobileCanvas) findObjectAtPositionMatching(pos fyne.Position, test func(object fyne.CanvasObject) bool) (fyne.CanvasObject, fyne.Position) {
 	if c.menu != nil && c.overlay == nil {
-		return driver.FindObjectAtPositionMatching(c.lastTapDownPos, test, c.menu)
+		return driver.FindObjectAtPositionMatching(pos, test, c.menu)
 	}
 
-	return driver.FindObjectAtPositionMatching(c.lastTapDownPos, test, c.overlay, c.windowHead, c.content)
+	return driver.FindObjectAtPositionMatching(pos, test, c.overlay, c.windowHead, c.content)
 }
 
-func (c *mobileCanvas) tapDown(pos fyne.Position) {
-	c.lastTapDown = time.Now()
-	c.lastTapDownPos = pos
+func (c *mobileCanvas) tapDown(pos fyne.Position, tapID int) {
+	c.lastTapDown[tapID] = time.Now()
+	c.lastTapDownPos[tapID] = pos
 	c.dragging = nil
 
-	co, _ := c.findObjectMatching(func(object fyne.CanvasObject) bool {
+	co, objPos := c.findObjectAtPositionMatching(pos, func(object fyne.CanvasObject) bool {
 		if _, ok := object.(fyne.Tappable); ok {
+			return true
+		} else if _, ok := object.(mobile.Touchable); ok {
 			return true
 		} else if _, ok := object.(fyne.Focusable); ok {
 			return true
@@ -205,6 +204,14 @@ func (c *mobileCanvas) tapDown(pos fyne.Position) {
 
 		return false
 	})
+
+	if wid, ok := co.(mobile.Touchable); ok {
+		touchEv := &mobile.TouchEvent{}
+		touchEv.Position = objPos
+		touchEv.AbsolutePosition = pos
+		wid.TouchDown(touchEv)
+		c.touched[tapID] = wid
+	}
 
 	needsFocus := true
 	wid := c.Focused()
@@ -222,31 +229,44 @@ func (c *mobileCanvas) tapDown(pos fyne.Position) {
 	}
 }
 
-func (c *mobileCanvas) tapMove(pos fyne.Position,
+func (c *mobileCanvas) tapMove(pos fyne.Position, tapID int,
 	dragCallback func(fyne.Draggable, *fyne.DragEvent)) {
-	deltaX := pos.X - c.lastTapDownPos.X
-	deltaY := pos.Y - c.lastTapDownPos.Y
+	deltaX := pos.X - c.lastTapDownPos[tapID].X
+	deltaY := pos.Y - c.lastTapDownPos[tapID].Y
 
 	if math.Abs(float64(deltaX)) < 3 && math.Abs(float64(deltaY)) < 3 {
 		return
 	}
+	c.lastTapDownPos[tapID] = pos
+
+	co, objPos := c.findObjectAtPositionMatching(pos, func(object fyne.CanvasObject) bool {
+		if _, ok := object.(fyne.Draggable); ok {
+			return true
+		} else if _, ok := object.(mobile.Touchable); ok {
+			return true
+		}
+
+		return false
+	})
+
+	if c.touched[tapID] != nil {
+		if touch, ok := co.(mobile.Touchable); !ok || c.touched[tapID] != touch {
+			touchEv := &mobile.TouchEvent{}
+			touchEv.Position = objPos
+			touchEv.AbsolutePosition = pos
+			c.touched[tapID].TouchCancel(touchEv)
+			c.touched[tapID] = nil
+		}
+	}
 
 	if c.dragging == nil {
-		co, _ := c.findObjectMatching(func(object fyne.CanvasObject) bool {
-			if _, ok := object.(fyne.Draggable); ok {
-				return true
-			}
-
-			return false
-		})
-
 		if drag, ok := co.(fyne.Draggable); ok {
 			c.dragging = drag
 		} else {
 			return
 		}
 	}
-	objPos := pos.Subtract(c.dragging.(fyne.CanvasObject).Position())
+	objPos = pos.Subtract(c.dragging.(fyne.CanvasObject).Position())
 
 	ev := new(fyne.DragEvent)
 	ev.Position = objPos
@@ -254,10 +274,9 @@ func (c *mobileCanvas) tapMove(pos fyne.Position,
 	ev.DraggedY = deltaY
 
 	dragCallback(c.dragging, ev)
-	c.lastTapDownPos = pos
 }
 
-func (c *mobileCanvas) tapUp(pos fyne.Position,
+func (c *mobileCanvas) tapUp(pos fyne.Position, tapID int,
 	tapCallback func(fyne.Tappable, *fyne.PointEvent),
 	tapAltCallback func(fyne.Tappable, *fyne.PointEvent),
 	dragCallback func(fyne.Draggable, *fyne.DragEvent)) {
@@ -267,7 +286,7 @@ func (c *mobileCanvas) tapUp(pos fyne.Position,
 		c.dragging = nil
 	}
 
-	duration := time.Since(c.lastTapDown)
+	duration := time.Since(c.lastTapDown[tapID])
 
 	if c.menu != nil && c.overlay == nil && pos.X > c.menu.Size().Width {
 		c.menu.Hide()
@@ -275,8 +294,10 @@ func (c *mobileCanvas) tapUp(pos fyne.Position,
 		return
 	}
 
-	co, objPos := c.findObjectMatching(func(object fyne.CanvasObject) bool {
+	co, objPos := c.findObjectAtPositionMatching(pos, func(object fyne.CanvasObject) bool {
 		if _, ok := object.(fyne.Tappable); ok {
+			return true
+		} else if _, ok := object.(mobile.Touchable); ok {
 			return true
 		} else if _, ok := object.(fyne.Focusable); ok {
 			return true
@@ -284,6 +305,14 @@ func (c *mobileCanvas) tapUp(pos fyne.Position,
 
 		return false
 	})
+
+	if wid, ok := co.(mobile.Touchable); ok {
+		touchEv := &mobile.TouchEvent{}
+		touchEv.Position = objPos
+		touchEv.AbsolutePosition = pos
+		wid.TouchUp(touchEv)
+		c.touched[tapID] = nil
+	}
 
 	ev := new(fyne.PointEvent)
 	ev.Position = objPos
@@ -318,8 +347,11 @@ func (c *mobileCanvas) setupThemeListener() {
 // NewCanvas creates a new gomobile mobileCanvas. This is a mobileCanvas that will render on a mobile device using OpenGL.
 func NewCanvas() fyne.Canvas {
 	ret := &mobileCanvas{padded: true}
-	ret.scale = deviceScale()
+	ret.scale = fyne.CurrentDevice().SystemScale()
 	ret.refreshQueue = make(chan fyne.CanvasObject, 1024)
+	ret.touched = make(map[int]mobile.Touchable)
+	ret.lastTapDownPos = make(map[int]fyne.Position)
+	ret.lastTapDown = make(map[int]time.Time)
 
 	ret.setupThemeListener()
 

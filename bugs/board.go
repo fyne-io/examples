@@ -20,8 +20,9 @@ type board struct {
 
 	win, lose func()
 
-	bugcount int
-	bugs     [][]square
+	bugCount  int
+	flagCount int
+	bugs      [][]square
 }
 
 func (b *board) countHidden() int {
@@ -41,7 +42,8 @@ func (b *board) countHidden() int {
 }
 
 func (b *board) load(count int) {
-	b.bugcount = count
+	b.bugCount = count
+	b.flagCount = 0
 	if b.bugs == nil {
 		b.bugs = make([][]square, b.height)
 
@@ -135,7 +137,7 @@ func (b *board) reveal(x, y int) {
 		b.reveal(x+1, y+1)
 	}
 
-	if b.countHidden() == b.bugcount && b.win != nil {
+	if b.countHidden() == b.bugCount && b.win != nil {
 		b.win()
 	}
 }
@@ -153,7 +155,13 @@ func (b *board) flag(x, y int) {
 		return
 	}
 
-	b.bugs[y][x].flagged = !sq.flagged
+	if sq.flagged {
+		b.bugs[y][x].flagged = false
+		b.flagCount--
+	} else {
+		b.bugs[y][x].flagged = true
+		b.flagCount++
+	}
 }
 
 func (b *board) flagged(x, y int) bool {
@@ -166,6 +174,10 @@ func (b *board) flagged(x, y int) bool {
 
 	sq := b.bugs[y][x]
 	return sq.flagged
+}
+
+func (b *board) remaining() int {
+	return b.bugCount - b.flagCount
 }
 
 func squareString(sq square) string {

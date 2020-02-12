@@ -167,8 +167,12 @@ func Show(app fyne.App) {
 		}),
 		submit)
 	x.image = &canvas.Image{FillMode: canvas.ImageFillOriginal}
+	imageContainer := widget.NewScrollContainer(x.image)
+	controlsContainer := fyne.NewContainerWithLayout(
+		layout.NewBorderLayout(buttons, form, nil, nil),
+		buttons, form)
 	w.SetContent(fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(form, buttons, nil, nil),
-		form, buttons, x.image))
+		layout.NewBorderLayout(controlsContainer, nil, nil, nil),
+		controlsContainer, imageContainer))
 	w.Show()
 }

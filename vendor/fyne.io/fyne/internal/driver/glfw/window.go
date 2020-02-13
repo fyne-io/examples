@@ -20,7 +20,7 @@ import (
 	"fyne.io/fyne/internal/painter/gl"
 	"fyne.io/fyne/widget"
 
-	"github.com/go-gl/glfw/v3.2/glfw"
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 const (
@@ -153,12 +153,7 @@ func (w *window) screenSize(canvasSize fyne.Size) (int, int) {
 }
 
 func (w *window) RequestFocus() {
-	runOnMain(func() {
-		err := w.viewport.Focus()
-		if err != nil {
-			fyne.LogError("Error requesting focus", err)
-		}
-	})
+	runOnMain(w.viewport.Focus)
 }
 
 func (w *window) Resize(size fyne.Size) {
@@ -336,6 +331,7 @@ func (w *window) detectScale() float32 {
 	if dpi > 1000 || dpi < 10 {
 		dpi = 96
 	}
+
 	return float32(float64(dpi) / 96.0)
 }
 
@@ -450,13 +446,13 @@ func (w *window) moved(viewport *glfw.Window, x, y int) {
 	// save coordinates
 	w.xpos, w.ypos = x, y
 
-	newDetected := w.detectScale()
-	if w.canvas.detectedScale == newDetected {
+	if w.canvas.detectedScale == w.detectScale() {
 		return
 	}
 
-	w.canvas.detectedScale = newDetected
-	go w.canvas.SetScale(fyne.SettingsScaleAuto) // scale value is ignored
+	w.canvas.detectedScale = w.detectScale()
+	go w.canvas.SetScale(fyne.SettingsScaleAuto) // scale is ignored
+	w.rescaleOnMain()
 }
 
 func (w *window) resized(viewport *glfw.Window, width, height int) {
@@ -473,7 +469,7 @@ func (w *window) frameSized(viewport *glfw.Window, width, height int) {
 
 	winWidth, _ := w.viewport.GetSize()
 	texScale := float32(width) / float32(winWidth) // This will be > 1.0 on a HiDPI screen
-	w.canvas.painter.SetFrameBufferScale(texScale)
+	w.canvas.setTextureScale(texScale)
 	w.canvas.painter.SetOutputSize(width, height)
 }
 
@@ -729,186 +725,109 @@ func convertMouseButton(btn glfw.MouseButton, mods glfw.ModifierKey) (desktop.Mo
 	return button, modifier
 }
 
-func keyToName(key glfw.Key) fyne.KeyName {
-	switch key {
+var keyCodeMap = map[glfw.Key]fyne.KeyName{
 	// non-printable
-	case glfw.KeyEscape:
-		return fyne.KeyEscape
-	case glfw.KeyEnter:
-		return fyne.KeyReturn
-	case glfw.KeyTab:
-		return fyne.KeyTab
-	case glfw.KeyBackspace:
-		return fyne.KeyBackspace
-	case glfw.KeyInsert:
-		return fyne.KeyInsert
-	case glfw.KeyDelete:
-		return fyne.KeyDelete
-	case glfw.KeyRight:
-		return fyne.KeyRight
-	case glfw.KeyLeft:
-		return fyne.KeyLeft
-	case glfw.KeyDown:
-		return fyne.KeyDown
-	case glfw.KeyUp:
-		return fyne.KeyUp
-	case glfw.KeyPageUp:
-		return fyne.KeyPageUp
-	case glfw.KeyPageDown:
-		return fyne.KeyPageDown
-	case glfw.KeyHome:
-		return fyne.KeyHome
-	case glfw.KeyEnd:
-		return fyne.KeyEnd
+	glfw.KeyEscape:    fyne.KeyEscape,
+	glfw.KeyEnter:     fyne.KeyReturn,
+	glfw.KeyTab:       fyne.KeyTab,
+	glfw.KeyBackspace: fyne.KeyBackspace,
+	glfw.KeyInsert:    fyne.KeyInsert,
+	glfw.KeyDelete:    fyne.KeyDelete,
+	glfw.KeyRight:     fyne.KeyRight,
+	glfw.KeyLeft:      fyne.KeyLeft,
+	glfw.KeyDown:      fyne.KeyDown,
+	glfw.KeyUp:        fyne.KeyUp,
+	glfw.KeyPageUp:    fyne.KeyPageUp,
+	glfw.KeyPageDown:  fyne.KeyPageDown,
+	glfw.KeyHome:      fyne.KeyHome,
+	glfw.KeyEnd:       fyne.KeyEnd,
 
-	case glfw.KeyF1:
-		return fyne.KeyF1
-	case glfw.KeyF2:
-		return fyne.KeyF2
-	case glfw.KeyF3:
-		return fyne.KeyF3
-	case glfw.KeyF4:
-		return fyne.KeyF4
-	case glfw.KeyF5:
-		return fyne.KeyF5
-	case glfw.KeyF6:
-		return fyne.KeyF6
-	case glfw.KeyF7:
-		return fyne.KeyF7
-	case glfw.KeyF8:
-		return fyne.KeyF8
-	case glfw.KeyF9:
-		return fyne.KeyF9
-	case glfw.KeyF10:
-		return fyne.KeyF10
-	case glfw.KeyF11:
-		return fyne.KeyF11
-	case glfw.KeyF12:
-		return fyne.KeyF12
+	glfw.KeyF1:  fyne.KeyF1,
+	glfw.KeyF2:  fyne.KeyF2,
+	glfw.KeyF3:  fyne.KeyF3,
+	glfw.KeyF4:  fyne.KeyF4,
+	glfw.KeyF5:  fyne.KeyF5,
+	glfw.KeyF6:  fyne.KeyF6,
+	glfw.KeyF7:  fyne.KeyF7,
+	glfw.KeyF8:  fyne.KeyF8,
+	glfw.KeyF9:  fyne.KeyF9,
+	glfw.KeyF10: fyne.KeyF10,
+	glfw.KeyF11: fyne.KeyF11,
+	glfw.KeyF12: fyne.KeyF12,
 
-	case glfw.KeyKPEnter:
-		return fyne.KeyEnter
+	glfw.KeyKPEnter: fyne.KeyEnter,
 
 	// printable
-	case glfw.KeySpace:
-		return fyne.KeySpace
-	case glfw.KeyApostrophe:
-		return fyne.KeyApostrophe
-	case glfw.KeyComma:
-		return fyne.KeyComma
-	case glfw.KeyMinus:
-		return fyne.KeyMinus
-	case glfw.KeyPeriod:
-		return fyne.KeyPeriod
-	case glfw.KeySlash:
-		return fyne.KeySlash
+	glfw.KeySpace:      fyne.KeySpace,
+	glfw.KeyApostrophe: fyne.KeyApostrophe,
+	glfw.KeyComma:      fyne.KeyComma,
+	glfw.KeyMinus:      fyne.KeyMinus,
+	glfw.KeyPeriod:     fyne.KeyPeriod,
+	glfw.KeySlash:      fyne.KeySlash,
 
-	case glfw.Key0:
-		return fyne.Key0
-	case glfw.Key1:
-		return fyne.Key1
-	case glfw.Key2:
-		return fyne.Key2
-	case glfw.Key3:
-		return fyne.Key3
-	case glfw.Key4:
-		return fyne.Key4
-	case glfw.Key5:
-		return fyne.Key5
-	case glfw.Key6:
-		return fyne.Key6
-	case glfw.Key7:
-		return fyne.Key7
-	case glfw.Key8:
-		return fyne.Key8
-	case glfw.Key9:
-		return fyne.Key9
-	case glfw.KeySemicolon:
-		return fyne.KeySemicolon
-	case glfw.KeyEqual:
-		return fyne.KeyEqual
+	glfw.Key0:         fyne.Key0,
+	glfw.Key1:         fyne.Key1,
+	glfw.Key2:         fyne.Key2,
+	glfw.Key3:         fyne.Key3,
+	glfw.Key4:         fyne.Key4,
+	glfw.Key5:         fyne.Key5,
+	glfw.Key6:         fyne.Key6,
+	glfw.Key7:         fyne.Key7,
+	glfw.Key8:         fyne.Key8,
+	glfw.Key9:         fyne.Key9,
+	glfw.KeySemicolon: fyne.KeySemicolon,
+	glfw.KeyEqual:     fyne.KeyEqual,
 
-	case glfw.KeyA:
-		return fyne.KeyA
-	case glfw.KeyB:
-		return fyne.KeyB
-	case glfw.KeyC:
-		return fyne.KeyC
-	case glfw.KeyD:
-		return fyne.KeyD
-	case glfw.KeyE:
-		return fyne.KeyE
-	case glfw.KeyF:
-		return fyne.KeyF
-	case glfw.KeyG:
-		return fyne.KeyG
-	case glfw.KeyH:
-		return fyne.KeyH
-	case glfw.KeyI:
-		return fyne.KeyI
-	case glfw.KeyJ:
-		return fyne.KeyJ
-	case glfw.KeyK:
-		return fyne.KeyK
-	case glfw.KeyL:
-		return fyne.KeyL
-	case glfw.KeyM:
-		return fyne.KeyM
-	case glfw.KeyN:
-		return fyne.KeyN
-	case glfw.KeyO:
-		return fyne.KeyO
-	case glfw.KeyP:
-		return fyne.KeyP
-	case glfw.KeyQ:
-		return fyne.KeyQ
-	case glfw.KeyR:
-		return fyne.KeyR
-	case glfw.KeyS:
-		return fyne.KeyS
-	case glfw.KeyT:
-		return fyne.KeyT
-	case glfw.KeyU:
-		return fyne.KeyU
-	case glfw.KeyV:
-		return fyne.KeyV
-	case glfw.KeyW:
-		return fyne.KeyW
-	case glfw.KeyX:
-		return fyne.KeyX
-	case glfw.KeyY:
-		return fyne.KeyY
-	case glfw.KeyZ:
-		return fyne.KeyZ
+	glfw.KeyA: fyne.KeyA,
+	glfw.KeyB: fyne.KeyB,
+	glfw.KeyC: fyne.KeyC,
+	glfw.KeyD: fyne.KeyD,
+	glfw.KeyE: fyne.KeyE,
+	glfw.KeyF: fyne.KeyF,
+	glfw.KeyG: fyne.KeyG,
+	glfw.KeyH: fyne.KeyH,
+	glfw.KeyI: fyne.KeyI,
+	glfw.KeyJ: fyne.KeyJ,
+	glfw.KeyK: fyne.KeyK,
+	glfw.KeyL: fyne.KeyL,
+	glfw.KeyM: fyne.KeyM,
+	glfw.KeyN: fyne.KeyN,
+	glfw.KeyO: fyne.KeyO,
+	glfw.KeyP: fyne.KeyP,
+	glfw.KeyQ: fyne.KeyQ,
+	glfw.KeyR: fyne.KeyR,
+	glfw.KeyS: fyne.KeyS,
+	glfw.KeyT: fyne.KeyT,
+	glfw.KeyU: fyne.KeyU,
+	glfw.KeyV: fyne.KeyV,
+	glfw.KeyW: fyne.KeyW,
+	glfw.KeyX: fyne.KeyX,
+	glfw.KeyY: fyne.KeyY,
+	glfw.KeyZ: fyne.KeyZ,
 
-	case glfw.KeyLeftBracket:
-		return fyne.KeyLeftBracket
-	case glfw.KeyBackslash:
-		return fyne.KeyBackslash
-	case glfw.KeyRightBracket:
-		return fyne.KeyRightBracket
+	glfw.KeyLeftBracket:  fyne.KeyLeftBracket,
+	glfw.KeyBackslash:    fyne.KeyBackslash,
+	glfw.KeyRightBracket: fyne.KeyRightBracket,
 
 	// desktop
-	case glfw.KeyLeftShift:
-		return desktop.KeyShiftLeft
-	case glfw.KeyRightShift:
-		return desktop.KeyShiftRight
-	case glfw.KeyLeftControl:
-		return desktop.KeyControlLeft
-	case glfw.KeyRightControl:
-		return desktop.KeyControlRight
-	case glfw.KeyLeftAlt:
-		return desktop.KeyAltLeft
-	case glfw.KeyRightAlt:
-		return desktop.KeyAltRight
-	case glfw.KeyLeftSuper:
-		return desktop.KeySuperLeft
-	case glfw.KeyRightSuper:
-		return desktop.KeySuperRight
-	case glfw.KeyMenu:
-		return desktop.KeyMenu
+	glfw.KeyLeftShift:    desktop.KeyShiftLeft,
+	glfw.KeyRightShift:   desktop.KeyShiftRight,
+	glfw.KeyLeftControl:  desktop.KeyControlLeft,
+	glfw.KeyRightControl: desktop.KeyControlRight,
+	glfw.KeyLeftAlt:      desktop.KeyAltLeft,
+	glfw.KeyRightAlt:     desktop.KeyAltRight,
+	glfw.KeyLeftSuper:    desktop.KeySuperLeft,
+	glfw.KeyRightSuper:   desktop.KeySuperRight,
+	glfw.KeyMenu:         desktop.KeyMenu,
+}
+
+func keyToName(code glfw.Key) fyne.KeyName {
+	ret, ok := keyCodeMap[code]
+	if !ok {
+		return ""
 	}
-	return ""
+
+	return ret
 }
 
 func (w *window) keyPressed(viewport *glfw.Window, key glfw.Key, scancode int, action glfw.Action, mods glfw.ModifierKey) {
@@ -1021,13 +940,11 @@ func desktopModifier(mods glfw.ModifierKey) desktop.Modifier {
 	return m
 }
 
-// charModInput defines the character with modifiers callback which is called when a
-// Unicode character is input regardless of what modifier keys are used.
+// charInput defines the character with modifiers callback which is called when a
+// Unicode character is input.
 //
-// The character with modifiers callback is intended for implementing custom
-// Unicode character input. Characters do not map 1:1 to physical keys,
-// as a key may produce zero, one or more characters.
-func (w *window) charModInput(viewport *glfw.Window, char rune, mods glfw.ModifierKey) {
+// Characters do not map 1:1 to physical keys, as a key may produce zero, one or more characters.
+func (w *window) charInput(viewport *glfw.Window, char rune) {
 	if w.canvas.Focused() == nil && w.canvas.onTypedRune == nil {
 		return
 	}
@@ -1109,12 +1026,21 @@ func (w *window) waitForEvents() {
 }
 
 func (d *gLDriver) CreateWindow(title string) fyne.Window {
+	return d.createWindow(title, true)
+}
+
+func (d *gLDriver) createWindow(title string, decorate bool) fyne.Window {
 	var ret *window
 	runOnMain(func() {
 		initOnce.Do(d.initGLFW)
 
 		// make the window hidden, we will set it up and then show it later
 		glfw.WindowHint(glfw.Visible, 0)
+		if decorate {
+			glfw.WindowHint(glfw.Decorated, 1)
+		} else {
+			glfw.WindowHint(glfw.Decorated, 0)
+		}
 		initWindowHints()
 
 		win, err := glfw.CreateWindow(10, 10, title, nil, nil)
@@ -1148,11 +1074,18 @@ func (d *gLDriver) CreateWindow(title string) fyne.Window {
 		win.SetMouseButtonCallback(ret.mouseClicked)
 		win.SetScrollCallback(ret.mouseScrolled)
 		win.SetKeyCallback(ret.keyPressed)
-		win.SetCharModsCallback(ret.charModInput)
+		win.SetCharCallback(ret.charInput)
 		win.SetFocusCallback(ret.focused)
 		glfw.DetachCurrentContext()
 	})
 	return ret
+}
+
+func (d *gLDriver) CreateSplashWindow() fyne.Window {
+	win := d.createWindow("", false)
+	win.SetPadded(false)
+	win.CenterOnScreen()
+	return win
 }
 
 func (d *gLDriver) AllWindows() []fyne.Window {

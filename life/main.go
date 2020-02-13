@@ -13,6 +13,16 @@ import (
 	"github.com/fyne-io/examples/img/icon"
 )
 
+var (
+	pixDensity = 1.0
+)
+
+const (
+	cellSize  = 10
+	minXCount = 50
+	minYCount = 40
+)
+
 type board struct {
 	cells  [][]bool
 	width  int
@@ -79,6 +89,39 @@ func (b *board) renderState(state [][]bool) {
 	}
 }
 
+func (b *board) createGrid(w, h int) {
+	b.cells = make([][]bool, h)
+	for y := 0; y < h; y++ {
+		b.cells[y] = make([]bool, w)
+	}
+
+	b.width = w
+	b.height = h
+}
+
+func (b *board) ensureGridSize(w, h int) {
+	yDelta := h - b.height
+	xDelta := w - b.width
+
+	if xDelta > 0 {
+		// extend existing rows
+		for i, row := range b.cells {
+			b.cells[i] = append(row, make([]bool, xDelta)...)
+		}
+	}
+
+	if yDelta > 0 {
+		// add empty rows
+		b.cells = append(b.cells, make([][]bool, yDelta)...)
+		for y := b.height; y < h; y++ {
+			b.cells[y] = make([]bool, w)
+		}
+	}
+
+	b.width = w
+	b.height = h
+}
+
 func (b *board) load() {
 	// gun
 	b.cells[5][1] = true
@@ -133,13 +176,9 @@ func (b *board) load() {
 	b.cells[37][4] = true
 }
 
-func newBoard() *board {
-	b := &board{nil, 60, 50}
-	b.cells = make([][]bool, b.height)
-
-	for y := 0; y < b.height; y++ {
-		b.cells[y] = make([]bool, b.width)
-	}
+func newBoard(minX, minY int) *board {
+	b := &board{}
+	b.createGrid(minX, minY)
 
 	return b
 }
@@ -156,7 +195,7 @@ type gameRenderer struct {
 }
 
 func (g *gameRenderer) MinSize() fyne.Size {
-	return fyne.NewSize(g.game.board.width*10, g.game.board.height*10)
+	return fyne.NewSize(int(float64(minXCount*cellSize)/pixDensity), int(float64(minYCount*cellSize)/pixDensity))
 }
 
 func (g *gameRenderer) Layout(size fyne.Size) {
@@ -189,10 +228,11 @@ func (g *gameRenderer) draw(w, h int) image.Image {
 		img = image.NewRGBA(image.Rect(0, 0, w, h))
 		g.imgCache = img
 	}
+	g.game.board.ensureGridSize(g.game.cellForCoord(w, h))
 
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
-			xpos, ypos := g.game.cellForCoord(x, y, w, h)
+			xpos, ypos := g.game.cellForCoord(x, y)
 
 			if xpos < g.game.board.width && ypos < g.game.board.height && g.game.board.cells[ypos][xpos] {
 				img.Set(x, y, g.aliveColor)
@@ -222,9 +262,9 @@ func (g *game) CreateRenderer() fyne.WidgetRenderer {
 	return renderer
 }
 
-func (g *game) cellForCoord(x, y, w, h int) (int, int) {
-	xpos := int(float64(g.board.width) * (float64(x) / float64(w)))
-	ypos := int(float64(g.board.height) * (float64(y) / float64(h)))
+func (g *game) cellForCoord(x, y int) (int, int) {
+	xpos := int(float64(x) / float64(cellSize) / pixDensity)
+	ypos := int(float64(y) / float64(cellSize) / pixDensity)
 
 	return xpos, ypos
 }
@@ -267,7 +307,7 @@ func (g *game) typedRune(r rune) {
 }
 
 func (g *game) Tapped(ev *fyne.PointEvent) {
-	xpos, ypos := g.cellForCoord(ev.Position.X, ev.Position.Y, g.Size().Width, g.Size().Height)
+	xpos, ypos := g.cellForCoord(int(float64(ev.Position.X)*pixDensity), int(float64(ev.Position.Y)*pixDensity))
 
 	if ev.Position.X < 0 || ev.Position.Y < 0 || xpos >= g.board.width || ypos >= g.board.height {
 		return
@@ -288,9 +328,14 @@ func newGame(b *board) *game {
 	return g
 }
 
+func (g *game) adaptToTextureSize(c fyne.Canvas) {
+	pixW, _ := c.PixelCoordinateForPosition(fyne.NewPos(cellSize, cellSize))
+	pixDensity = float64(pixW) / float64(cellSize)
+}
+
 // Show starts a new game of life
 func Show(app fyne.App) {
-	board := newBoard()
+	board := newBoard(minXCount, minYCount)
 	board.load()
 
 	game := newGame(board)
@@ -302,6 +347,7 @@ func Show(app fyne.App) {
 	})
 	window.SetContent(fyne.NewContainerWithLayout(layout.NewBorderLayout(nil, pause, nil, nil), pause, game))
 	window.Canvas().SetOnTypedRune(game.typedRune)
+	game.adaptToTextureSize(window.Canvas())
 
 	// start the board animation before we show the window - it will block
 	game.animate()

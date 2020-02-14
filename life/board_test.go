@@ -57,3 +57,12 @@ func TestBoard_EnsureGridSize(t *testing.T) {
 	assert.Equal(t, 4, len(b.cells[0]))
 	assert.True(t, b.cells[1][1])
 }
+
+func TestBoard_Generatoin(t *testing.T) {
+	b := &board{}
+	b.createGrid(5, 5)
+	assert.Equal(t, 0, b.generation)
+
+	b.nextGen()
+	assert.Equal(t, 1, b.generation)
+}

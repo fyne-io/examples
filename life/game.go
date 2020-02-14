@@ -1,12 +1,14 @@
 package life
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"time"
 
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
 )
@@ -83,8 +85,10 @@ func (g *gameRenderer) draw(w, h int) image.Image {
 
 type game struct {
 	widget.BaseWidget
-	board  *board
-	paused bool
+
+	genText *widget.Label
+	board   *board
+	paused  bool
 }
 
 func (g *game) CreateRenderer() fyne.WidgetRenderer {
@@ -128,8 +132,8 @@ func (g *game) animate() {
 					continue
 				}
 
-				state := g.board.nextGen()
-				g.board.renderState(state)
+				g.board.nextGen()
+				g.updateGeneration()
 				widget.Refresh(g)
 			}
 		}
@@ -157,8 +161,28 @@ func (g *game) Tapped(ev *fyne.PointEvent) {
 func (g *game) TappedSecondary(ev *fyne.PointEvent) {
 }
 
+func (g *game) buildUI() fyne.CanvasObject {
+	var pause *widget.Button
+	pause = widget.NewButton("Pause", func() {
+		g.paused = !g.paused
+
+		if g.paused {
+			pause.SetText("Resume")
+		} else {
+			pause.SetText("Pause")
+		}
+	})
+
+	title := fyne.NewContainerWithLayout(layout.NewGridLayout(2), g.genText, pause)
+	return fyne.NewContainerWithLayout(layout.NewBorderLayout(title, nil, nil, nil), title, g)
+}
+
+func (g *game) updateGeneration() {
+	g.genText.SetText(fmt.Sprintf("Generation %d", g.board.generation))
+}
+
 func newGame(b *board) *game {
-	g := &game{board: b}
+	g := &game{board: b, genText: widget.NewLabel("Generation 0")}
 	g.ExtendBaseWidget(g)
 
 	return g

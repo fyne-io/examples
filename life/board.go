@@ -1,9 +1,9 @@
 package life
 
 type board struct {
-	cells  [][]bool
-	width  int
-	height int
+	cells         [][]bool
+	generation    int
+	width, height int
 }
 
 func (b *board) ifAlive(x, y int) int {
@@ -38,7 +38,18 @@ func (b *board) countNeighbours(x, y int) int {
 	return sum
 }
 
-func (b *board) nextGen() [][]bool {
+func (b *board) nextGen() {
+	state := b.computeNextGen()
+	b.generation++
+
+	for y := 0; y < b.height; y++ {
+		for x := 0; x < b.width; x++ {
+			b.cells[y][x] = state[y][x]
+		}
+	}
+}
+
+func (b *board) computeNextGen() [][]bool {
 	state := make([][]bool, b.height)
 
 	for y := 0; y < b.height; y++ {
@@ -56,14 +67,6 @@ func (b *board) nextGen() [][]bool {
 	}
 
 	return state
-}
-
-func (b *board) renderState(state [][]bool) {
-	for y := 0; y < b.height; y++ {
-		for x := 0; x < b.width; x++ {
-			b.cells[y][x] = state[y][x]
-		}
-	}
 }
 
 func (b *board) createGrid(w, h int) {

@@ -2,9 +2,6 @@ package life
 
 import (
 	"fyne.io/fyne"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/widget"
-
 	"github.com/fyne-io/examples/img/icon"
 )
 
@@ -17,15 +14,12 @@ const (
 func Show(app fyne.App) {
 	board := newBoard(minXCount, minYCount)
 	board.load()
-
 	game := newGame(board)
 
 	window := app.NewWindow("Life")
 	window.SetIcon(icon.LifeBitmap)
-	pause := widget.NewButton("Pause", func() {
-		game.paused = !game.paused
-	})
-	window.SetContent(fyne.NewContainerWithLayout(layout.NewBorderLayout(nil, pause, nil, nil), pause, game))
+
+	window.SetContent(game.buildUI())
 	window.Canvas().SetOnTypedRune(game.typedRune)
 	game.adaptToTextureSize(window.Canvas())
 

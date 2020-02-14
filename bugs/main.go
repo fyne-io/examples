@@ -1,6 +1,7 @@
 package bugs
 
 import (
+	"fmt"
 	"image/color"
 
 	"fyne.io/fyne"
@@ -21,17 +22,22 @@ func init() {
 }
 
 type gameRenderer struct {
-	grid *fyne.Container
+	grid   *fyne.Container
+	header fyne.CanvasObject
 
 	game *game
 }
 
 func (g *gameRenderer) MinSize() fyne.Size {
-	return g.grid.MinSize()
+	return g.grid.MinSize().Add(fyne.NewSize(0, g.header.MinSize().Height))
 }
 
 func (g *gameRenderer) Layout(size fyne.Size) {
-	g.grid.Layout.Layout(g.grid.Objects, size)
+	headerHeight := g.header.MinSize().Height
+	g.header.Resize(fyne.NewSize(size.Width, headerHeight))
+	g.grid.Move(fyne.NewPos(0, headerHeight)) // TODO why ignored?
+	gridSize := size.Subtract(fyne.NewSize(0, headerHeight))
+	g.grid.Layout.Layout(g.grid.Objects, gridSize)
 }
 
 func (g *gameRenderer) ApplyTheme() {
@@ -46,7 +52,7 @@ func (g *gameRenderer) Refresh() {
 }
 
 func (g *gameRenderer) Objects() []fyne.CanvasObject {
-	return g.grid.Objects
+	return []fyne.CanvasObject{g.grid, g.header}
 }
 
 func (g *gameRenderer) Destroy() {
@@ -54,7 +60,8 @@ func (g *gameRenderer) Destroy() {
 
 type game struct {
 	widget.BaseWidget
-	board *board
+	board  *board
+	remain *widget.Label
 
 	window fyne.Window
 }
@@ -122,6 +129,11 @@ func (g *game) refreshFrom(x, y int) {
 
 func (g *game) CreateRenderer() fyne.WidgetRenderer {
 	renderer := &gameRenderer{game: g}
+	title := widget.NewLabel("Hunt bugs!")
+	g.remain = widget.NewLabel("")
+	g.updateRemain()
+	renderer.header = fyne.NewContainerWithLayout(layout.NewBorderLayout(nil, nil, title, g.remain),
+		title, g.remain)
 
 	var buttons []fyne.CanvasObject
 	for y := 0; y < g.board.height; y++ {
@@ -134,6 +146,8 @@ func (g *game) CreateRenderer() fyne.WidgetRenderer {
 				} else {
 					g.squareFlagged(xx, yy)
 				}
+
+				g.updateRemain()
 			}))
 		}
 	}
@@ -162,6 +176,7 @@ func (g *game) loseCallback(yes bool) {
 	}
 
 	g.board.load(40)
+	g.updateRemain()
 	g.refreshFrom(g.board.width/2, g.board.height/2)
 }
 
@@ -173,6 +188,10 @@ func (g *game) lose() {
 	dialog.ShowConfirm("You lost!", "You hit a bug and lost the game, try again?", g.loseCallback, g.window)
 }
 
+func (g *game) updateRemain() {
+	g.remain.SetText(fmt.Sprintf("remaining: %d", g.board.remaining()))
+}
+
 func newGame(f *board) *game {
 	g := &game{board: f}
 	g.ExtendBaseWidget(g)
@@ -182,7 +201,7 @@ func newGame(f *board) *game {
 
 // Show starts a new bugs game
 func Show(app fyne.App) {
-	b := newBoard(16, 16)
+	b := newBoard(20, 14)
 	game := newGame(b)
 
 	b.win = game.win

@@ -81,6 +81,15 @@ func TestBoard_setMines(t *testing.T) {
 	assert.Equal(t, 1, b.bugs[2][3].near)
 }
 
+func TestBoard_remaining(t *testing.T) {
+	b := newBoard(3, 3)
+	b.load(1)
+
+	assert.Equal(t, 1, b.remaining())
+	b.flag(0, 0)
+	assert.Equal(t, 0, b.remaining())
+}
+
 func TestBoard_reveal(t *testing.T) {
 	b := newBoard(3, 3)
 	b.load(0)

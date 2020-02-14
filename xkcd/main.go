@@ -118,6 +118,10 @@ func (x *XKCD) DataToScreen() {
 			if newline := strings.IndexAny(v, "\n.-,"); newline > -1 {
 				v = v[:newline] + "..."
 			}
+			// NOTE: See Id == 1459
+			if len(v) > 100 {
+				v = v[:100] + "..."
+			}
 			x.labels[tag].SetText(v)
 		}
 	}
@@ -174,5 +178,7 @@ func Show(app fyne.App) {
 	w.SetContent(fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(controlsContainer, nil, nil, nil),
 		controlsContainer, imageContainer))
+	w.Resize(fyne.NewSize(1000, 800)) // will limit to screensize
+	w.CenterOnScreen()
 	w.Show()
 }

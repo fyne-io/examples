@@ -18,7 +18,7 @@ var (
 )
 
 const (
-	cellSize = 10
+	cellSize = 8
 )
 
 type gameRenderer struct {

@@ -80,6 +80,9 @@ func (b *board) createGrid(w, h int) {
 }
 
 func (b *board) ensureGridSize(w, h int) {
+	if w <= 0 || h <= 0 { // for some reason we can be packed in below minsize on mobile - fyne#718
+		return
+	}
 	yDelta := h - b.height
 	xDelta := w - b.width
 

@@ -13,10 +13,6 @@ import (
 	"fyne.io/fyne/widget"
 )
 
-var (
-	pixDensity = 1.0
-)
-
 const (
 	cellSize = 8
 )
@@ -33,6 +29,7 @@ type gameRenderer struct {
 }
 
 func (g *gameRenderer) MinSize() fyne.Size {
+	pixDensity := g.game.pixelDensity()
 	return fyne.NewSize(int(float64(minXCount*cellSize)/pixDensity), int(float64(minYCount*cellSize)/pixDensity))
 }
 
@@ -61,16 +58,18 @@ func (g *gameRenderer) Destroy() {
 }
 
 func (g *gameRenderer) draw(w, h int) image.Image {
+	pixDensity := g.game.pixelDensity()
+
 	img := g.imgCache
 	if img == nil || img.Bounds().Size().X != w || img.Bounds().Size().Y != h {
 		img = image.NewRGBA(image.Rect(0, 0, w, h))
 		g.imgCache = img
 	}
-	g.game.board.ensureGridSize(g.game.cellForCoord(w, h))
+	g.game.board.ensureGridSize(g.game.cellForCoord(w, h, pixDensity))
 
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
-			xpos, ypos := g.game.cellForCoord(x, y)
+			xpos, ypos := g.game.cellForCoord(x, y, pixDensity)
 
 			if xpos < g.game.board.width && ypos < g.game.board.height && g.game.board.cells[ypos][xpos] {
 				img.Set(x, y, g.aliveColor)
@@ -102,9 +101,9 @@ func (g *game) CreateRenderer() fyne.WidgetRenderer {
 	return renderer
 }
 
-func (g *game) cellForCoord(x, y int) (int, int) {
-	xpos := int(float64(x) / float64(cellSize) / pixDensity)
-	ypos := int(float64(y) / float64(cellSize) / pixDensity)
+func (g *game) cellForCoord(x, y int, density float64) (int, int) {
+	xpos := int(float64(x) / float64(cellSize) / density)
+	ypos := int(float64(y) / float64(cellSize) / density)
 
 	return xpos, ypos
 }
@@ -147,7 +146,8 @@ func (g *game) typedRune(r rune) {
 }
 
 func (g *game) Tapped(ev *fyne.PointEvent) {
-	xpos, ypos := g.cellForCoord(int(float64(ev.Position.X)*pixDensity), int(float64(ev.Position.Y)*pixDensity))
+	pixDensity := g.pixelDensity()
+	xpos, ypos := g.cellForCoord(int(float64(ev.Position.X)*pixDensity), int(float64(ev.Position.Y)*pixDensity), pixDensity)
 
 	if ev.Position.X < 0 || ev.Position.Y < 0 || xpos >= g.board.width || ypos >= g.board.height {
 		return
@@ -181,14 +181,19 @@ func (g *game) updateGeneration() {
 	g.genText.SetText(fmt.Sprintf("Generation %d", g.board.generation))
 }
 
+func (g *game) pixelDensity() float64 {
+	c := fyne.CurrentApp().Driver().CanvasForObject(g)
+	if c == nil {
+		return 1.0
+	}
+
+	pixW, _ := c.PixelCoordinateForPosition(fyne.NewPos(cellSize, cellSize))
+	return float64(pixW) / float64(cellSize)
+}
+
 func newGame(b *board) *game {
 	g := &game{board: b, genText: widget.NewLabel("Generation 0")}
 	g.ExtendBaseWidget(g)
 
 	return g
-}
-
-func (g *game) adaptToTextureSize(c fyne.Canvas) {
-	pixW, _ := c.PixelCoordinateForPosition(fyne.NewPos(cellSize, cellSize))
-	pixDensity = float64(pixW) / float64(cellSize)
 }

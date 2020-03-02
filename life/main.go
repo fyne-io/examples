@@ -21,7 +21,6 @@ func Show(app fyne.App) {
 
 	window.SetContent(game.buildUI())
 	window.Canvas().SetOnTypedRune(game.typedRune)
-	game.adaptToTextureSize(window.Canvas())
 
 	// start the board animation before we show the window - it will block
 	game.animate()

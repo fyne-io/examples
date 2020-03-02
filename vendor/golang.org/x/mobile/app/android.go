@@ -41,6 +41,9 @@ EGLSurface surface;
 char* createEGLSurface(ANativeWindow* window);
 char* destroyEGLSurface();
 int32_t getKeyRune(JNIEnv* env, AInputEvent* e);
+
+void ShowKeyboard(JNIEnv* env);
+void HideKeyboard(JNIEnv* env);
 */
 import "C"
 import (
@@ -134,6 +137,7 @@ func onCreate(activity *C.ANativeActivity) {
 
 //export onDestroy
 func onDestroy(activity *C.ANativeActivity) {
+	activityDestroyed <- struct{}{}
 }
 
 //export onWindowFocusChanged
@@ -256,6 +260,7 @@ var (
 	windowRedrawNeeded = make(chan *C.ANativeWindow)
 	windowRedrawDone   = make(chan struct{})
 	windowConfigChange = make(chan windowConfig)
+	activityDestroyed  = make(chan struct{})
 )
 
 func init() {
@@ -278,7 +283,38 @@ func main(f func(App)) {
 	}
 }
 
+// driverShowVirtualKeyboard requests the driver to show a virtual keyboard for text input
+func driverShowVirtualKeyboard() {
+	if err := mobileinit.RunOnJVM(showSoftInput); err != nil {
+		log.Fatalf("app: %v", err)
+	}
+}
+
+func showSoftInput(vm, jniEnv, ctx uintptr) error {
+	env := (*C.JNIEnv)(unsafe.Pointer(jniEnv)) // not a Go heap pointer
+	C.ShowKeyboard(env)
+	return nil
+}
+
+// driverHideVirtualKeyboard requests the driver to hide any visible virtual keyboard
+func driverHideVirtualKeyboard() {
+	if err := mobileinit.RunOnJVM(hideSoftInput); err != nil {
+		log.Fatalf("app: %v", err)
+	}
+}
+
+func hideSoftInput(vm, jniEnv, ctx uintptr) error {
+	env := (*C.JNIEnv)(unsafe.Pointer(jniEnv)) // not a Go heap pointer
+	C.HideKeyboard(env)
+	return nil
+}
+
 var mainUserFn func(App)
+
+var DisplayMetrics struct{
+	WidthPx int
+	HeightPx int
+}
 
 func mainUI(vm, jniEnv, ctx uintptr) error {
 	workAvailable := theApp.worker.WorkAvailable()
@@ -290,7 +326,6 @@ func mainUI(vm, jniEnv, ctx uintptr) error {
 	}()
 
 	var pixelsPerPt float32
-	var orientation size.Orientation
 
 	for {
 		select {
@@ -298,12 +333,13 @@ func mainUI(vm, jniEnv, ctx uintptr) error {
 			return nil
 		case cfg := <-windowConfigChange:
 			pixelsPerPt = cfg.pixelsPerPt
-			orientation = cfg.orientation
 		case w := <-windowRedrawNeeded:
 			if C.surface == nil {
 				if errStr := C.createEGLSurface(w); errStr != nil {
 					return fmt.Errorf("%s (%s)", C.GoString(errStr), eglGetError())
 				}
+				DisplayMetrics.WidthPx = int(C.ANativeWindow_getWidth(w))
+				DisplayMetrics.HeightPx = int(C.ANativeWindow_getHeight(w))
 			}
 			theApp.sendLifecycle(lifecycle.StageFocused)
 			widthPx := int(C.ANativeWindow_getWidth(w))
@@ -314,7 +350,7 @@ func mainUI(vm, jniEnv, ctx uintptr) error {
 				WidthPt:     geom.Pt(float32(widthPx) / pixelsPerPt),
 				HeightPt:    geom.Pt(float32(heightPx) / pixelsPerPt),
 				PixelsPerPt: pixelsPerPt,
-				Orientation: orientation,
+				Orientation: screenOrientation(widthPx, heightPx), // we are guessing orientation here as it was not always working
 			}
 			theApp.eventsIn <- paint.Event{External: true}
 		case <-windowDestroyed:
@@ -325,6 +361,8 @@ func mainUI(vm, jniEnv, ctx uintptr) error {
 			}
 			C.surface = nil
 			theApp.sendLifecycle(lifecycle.StageAlive)
+		case <-activityDestroyed:
+			theApp.sendLifecycle(lifecycle.StageDead)
 		case <-workAvailable:
 			theApp.worker.DoWork()
 		case <-theApp.publish:

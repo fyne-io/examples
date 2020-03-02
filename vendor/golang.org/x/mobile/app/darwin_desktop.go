@@ -137,6 +137,7 @@ func setGeom(pixelsPerPt float32, widthPx, heightPx int) {
 		WidthPt:     geom.Pt(float32(widthPx) / pixelsPerPt),
 		HeightPt:    geom.Pt(float32(heightPx) / pixelsPerPt),
 		PixelsPerPt: pixelsPerPt,
+		Orientation: screenOrientation(widthPx, heightPx),
 	}
 }
 
@@ -225,6 +226,14 @@ func lifecycleVisible() {
 
 //export lifecycleFocused
 func lifecycleFocused() { theApp.sendLifecycle(lifecycle.StageFocused) }
+
+// driverShowVirtualKeyboard does nothing on desktop
+func driverShowVirtualKeyboard() {
+}
+
+// driverHideVirtualKeyboard does nothing on desktop
+func driverHideVirtualKeyboard() {
+}
 
 // convRune marks the Carbon/Cocoa private-range unicode rune representing
 // a non-unicode key event to -1, used for Rune in the key package.

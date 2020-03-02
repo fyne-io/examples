@@ -19,8 +19,7 @@ import (
 	"fyne.io/fyne/internal/driver"
 	"fyne.io/fyne/internal/painter/gl"
 	"fyne.io/fyne/widget"
-
-	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
 const (
@@ -31,6 +30,7 @@ const (
 var (
 	defaultCursor, entryCursor, hyperlinkCursor *glfw.Cursor
 	initOnce                                    = &sync.Once{}
+	defaultTitle                                = "Fyne Application"
 )
 
 func initCursors() {
@@ -153,7 +153,12 @@ func (w *window) screenSize(canvasSize fyne.Size) (int, int) {
 }
 
 func (w *window) RequestFocus() {
-	runOnMain(w.viewport.Focus)
+	runOnMain(func() {
+		err := w.viewport.Focus()
+		if err != nil {
+			fyne.LogError("Error requesting focus", err)
+		}
+	})
 }
 
 func (w *window) Resize(size fyne.Size) {
@@ -246,6 +251,9 @@ func (w *window) fitContent() {
 		w.viewport.SetSize(w.width, w.height)
 	}
 	if w.fixedSize {
+		w.width = internal.ScaleInt(w.canvas, w.Canvas().Size().Width)
+		w.height = internal.ScaleInt(w.canvas, w.Canvas().Size().Height)
+
 		w.viewport.SetSizeLimits(w.width, w.height, w.width, w.height)
 	} else {
 		w.viewport.SetSizeLimits(minWidth, minHeight, glfw.DontCare, glfw.DontCare)
@@ -331,7 +339,6 @@ func (w *window) detectScale() float32 {
 	if dpi > 1000 || dpi < 10 {
 		dpi = 96
 	}
-
 	return float32(float64(dpi) / 96.0)
 }
 
@@ -446,13 +453,13 @@ func (w *window) moved(viewport *glfw.Window, x, y int) {
 	// save coordinates
 	w.xpos, w.ypos = x, y
 
-	if w.canvas.detectedScale == w.detectScale() {
+	newDetected := w.detectScale()
+	if w.canvas.detectedScale == newDetected {
 		return
 	}
 
-	w.canvas.detectedScale = w.detectScale()
-	go w.canvas.SetScale(fyne.SettingsScaleAuto) // scale is ignored
-	w.rescaleOnMain()
+	w.canvas.detectedScale = newDetected
+	go w.canvas.SetScale(fyne.SettingsScaleAuto) // scale value is ignored
 }
 
 func (w *window) resized(viewport *glfw.Window, width, height int) {
@@ -940,11 +947,13 @@ func desktopModifier(mods glfw.ModifierKey) desktop.Modifier {
 	return m
 }
 
-// charInput defines the character with modifiers callback which is called when a
-// Unicode character is input.
+// charModInput defines the character with modifiers callback which is called when a
+// Unicode character is input regardless of what modifier keys are used.
 //
-// Characters do not map 1:1 to physical keys, as a key may produce zero, one or more characters.
-func (w *window) charInput(viewport *glfw.Window, char rune) {
+// The character with modifiers callback is intended for implementing custom
+// Unicode character input. Characters do not map 1:1 to physical keys,
+// as a key may produce zero, one or more characters.
+func (w *window) charModInput(viewport *glfw.Window, char rune, mods glfw.ModifierKey) {
 	if w.canvas.Focused() == nil && w.canvas.onTypedRune == nil {
 		return
 	}
@@ -1026,21 +1035,15 @@ func (w *window) waitForEvents() {
 }
 
 func (d *gLDriver) CreateWindow(title string) fyne.Window {
-	return d.createWindow(title, true)
-}
-
-func (d *gLDriver) createWindow(title string, decorate bool) fyne.Window {
 	var ret *window
+	if title == "" {
+		title = defaultTitle
+	}
 	runOnMain(func() {
 		initOnce.Do(d.initGLFW)
 
 		// make the window hidden, we will set it up and then show it later
 		glfw.WindowHint(glfw.Visible, 0)
-		if decorate {
-			glfw.WindowHint(glfw.Decorated, 1)
-		} else {
-			glfw.WindowHint(glfw.Decorated, 0)
-		}
 		initWindowHints()
 
 		win, err := glfw.CreateWindow(10, 10, title, nil, nil)
@@ -1074,18 +1077,11 @@ func (d *gLDriver) createWindow(title string, decorate bool) fyne.Window {
 		win.SetMouseButtonCallback(ret.mouseClicked)
 		win.SetScrollCallback(ret.mouseScrolled)
 		win.SetKeyCallback(ret.keyPressed)
-		win.SetCharCallback(ret.charInput)
+		win.SetCharModsCallback(ret.charModInput)
 		win.SetFocusCallback(ret.focused)
 		glfw.DetachCurrentContext()
 	})
 	return ret
-}
-
-func (d *gLDriver) CreateSplashWindow() fyne.Window {
-	win := d.createWindow("", false)
-	win.SetPadded(false)
-	win.CenterOnScreen()
-	return win
 }
 
 func (d *gLDriver) AllWindows() []fyne.Window {

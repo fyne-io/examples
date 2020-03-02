@@ -2,8 +2,7 @@ package glfw
 
 import (
 	"fyne.io/fyne"
-
-	"github.com/go-gl/glfw/v3.3/glfw"
+	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
 // Declare conformity with Clipboard interface
@@ -16,16 +15,14 @@ type clipboard struct {
 
 // Content returns the clipboard content
 func (c *clipboard) Content() string {
-	content := ""
-	runOnMain(func() {
-		content = glfw.GetClipboardString()
-	})
+	content, err := c.window.GetClipboardString()
+	if err != nil {
+		return ""
+	}
 	return content
 }
 
 // SetContent sets the clipboard content
 func (c *clipboard) SetContent(content string) {
-	runOnMain(func() {
-		glfw.SetClipboardString(content)
-	})
+	c.window.SetClipboardString(content)
 }

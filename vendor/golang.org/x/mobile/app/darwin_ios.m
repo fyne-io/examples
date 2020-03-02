@@ -18,6 +18,9 @@ struct utsname sysInfo;
 @interface GoAppAppController : GLKViewController<UIContentContainer, GLKViewDelegate>
 @end
 
+@interface GoInputView : UITextField<UITextFieldDelegate>
+@end
+
 @interface GoAppAppDelegate : UIResponder<UIApplicationDelegate>
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) GoAppAppController *controller;
@@ -25,6 +28,13 @@ struct utsname sysInfo;
 
 @implementation GoAppAppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    int scale = 1;
+    if ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)]) {
+		scale = (int)[UIScreen mainScreen].scale; // either 1.0, 2.0, or 3.0.
+	}
+    CGSize size = [UIScreen mainScreen].bounds.size;
+    setDisplayMetrics((int)size.width, (int)size.height, scale);
+
 	lifecycleAlive();
 	self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 	self.controller = [[GoAppAppController alloc] initWithNibName:nil bundle:nil];
@@ -53,6 +63,7 @@ struct utsname sysInfo;
 @interface GoAppAppController ()
 @property (strong, nonatomic) EAGLContext *context;
 @property (strong, nonatomic) GLKView *glview;
+@property (strong, nonatomic) GoInputView *inputView;
 @end
 
 @implementation GoAppAppController
@@ -66,17 +77,22 @@ struct utsname sysInfo;
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
+	self.inputView = [[GoInputView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
+	self.inputView.delegate = self.inputView;
+	self.inputView.autocapitalizationType = UITextAutocapitalizationTypeNone;
+	self.inputView.autocorrectionType = UITextAutocorrectionTypeNo;
+	[self.view addSubview:self.inputView];
 	self.glview = (GLKView*)self.view;
 	self.glview.drawableDepthFormat = GLKViewDrawableDepthFormat24;
 	self.glview.multipleTouchEnabled = true; // TODO expose setting to user.
 	self.glview.context = self.context;
 	self.glview.userInteractionEnabled = YES;
-	self.glview.enableSetNeedsDisplay = YES; // only invoked once
+	//self.glview.enableSetNeedsDisplay = YES; // only invoked once
 
 	// Do not use the GLKViewController draw loop.
-	self.paused = YES;
-	self.resumeOnDidBecomeActive = NO;
-	self.preferredFramesPerSecond = 0;
+	//self.paused = YES;
+	//self.resumeOnDidBecomeActive = NO;
+	//self.preferredFramesPerSecond = 0;
 
 	int scale = 1;
 	if ([[UIScreen mainScreen] respondsToSelector:@selector(displayLinkWithTarget:selector:)]) {
@@ -87,6 +103,10 @@ struct utsname sysInfo;
 	CGSize size = [UIScreen mainScreen].bounds.size;
 	UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
 	updateConfig((int)size.width, (int)size.height, orientation);
+
+    self.glview.enableSetNeedsDisplay = NO;
+    CADisplayLink* displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(render:)];
+    [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
@@ -98,11 +118,12 @@ struct utsname sysInfo;
 	}];
 }
 
+- (void)render:(CADisplayLink*)displayLink {
+    [self.glview display];
+}
+
 - (void)glkView:(GLKView *)view drawInRect:(CGRect)rect {
-	// Now that we have been asked to do the first draw, disable any
-	// future draw and hand control over to the Go paint.Event cycle.
-	self.glview.enableSetNeedsDisplay = NO;
-	startloop((GLintptr)self.context);
+    drawloop();
 }
 
 #define TOUCH_TYPE_BEGIN 0 // touch.TypeBegin
@@ -134,9 +155,27 @@ static void sendTouches(int change, NSSet* touches) {
 }
 @end
 
+@implementation GoInputView
+
+- (BOOL)canBecomeFirstResponder {
+    return YES;
+}
+
+- (void)deleteBackward {
+    keyboardDelete();
+}
+
+-(BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
+    keyboardTyped([string UTF8String]);
+    return NO;
+}
+
+@end
+
 void runApp(void) {
+	char * argv[] = {};
 	@autoreleasepool {
-		UIApplicationMain(0, nil, nil, NSStringFromClass([GoAppAppDelegate class]));
+		UIApplicationMain(0, argv, nil, NSStringFromClass([GoAppAppDelegate class]));
 	}
 }
 
@@ -162,4 +201,22 @@ uint64_t threadID() {
 		abort();
 	}
 	return id;
+}
+
+void showKeyboard() {
+    GoAppAppDelegate *appDelegate = (GoAppAppDelegate *)[[UIApplication sharedApplication] delegate];
+    GoInputView *view = appDelegate.controller.inputView;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        BOOL ret = [view becomeFirstResponder];
+    });
+}
+
+void hideKeyboard() {
+    GoAppAppDelegate *appDelegate = (GoAppAppDelegate *)[[UIApplication sharedApplication] delegate];
+    GoInputView *view = appDelegate.controller.inputView;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [view resignFirstResponder];
+    });
 }

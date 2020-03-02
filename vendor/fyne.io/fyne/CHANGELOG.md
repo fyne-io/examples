@@ -3,27 +3,29 @@
 This file lists the main changes with each version of the Fyne toolkit.
 More detailed release notes can be found on the [releases page](https://github.com/fyne-io/fyne/releases). 
 
-## 1.3 - In Progress
+## 1.2.3 - Ongoing
 
 ### Added
- 
-* Desktop apps can now create splash windows
-* Support changing the text on form submit/cancel buttons
+
+ * Add media and volume icons to default themes (#649)
+ * Add Canvas.PixelCoordinateForPosition to find pixel locations if required
+ * Add ProgressInfinite dialog
 
 ### Changed
 
-* Upgraded underlying GLFW library to fix various issues (#183, #61)
-
-### Fixed
-
-*
-
-
-## 1.2.3 - Ongoing
+ * Warn if -executable or -sourceDir flags are used for package on mobile (#652)
+ * Update scale based on device for mobile apps
+ * Windows without a title will now be named "Fyne Application"
 
 ### Fixed
 
  * App.UniqueID() did not return current app ID
+ * Fyne package ignored -name flag for ios and android builds (#657)
+ * Possible crash when appending tabs to TabContainer
+ * FixedSize windows not rescaling when dragged between monitors (#654)
+ * Fix issues where older Android devices may not background or rotate
+ * Crash when setting theme before window content set (#688)
+ * Correct form extend behaviour (#694)
 
 
 ## 1.2.2 - 29 January 2020

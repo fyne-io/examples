@@ -93,6 +93,7 @@ func (b *bugButton) CreateRenderer() fyne.WidgetRenderer {
 	text.TextStyle.Bold = true
 
 	icon := canvas.NewImageFromResource(b.icon)
+	icon.FillMode = canvas.ImageFillContain
 
 	objects := []fyne.CanvasObject{
 		text,

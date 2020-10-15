@@ -39,6 +39,7 @@ func Show(app fyne.App) {
 	window := app.NewWindow("File System Viewer")
 	// TODO window.SetIcon(icon.FileSystemBitmap)
 	window.SetContent(tree)
+	window.Resize(fyne.NewSize(600, 400))
 	window.Show()
 }
 

@@ -31,6 +31,9 @@ var NoTexture = Texture(gl.Texture{0})
 var textureFilterToGL = []int{gl.LINEAR, gl.NEAREST}
 
 func (p *glPainter) logError() {
+	if fyne.CurrentApp().Settings().BuildType() != fyne.BuildDebug {
+		return
+	}
 	err := p.glctx().GetError()
 	logGLError(uint32(err))
 }
@@ -95,11 +98,13 @@ func (p *glPainter) SetOutputSize(width, height int) {
 
 func (p *glPainter) freeTexture(obj fyne.CanvasObject) {
 	texture, ok := textures[obj]
-	if ok {
-		p.glctx().DeleteTexture(gl.Texture(texture))
-		p.logError()
-		delete(textures, obj)
+	if !ok {
+		return
 	}
+
+	p.glctx().DeleteTexture(gl.Texture(texture))
+	p.logError()
+	delete(textures, obj)
 }
 
 func (p *glPainter) compileShader(source string, shaderType gl.Enum) (gl.Shader, error) {

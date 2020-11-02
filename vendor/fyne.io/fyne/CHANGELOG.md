@@ -3,6 +3,136 @@
 This file lists the main changes with each version of the Fyne toolkit.
 More detailed release notes can be found on the [releases page](https://github.com/fyne-io/fyne/releases). 
 
+## 1.4 - 1 November 2020
+
+### Added (highlights)
+
+* List (#156), Table (#157) and Tree collection Widgets
+* Card, FileItem, Separator widgets
+* ColorPicker dialog
+* User selection of primary colour
+* Container API package to ease using layouts and container widgets
+* Add input validation
+* ListableURI for working with directories etc
+* Added PaddedLayout
+
+* Window.SetCloseIntercept (#467)
+* Canvas.InteractiveArea() to indicate where widgets should avoid
+* TextFormatter for ProgressBar
+* FileDialog.SetLocation() (#821)
+* Added dialog.ShowFolderOpen (#941)
+* Support to install on iOS and android with 'fyne install'
+* Support asset bundling with go:generate
+* Add fyne release command for preparing signed apps
+* Add keyboard and focus support to Radio and Select widgets 
+
+### Changed
+
+* Theme update - new blue highlight, move buttons to outline
+* Android SDK target updated to 29
+* Mobile log entries now start "Fyne" instead of "GoLog"
+* Don't expand Select to its largest option (#1247)
+* Button.HideShadow replaced by Button.Importance = LowImportance
+
+* Deprecate NewContainer in favour of NewContainerWithoutLayout
+* Deprecate HBox and VBox in favour of new container APIs
+* Move Container.AddObject to Container.Add matching Container.Remove
+* Start move from widget.TabContainer to container.AppTabs
+* Replace Radio with RadioGroup
+* Deprecate WidgetRenderer.BackgroundColor
+
+### Fixed
+
+* Support focus traversal in dialog (#948), (#948)
+* Add missing AbsolutePosition in some mouse events (#1274)
+* Don't let scrollbar handle become too small
+* Ensure tab children are resized before being shown (#1331)
+* Don't hang if OpenURL loads browser (#1332)
+* Content not filling dialog (#1360)
+* Overlays not adjusting on orientation change in mobile (#1334)
+* Fix missing key events for some keypad keys (#1325)
+* Issue with non-english folder names in Linux favourites (#1248)
+* Fix overlays escaping screen interactive bounds (#1358)
+* Key events not blocked by overlays (#814)
+* Update scroll container content if it is changed (#1341)
+* Respect SelectEntry datta changes on refresh (#1462)
+* Incorrect SelectEntry dropdown button position (#1361)
+* don't allow both single and double tap events to fire (#1381)
+* Fix issue where long or tall images could jump on load (#1266, #1432)
+* Weird behaviour when resizing or minimizing a ScrollContainer (#1245)
+* Fix panic on NewTextGrid().Text()
+* Fix issue where scrollbar could jump after mousewheel scroll
+* Add missing raster support in software render
+* Respect GOOS/GOARCH in fyne command utilities
+* BSD support in build tools
+* SVG Cache could return the incorrect resource (#1479)
+
+* Many optimisations and widget performance enhancements
+* Various fixes to file creation and saving on mobile devices
+
+
+## 1.3.3 - 10 August 2020
+
+### Added
+
+* Use icons for file dialog favourites (#1186)
+* Add ScrollContainer ScrollToBottom and ScrollToTop
+
+### Changed
+
+* Make file filter case sensitive (#1185)
+
+### Fixed
+
+* Allow popups to create dialogs (#1176)
+* Use default cursor for dragging scrollbars (#1172)
+* Correctly parse SVG files with missing X/Y for rect
+* Fix visibility of Entry placeholder when text is set (#1193)
+* Fix encoding issue with Windows notifications (#1191)
+* Fix issue where content expanding on Windows could freeze (#1189)
+* Fix errors on Windows when reloading Fyne settings (#1165)
+* Dialogs not updating theme correctly (#1201)
+* Update the extended progressbar on refresh (#1219)
+* Segfault if font fails (#1200)
+* Slider rendering incorrectly when window maximized (#1223)
+* Changing form label not refreshed (#1231)
+* Files and folders starting "." show no name (#1235)
+
+
+## 1.3.2 - 11 July 2020
+
+### Added
+
+* Linux packaged apps now include a Makefile to aid install
+
+### Changed
+
+* Fyne package supports specific architectures for Android
+* Reset missing textures on refresh
+* Custom confirm callbacks now called on implicitly shown dialogs
+* SelectEntry can update drop-down list during OnChanged callback
+* TextGrid whitespace color now matches theme changes
+* Order of Window Resize(), SetFixedSize() and CenterOnScreen() does no matter before Show()
+* Containers now refresh their visuals as well as their Children on Refresh()
+
+### Fixed
+
+* Capped StrokeWidth on canvas.Line (#831)
+* Canvas lines, rectangles and circles do not resize and refresh correctly
+* Black flickering on resize on MacOS and OS X (possibly not on Catalina) (#1122)
+* Crash when resizing window under macOS (#1051, #1140)
+* Set SetFixedSize to true, the menus are overlapped (#1105)
+* Ctrl+v into text input field crashes app. Presumably clipboard is empty (#1123, #1132)
+* Slider default value doesn't stay inside range (#1128)
+* The position of window is changed when status change from show to hide, then to show (#1116)
+* Creating a windows inside onClose handler causes Fyne to panic (#1106)
+* Backspace in entry after SetText("") can crash (#1096)
+* Empty main menu causes panic (#1073)
+* Installing using `fyne install` on Linux now works on distrubutions that don't use `/usr/local`
+* Fix recommendations from staticcheck
+* Unable to overwrite file when using dialog.ShowFileSave (#1168)
+
+
 ## 1.3 - 5 June 2020
 
 ### Added
@@ -34,7 +164,7 @@ More detailed release notes can be found on the [releases page](https://github.c
 * Apps started on a goroutine will now panic as this is not supported
 * On Linux apps now simulate 120DPI instead of 96DPI
 * Improved fyne_settings scale picking user interface
-* Reorganised fyne_demo to accomodate growing collection of widgets and containers
+* Reorganised fyne_demo to accommodate growing collection of widgets and containers
 * Rendering now happens on a different thread to events for more consistent drawing
 * Improved text selection on mobile devices
 

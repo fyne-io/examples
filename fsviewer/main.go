@@ -29,7 +29,7 @@ func Show(app fyne.App) {
 	}
 	tree := newFileTree(
 		storage.NewURI("file://"+dir),
-		func(uid fyne.URI) bool {
+		func(id fyne.URI) bool {
 			return true // No filtering
 		},
 		func(a, b fyne.URI) bool {
@@ -46,8 +46,8 @@ func Show(app fyne.App) {
 func newFileTree(root fyne.URI, filter func(fyne.URI) bool, sorter func(fyne.URI, fyne.URI) bool) *widget.Tree {
 	tree := &widget.Tree{
 		Root: root.String(),
-		IsBranch: func(uid string) bool {
-			_, err := storage.ListerForURI(storage.NewURI(uid))
+		IsBranch: func(id widget.TreeNodeID) bool {
+			_, err := storage.ListerForURI(storage.NewURI(id))
 			return err == nil
 		},
 		CreateNode: func(branch bool) fyne.CanvasObject {
@@ -60,10 +60,10 @@ func newFileTree(root fyne.URI, filter func(fyne.URI) bool, sorter func(fyne.URI
 			return fyne.NewContainerWithLayout(layout.NewHBoxLayout(), icon, widget.NewLabel("Template Object"))
 		},
 	}
-	tree.ChildUIDs = func(uid string) (c []string) {
-		luri, err := storage.ListerForURI(storage.NewURI(uid))
+	tree.ChildUIDs = func(id widget.TreeNodeID) (c []string) {
+		luri, err := storage.ListerForURI(storage.NewURI(id))
 		if err != nil {
-			fyne.LogError("Unable to get lister for "+uid, err)
+			fyne.LogError("Unable to get lister for "+id, err)
 		} else {
 			uris, err := luri.List()
 			if err != nil {
@@ -90,12 +90,12 @@ func newFileTree(root fyne.URI, filter func(fyne.URI) bool, sorter func(fyne.URI
 		}
 		return
 	}
-	tree.UpdateNode = func(uid string, branch bool, node fyne.CanvasObject) {
-		uri := storage.NewURI(uid)
+	tree.UpdateNode = func(id widget.TreeNodeID, branch bool, node fyne.CanvasObject) {
+		uri := storage.NewURI(id)
 		c := node.(*fyne.Container)
 		if branch {
 			var r fyne.Resource
-			if tree.IsBranchOpen(uid) {
+			if tree.IsBranchOpen(id) {
 				// Set open folder icon
 				r = theme.FolderOpenIcon()
 			} else {
@@ -108,15 +108,15 @@ func newFileTree(root fyne.URI, filter func(fyne.URI) bool, sorter func(fyne.URI
 			c.Objects[0].(*widget.FileIcon).SetURI(uri)
 		}
 		l := c.Objects[1].(*widget.Label)
-		if tree.Root == uid {
-			l.SetText(uid)
+		if tree.Root == id {
+			l.SetText(id)
 		} else {
 			l.SetText(uri.Name())
 		}
 	}
-	tree.OnSelectionChanged = func(uid string) {
-		fmt.Println("TreeNodeSelected:", uid)
-		u, err := url.Parse(uid)
+	tree.OnSelected = func(id widget.TreeNodeID) {
+		fmt.Println("TreeNodeSelected:", id)
+		u, err := url.Parse(id)
 		if err != nil {
 			fyne.LogError("Failed to parse url", err)
 		} else {

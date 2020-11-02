@@ -7,11 +7,14 @@ import (
 	"testing"
 
 	"fyne.io/fyne/storage"
+	"fyne.io/fyne/test"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_newFileTree(t *testing.T) {
+	test.NewApp()
+
 	tempDir, err := ioutil.TempDir("", "test")
 	assert.NoError(t, err)
 	defer os.RemoveAll(tempDir)

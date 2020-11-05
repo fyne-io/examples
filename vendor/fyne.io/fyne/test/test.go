@@ -1,11 +1,7 @@
 package test
 
 import (
-	"fmt"
 	"image"
-	"image/png"
-	"os"
-	"path/filepath"
 	"testing"
 	"time"
 
@@ -13,8 +9,8 @@ import (
 	"fyne.io/fyne/driver/desktop"
 	"fyne.io/fyne/internal/cache"
 	"fyne.io/fyne/internal/driver"
+	"fyne.io/fyne/internal/test"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,35 +29,7 @@ func AssertCanvasTappableAt(t *testing.T, c fyne.Canvas, pos fyne.Position) bool
 // In this case the given image is written into a file in `testdata/failed/<masterFilename>` (relative to the test).
 // This path is also reported, thus the file can be used as new master.
 func AssertImageMatches(t *testing.T, masterFilename string, img image.Image, msgAndArgs ...interface{}) bool {
-	wd, err := os.Getwd()
-	require.NoError(t, err)
-	masterPath := filepath.Join(wd, "testdata", masterFilename)
-	failedPath := filepath.Join(wd, "testdata/failed", masterFilename)
-	_, err = os.Stat(masterPath)
-	if os.IsNotExist(err) {
-		require.NoError(t, writeImage(failedPath, img))
-		t.Errorf("Master not found at %s. Image written to %s might be used as master.", masterPath, failedPath)
-		return false
-	}
-
-	file, err := os.Open(masterPath)
-	require.NoError(t, err)
-	defer file.Close()
-	raw, _, err := image.Decode(file)
-	require.NoError(t, err)
-
-	masterPix := pixelsForImage(t, raw) // let's just compare the pixels directly
-	capturePix := pixelsForImage(t, img)
-
-	var msg string
-	if len(msgAndArgs) > 0 {
-		msg = fmt.Sprintf(msgAndArgs[0].(string)+"\n", msgAndArgs[1:]...)
-	}
-	if !assert.Equal(t, masterPix, capturePix, "%sImage did not match master. Actual image written to file://%s.", msg, failedPath) {
-		require.NoError(t, writeImage(failedPath, img))
-		return false
-	}
-	return true
+	return test.AssertImageMatches(t, masterFilename, img, msgAndArgs...)
 }
 
 // Drag drags at an absolute position on the canvas.
@@ -84,6 +52,32 @@ func Drag(c fyne.Canvas, pos fyne.Position, deltaX, deltaY int) {
 	}
 	o.(fyne.Draggable).Dragged(e)
 	o.(fyne.Draggable).DragEnd()
+}
+
+// FocusNext focuses the next focusable on the canvas.
+func FocusNext(c fyne.Canvas) {
+	if tc, ok := c.(*testCanvas); ok {
+		tc.focusManager().FocusNext()
+	} else {
+		fyne.LogError("FocusNext can only be called with a test canvas", nil)
+	}
+}
+
+// FocusPrevious focuses the previous focusable on the canvas.
+func FocusPrevious(c fyne.Canvas) {
+	if tc, ok := c.(*testCanvas); ok {
+		tc.focusManager().FocusPrevious()
+	} else {
+		fyne.LogError("FocusPrevious can only be called with a test canvas", nil)
+	}
+}
+
+// LaidOutObjects returns all fyne.CanvasObject starting at the given fyne.CanvasObject which is laid out previously.
+func LaidOutObjects(o fyne.CanvasObject) (objects []fyne.CanvasObject) {
+	if o != nil {
+		objects = layoutAndCollect(objects, o, o.MinSize().Max(o.Size()))
+	}
+	return objects
 }
 
 // MoveMouse simulates a mouse movement to the given position.
@@ -144,6 +138,13 @@ func Scroll(c fyne.Canvas, pos fyne.Position, deltaX, deltaY int) {
 
 	e := &fyne.ScrollEvent{DeltaX: deltaX, DeltaY: deltaY}
 	o.(fyne.Scrollable).Scrolled(e)
+}
+
+// DoubleTap simulates a double left mouse click on the specified object.
+func DoubleTap(obj fyne.DoubleTappable) {
+	ev, c := prepareTap(obj, fyne.NewPos(1, 1))
+	handleFocusOnTap(c, obj)
+	obj.DoubleTapped(ev)
 }
 
 // Tap simulates a left mouse click on the specified object.
@@ -261,37 +262,8 @@ func handleFocusOnTap(c fyne.Canvas, obj interface{}) {
 	}
 }
 
-func pixelsForImage(t *testing.T, img image.Image) []uint8 {
-	var pix []uint8
-	if data, ok := img.(*image.RGBA); ok {
-		pix = data.Pix
-	} else if data, ok := img.(*image.NRGBA); ok {
-		pix = data.Pix
-	}
-	if pix == nil {
-		t.Error("Master image is unsupported type")
-	}
-
-	return pix
-}
-
 func typeChars(chars []rune, keyDown func(rune)) {
 	for _, char := range chars {
 		keyDown(char)
 	}
-}
-
-func writeImage(path string, img image.Image) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
-		return err
-	}
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	if err = png.Encode(f, img); err != nil {
-		f.Close()
-		return err
-	}
-	return f.Close()
 }

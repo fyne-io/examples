@@ -86,13 +86,15 @@ func (p *glPainter) SetOutputSize(width, height int) {
 }
 
 func (p *glPainter) freeTexture(obj fyne.CanvasObject) {
-	texture := textures[obj]
-	if texture != 0 {
-		tex := uint32(texture)
-		gl.DeleteTextures(1, &tex)
-		logError()
-		delete(textures, obj)
+	texture, ok := textures[obj]
+	if !ok {
+		return
 	}
+
+	tex := uint32(texture)
+	gl.DeleteTextures(1, &tex)
+	logError()
+	delete(textures, obj)
 }
 
 func glInit() {
@@ -256,5 +258,8 @@ func (p *glPainter) glCapture(width, height int32, pixels *[]uint8) {
 }
 
 func logError() {
+	if fyne.CurrentApp().Settings().BuildType() != fyne.BuildDebug {
+		return
+	}
 	logGLError(gl.GetError())
 }

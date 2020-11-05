@@ -18,14 +18,19 @@ type Raster struct {
 	Generator func(w, h int) image.Image // Render the raster image from code
 
 	Translucency float64 // Set a translucency value > 0.0 to fade the raster
-
-	img draw.Image // internal cache for pixel based generator functions
 }
 
 // Alpha is a convenience function that returns the alpha value for a raster
 // based on its Translucency value. The result is 1.0 - Translucency.
 func (r *Raster) Alpha() float64 {
 	return 1.0 - r.Translucency
+}
+
+// Resize on a raster image causes the new size to be set and then calls Refresh.
+// This causes the underlying data to be recalculated and a new output to be drawn.
+func (r *Raster) Resize(s fyne.Size) {
+	r.baseObject.Resize(s)
+	Refresh(r)
 }
 
 // Refresh causes this object to be redrawn in it's current state

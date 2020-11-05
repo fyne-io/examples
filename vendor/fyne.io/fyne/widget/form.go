@@ -12,11 +12,13 @@ import (
 type FormItem struct {
 	Text   string
 	Widget fyne.CanvasObject
+
+	validationError error
 }
 
 // NewFormItem creates a new form item with the specified label text and input widget
 func NewFormItem(text string, widget fyne.CanvasObject) *FormItem {
-	return &FormItem{text, widget}
+	return &FormItem{Text: text, Widget: widget}
 }
 
 // Form widget is two column grid where each row has a label and a widget (usually an input).
@@ -61,6 +63,8 @@ func (f *Form) AppendItem(item *FormItem) {
 		f.itemGrid.AddObject(item.Widget)
 	}
 
+	f.setUpValidation(item.Widget, len(f.Items)-1)
+
 	f.Refresh()
 }
 
@@ -73,12 +77,13 @@ func (f *Form) MinSize() fyne.Size {
 // Refresh updates the widget state when requested.
 func (f *Form) Refresh() {
 	cache.Renderer(f.super()) // we are about to make changes to renderer created content... not great!
-	f.setButtons()
+	f.updateButtons()
+	f.updateLabels()
 	f.BaseWidget.Refresh()
 	canvas.Refresh(f.super()) // refresh ourselves for BG color - the above updates the content
 }
 
-func (f *Form) setButtons() {
+func (f *Form) updateButtons() {
 	if f.CancelText == "" {
 		f.CancelText = "Cancel"
 	}
@@ -106,25 +111,63 @@ func (f *Form) setButtons() {
 	} else {
 		f.buttonBox.Show()
 	}
+
+	f.checkValidation()
+}
+
+func (f *Form) checkValidation() {
+	for i, item := range f.Items {
+		if item.validationError != nil {
+			f.submitButton.Disable()
+			break
+		} else if i == len(f.Items)-1 {
+			f.submitButton.Enable()
+		}
+	}
+}
+
+func (f *Form) setUpValidation(widget fyne.CanvasObject, i int) {
+	if w, ok := widget.(fyne.Validatable); ok {
+		w.SetOnValidationChanged(func(err error) {
+			f.Items[i].validationError = err
+			if err != nil {
+				f.submitButton.Disable()
+			} else {
+				f.checkValidation()
+			}
+		})
+	}
+}
+
+func (f *Form) updateLabels() {
+	for i, item := range f.Items {
+		l := f.itemGrid.Objects[i*2].(*Label)
+		if l.Text == item.Text {
+			continue
+		}
+
+		l.SetText(item.Text)
+	}
 }
 
 // CreateRenderer is a private method to Fyne which links this widget to its renderer
 func (f *Form) CreateRenderer() fyne.WidgetRenderer {
 	f.ExtendBaseWidget(f)
 	itemGrid := fyne.NewContainerWithLayout(layout.NewFormLayout(), []fyne.CanvasObject{}...)
-	for _, item := range f.Items {
+	for i, item := range f.Items {
 		itemGrid.AddObject(f.createLabel(item.Text))
 		itemGrid.AddObject(item.Widget)
+		f.setUpValidation(item.Widget, i)
 	}
 	f.itemGrid = itemGrid
 
 	f.cancelButton = NewButtonWithIcon("", theme.CancelIcon(), f.OnCancel)
 	f.submitButton = NewButtonWithIcon("", theme.ConfirmIcon(), f.OnSubmit)
-	f.submitButton.Style = PrimaryButton
+	f.submitButton.Importance = HighImportance
 	f.buttonBox = NewHBox(layout.NewSpacer(), f.cancelButton, f.submitButton)
 
 	renderer := cache.Renderer(NewVBox(f.itemGrid, f.buttonBox))
-	f.setButtons() // will set correct visibility on the submit/cancel btns
+	f.updateButtons() // will set correct visibility on the submit/cancel btns
 	return renderer
 }
 

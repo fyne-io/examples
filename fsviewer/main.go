@@ -28,7 +28,7 @@ func Show(app fyne.App) {
 		return
 	}
 	tree := newFileTree(
-		storage.NewURI("file://"+dir),
+		storage.NewFileURI(dir),
 		func(id fyne.URI) bool {
 			return true // No filtering
 		},

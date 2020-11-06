@@ -44,11 +44,24 @@ func Show(app fyne.App) {
 }
 
 func newFileTree(root fyne.URI, filter func(fyne.URI) bool, sorter func(fyne.URI, fyne.URI) bool) *widget.Tree {
+	uriCache := make(map[widget.TreeNodeID]fyne.URI)
+	luriCache := make(map[widget.TreeNodeID]fyne.ListableURI)
 	tree := &widget.Tree{
 		Root: root.String(),
 		IsBranch: func(id widget.TreeNodeID) bool {
-			_, err := storage.ListerForURI(storage.NewURI(id))
-			return err == nil
+			if _, ok := luriCache[id]; ok {
+				return true
+			}
+			uri, ok := uriCache[id]
+			if !ok {
+				uri = storage.NewURI(id)
+				uriCache[id] = uri
+			}
+			if luri, err := storage.ListerForURI(uri); err == nil {
+				luriCache[id] = luri
+				return true
+			}
+			return false
 		},
 		CreateNode: func(branch bool) fyne.CanvasObject {
 			var icon fyne.CanvasObject
@@ -61,37 +74,52 @@ func newFileTree(root fyne.URI, filter func(fyne.URI) bool, sorter func(fyne.URI
 		},
 	}
 	tree.ChildUIDs = func(id widget.TreeNodeID) (c []string) {
-		luri, err := storage.ListerForURI(storage.NewURI(id))
-		if err != nil {
-			fyne.LogError("Unable to get lister for "+id, err)
-		} else {
-			uris, err := luri.List()
-			if err != nil {
-				fyne.LogError("Unable to list "+luri.String(), err)
-			} else {
-				// Filter URIs
-				var us []fyne.URI
-				for _, u := range uris {
-					if filter == nil || filter(u) {
-						us = append(us, u)
-					}
-				}
-				// Sort URIs
-				if sorter != nil {
-					sort.Slice(us, func(i, j int) bool {
-						return sorter(us[i], us[j])
-					})
-				}
-				// Convert to Strings
-				for _, u := range us {
-					c = append(c, u.String())
-				}
+		luri, ok := luriCache[id]
+		if !ok {
+			uri, ok := uriCache[id]
+			if !ok {
+				uri = storage.NewURI(id)
+				uriCache[id] = uri
 			}
+			l, err := storage.ListerForURI(uri)
+			if err != nil {
+				fyne.LogError("Unable to get lister for "+id, err)
+				return
+			} else {
+				luri = l
+				luriCache[id] = l
+			}
+		}
+		uris, err := luri.List()
+		if err != nil {
+			fyne.LogError("Unable to list "+luri.String(), err)
+			return
+		}
+		// Filter URIs
+		var us []fyne.URI
+		for _, u := range uris {
+			if filter == nil || filter(u) {
+				us = append(us, u)
+			}
+		}
+		// Sort URIs
+		if sorter != nil {
+			sort.Slice(us, func(i, j int) bool {
+				return sorter(us[i], us[j])
+			})
+		}
+		// Convert to Strings
+		for _, u := range us {
+			c = append(c, u.String())
 		}
 		return
 	}
 	tree.UpdateNode = func(id widget.TreeNodeID, branch bool, node fyne.CanvasObject) {
-		uri := storage.NewURI(id)
+		uri, ok := uriCache[id]
+		if !ok {
+			uri = storage.NewURI(id)
+			uriCache[id] = uri
+		}
 		c := node.(*fyne.Container)
 		if branch {
 			var r fyne.Resource

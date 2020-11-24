@@ -39,7 +39,7 @@ trivial to build :).
 
 ### Calculator
 
-Moved to [calculator repository](/fyne-io/calculator/)
+Moved to [calculator repository](https://github.com/fyne-io/calculator/)
 
 ### Bugs game (like MineSweeper)
 
@@ -72,8 +72,8 @@ A fractal viewer that can be panned and zoomed
 
 ### Solitaire
 
-Moved to [solitaire repository](/fyne-io/solitaire/)
+Moved to [solitaire repository](https://github.com/fyne-io/solitaire/)
 
 ### Life
 
-Moved to [life repository](/fyne-io/life/)
+Moved to [life repository](https://github.com/fyne-io/life/)

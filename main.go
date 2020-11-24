@@ -43,8 +43,12 @@ func main() {
 			return len(apps)
 		},
 		func() fyne.CanvasObject {
-			return container.NewBorder(nil, nil, &canvas.Image{}, nil,
-				widget.NewLabel("Text Editor"))
+			icon := &canvas.Image{}
+			label := widget.NewLabel("Text Editor")
+			labelHeight := label.MinSize().Height
+			icon.SetMinSize(fyne.NewSize(labelHeight, labelHeight))
+			return container.NewBorder(nil, nil, icon, nil,
+				label)
 		},
 		func(id widget.ListItemID, obj fyne.CanvasObject) {
 			img := obj.(*fyne.Container).Objects[1].(*canvas.Image)

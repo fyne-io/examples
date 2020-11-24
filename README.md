@@ -21,7 +21,7 @@ go run main.go
 or you can specify a particular example by naming it in the parameter list, like:
 
 ```bash
-go run main.go -calculator
+go run main.go -fractal
 ```
 
 Alternatively each app has a direct main executable in the cmd/* folders.
@@ -39,7 +39,7 @@ trivial to build :).
 
 ### Calculator
 
-![](img/calc-dark.png) &nbsp; ![](img/calc-light.png)
+Moved to [calculator repository](/fyne-io/calculator/)
 
 ### Bugs game (like MineSweeper)
 
@@ -72,12 +72,8 @@ A fractal viewer that can be panned and zoomed
 
 ### Solitaire
 
-A simple game of solitaire.
-
-![](img/solitaire.png)
+Moved to [solitaire repository](/fyne-io/solitaire/)
 
 ### Life
 
-A basic visualisation of Conway's game of life.
-
-![](img/life.png)
+Moved to [life repository](/fyne-io/life/)

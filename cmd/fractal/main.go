@@ -2,10 +2,10 @@
 package main
 
 import (
+	"fyne.io/fyne/app"
 	"github.com/fyne-io/examples/fractal"
 	"github.com/fyne-io/examples/img/icon"
 )
-import "fyne.io/fyne/app"
 
 func main() {
 	app := app.New()

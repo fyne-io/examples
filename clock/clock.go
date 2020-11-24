@@ -7,7 +7,6 @@ import (
 	"fyne.io/fyne"
 	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/theme"
-	"github.com/fyne-io/examples/img/icon"
 )
 
 type clockLayout struct {
@@ -87,11 +86,11 @@ func (c *clockLayout) render() *fyne.Container {
 	return container
 }
 
-func (c *clockLayout) animate(canvas fyne.Canvas) {
+func (c *clockLayout) animate(co fyne.CanvasObject) {
 	tick := time.NewTicker(time.Second)
 	go func() {
 		for !c.stop {
-			c.Layout(nil, canvas.Size().Subtract(fyne.NewSize(theme.Padding()*2, theme.Padding()*2)))
+			c.Layout(nil, co.Size())
 			canvas.Refresh(c.canvas)
 			<-tick.C
 		}
@@ -109,19 +108,17 @@ func (c *clockLayout) applyTheme(_ fyne.Settings) {
 }
 
 // Show loads a clock example window for the specified app context
-func Show(app fyne.App) {
-	clockWindow := app.NewWindow("Clock")
-	clockWindow.SetIcon(icon.ClockBitmap)
+func Show(win fyne.Window) fyne.CanvasObject {
 	clock := &clockLayout{}
-	clockWindow.SetOnClosed(func() {
-		clock.stop = true
-	})
+	//clockWindow.SetOnClosed(func() {
+	//	clock.stop = true
+	//})
 
 	content := clock.render()
-	go clock.animate(clockWindow.Canvas())
+	go clock.animate(content)
 
 	listener := make(chan fyne.Settings)
-	app.Settings().AddChangeListener(listener)
+	fyne.CurrentApp().Settings().AddChangeListener(listener)
 	go func() {
 		for {
 			settings := <-listener
@@ -129,6 +126,5 @@ func Show(app fyne.App) {
 		}
 	}()
 
-	clockWindow.SetContent(content)
-	clockWindow.Show()
+	return content
 }

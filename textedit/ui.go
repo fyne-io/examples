@@ -7,8 +7,6 @@ import (
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
-
-	"github.com/fyne-io/examples/img/icon"
 )
 
 type textEdit struct {
@@ -51,10 +49,7 @@ func (e *textEdit) buildToolbar() *widget.Toolbar {
 }
 
 // Show loads a new text editor
-func Show(app fyne.App) {
-	window := app.NewWindow("Text Editor")
-	window.SetIcon(icon.TextEditorBitmap)
-
+func Show(win fyne.Window) fyne.CanvasObject {
 	entry := widget.NewMultiLineEntry()
 	cursorRow := widget.NewLabel("1")
 	cursorCol := widget.NewLabel("1")
@@ -63,7 +58,7 @@ func Show(app fyne.App) {
 		cursorRow: cursorRow,
 		cursorCol: cursorCol,
 		entry:     entry,
-		window:    window,
+		window:    win,
 	}
 
 	toolbar := editor.buildToolbar()
@@ -77,20 +72,5 @@ func Show(app fyne.App) {
 		editor.updateStatus()
 	}
 
-	window.SetMainMenu(fyne.NewMainMenu(
-		fyne.NewMenu("File",
-			fyne.NewMenuItem("New", func() {
-				editor.entry.SetText("")
-			}),
-		),
-		fyne.NewMenu("Edit",
-			fyne.NewMenuItem("Cut", editor.cut),
-			fyne.NewMenuItem("Copy", editor.copy),
-			fyne.NewMenuItem("Paste", editor.paste),
-		),
-	))
-
-	window.SetContent(content)
-	window.Resize(fyne.NewSize(480, 320))
-	window.Show()
+	return content
 }

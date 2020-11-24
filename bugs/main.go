@@ -10,7 +10,6 @@ import (
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
-	"github.com/fyne-io/examples/img/icon"
 )
 
 var bug, code, flag *theme.ThemedResource
@@ -200,7 +199,7 @@ func newGame(f *board) *game {
 }
 
 // Show starts a new bugs game
-func Show(app fyne.App) {
+func Show(win fyne.Window) fyne.CanvasObject {
 	b := newBoard(20, 14)
 	game := newGame(b)
 
@@ -208,9 +207,6 @@ func Show(app fyne.App) {
 	b.lose = game.lose
 	b.load(40)
 
-	game.window = app.NewWindow("Bugs")
-	game.window.SetIcon(icon.BugBitmap)
-	game.window.SetContent(game)
-
-	game.window.Show()
+	game.window = win
+	return game
 }

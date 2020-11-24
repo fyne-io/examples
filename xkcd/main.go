@@ -18,7 +18,6 @@ import (
 	"fyne.io/fyne/canvas"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/widget"
-	"github.com/fyne-io/examples/img/icon"
 )
 
 // XKCD is an app to get xkcd images and display them
@@ -146,20 +145,15 @@ func (x *XKCD) NewForm(w fyne.Window) fyne.Widget {
 }
 
 // Show starts a new xkcd widget
-func Show(app fyne.App) {
+func Show(win fyne.Window) fyne.CanvasObject {
 	x := NewXKCD()
-	w := app.NewWindow("XKCD Viewer")
-	w.SetIcon(icon.XKCDBitmap)
 
-	form := x.NewForm(w)
+	form := x.NewForm(win)
 	submit := widget.NewButton("Submit", func() {
 		x.Submit()
 	})
 	submit.Style = widget.PrimaryButton
 	buttons := widget.NewHBox(
-		widget.NewButton("Cancel", func() {
-			w.Close()
-		}),
 		layout.NewSpacer(),
 		widget.NewButton("Random", func() {
 			x.iDEntry.Text = ""
@@ -167,8 +161,7 @@ func Show(app fyne.App) {
 		}),
 		submit)
 	x.image = &canvas.Image{FillMode: canvas.ImageFillOriginal}
-	w.SetContent(fyne.NewContainerWithLayout(
+	return fyne.NewContainerWithLayout(
 		layout.NewBorderLayout(form, buttons, nil, nil),
-		form, buttons, x.image))
-	w.Show()
+		form, buttons, x.image)
 }

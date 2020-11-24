@@ -1,3 +1,5 @@
+//go:generate fyne bundle -o data.go Icon.png
+
 package main
 
 import (
@@ -82,6 +84,7 @@ func main() {
 	}
 
 	ex := app.New()
+	ex.SetIcon(resourceIconPng)
 	launch(ex)
 	ex.Run()
 }

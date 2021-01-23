@@ -2,7 +2,7 @@
 
 package bugs
 
-import "fyne.io/fyne"
+import "fyne.io/fyne/v2"
 
 var codeIcon = &fyne.StaticResource{
 	StaticName: "code.svg",

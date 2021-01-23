@@ -4,9 +4,9 @@ import (
 	"math"
 	"time"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
-	"fyne.io/fyne/theme"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/theme"
 )
 
 type clockLayout struct {
@@ -17,16 +17,16 @@ type clockLayout struct {
 	stop   bool
 }
 
-func (c *clockLayout) rotate(hand fyne.CanvasObject, middle fyne.Position, facePosition float64, offset, length int) {
+func (c *clockLayout) rotate(hand fyne.CanvasObject, middle fyne.Position, facePosition float64, offset, length float32) {
 	rotation := math.Pi * 2 / 60 * facePosition
-	x2 := int(float64(length) * math.Sin(rotation))
-	y2 := int(float64(-length) * math.Cos(rotation))
+	x2 := length * float32(math.Sin(rotation))
+	y2 := -length * float32(math.Cos(rotation))
 
-	offX := 0
-	offY := 0
+	offX := float32(0)
+	offY := float32(0)
 	if offset > 0 {
-		offX += int(float64(offset) * math.Sin(rotation))
-		offY += int(float64(-offset) * math.Cos(rotation))
+		offX += offset * float32(math.Sin(rotation))
+		offY += -offset * float32(math.Cos(rotation))
 	}
 
 	hand.Move(fyne.NewPos(middle.X+offX, middle.Y+offY))
@@ -39,9 +39,9 @@ func (c *clockLayout) Layout(_ []fyne.CanvasObject, size fyne.Size) {
 	dotRadius := radius / 12
 	smallDotRadius := dotRadius / 8
 
-	stroke := float32(diameter) / 40
-	midStroke := float32(diameter) / 90
-	smallStroke := float32(diameter) / 200
+	stroke := diameter / 40
+	midStroke := diameter / 90
+	smallStroke := diameter / 200
 
 	size = fyne.NewSize(diameter, diameter)
 	middle := fyne.NewPos(size.Width/2, size.Height/2)
@@ -53,7 +53,7 @@ func (c *clockLayout) Layout(_ []fyne.CanvasObject, size fyne.Size) {
 	c.hour.StrokeWidth = stroke
 	c.rotate(c.hour, middle, float64((time.Now().Hour()%12)*5)+(float64(time.Now().Minute())/12), dotRadius, radius/2)
 	c.minute.StrokeWidth = midStroke
-	c.rotate(c.minute, middle, float64(time.Now().Minute())+(float64(time.Now().Second())/60), dotRadius, int(float64(radius)*.9))
+	c.rotate(c.minute, middle, float64(time.Now().Minute())+(float64(time.Now().Second())/60), dotRadius, radius*.9)
 	c.second.StrokeWidth = smallStroke
 	c.rotate(c.second, middle, float64(time.Now().Second()), 0, radius-3)
 

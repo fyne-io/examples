@@ -3,10 +3,11 @@ package textedit
 import (
 	"fmt"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 )
 
 type textEdit struct {
@@ -62,11 +63,11 @@ func Show(win fyne.Window) fyne.CanvasObject {
 	}
 
 	toolbar := editor.buildToolbar()
-	status := widget.NewHBox(layout.NewSpacer(),
+	status := container.NewHBox(layout.NewSpacer(),
 		widget.NewLabel("Cursor Row:"), cursorRow,
 		widget.NewLabel("Col:"), cursorCol)
 	content := fyne.NewContainerWithLayout(layout.NewBorderLayout(toolbar, status, nil, nil),
-		toolbar, status, widget.NewScrollContainer(entry))
+		toolbar, status, container.NewScroll(entry))
 
 	editor.entry.OnCursorChanged = func() {
 		editor.updateStatus()

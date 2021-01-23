@@ -4,20 +4,20 @@ import (
 	"fmt"
 	"image/color"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
-	"fyne.io/fyne/dialog"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 )
 
 var bug, code, flag *theme.ThemedResource
 
 func init() {
-	bug = theme.NewThemedResource(bugIcon, nil)
-	code = theme.NewThemedResource(codeIcon, nil)
-	flag = theme.NewThemedResource(flagIcon, nil)
+	bug = theme.NewThemedResource(bugIcon)
+	code = theme.NewThemedResource(codeIcon)
+	flag = theme.NewThemedResource(flagIcon)
 }
 
 type gameRenderer struct {
@@ -62,6 +62,7 @@ type game struct {
 	board  *board
 	remain *widget.Label
 
+	grid   *fyne.Container
 	window fyne.Window
 }
 
@@ -72,7 +73,7 @@ func (g *game) refreshSquare(x, y int) {
 
 	sq := g.board.bugs[y][x]
 	i := y*g.board.width + x
-	button := widget.Renderer(g).(*gameRenderer).grid.Objects[i].(*bugButton)
+	button := g.grid.Objects[i].(*bugButton)
 
 	if sq.flagged {
 		if button.icon == flag {
@@ -99,7 +100,7 @@ func (g *game) refreshSquare(x, y int) {
 		button.text = squareString(sq)
 	}
 
-	widget.Refresh(button)
+	button.Refresh()
 }
 
 func (g *game) refreshAround(xp, yp, d int) {
@@ -121,7 +122,7 @@ func (g *game) refreshAround(xp, yp, d int) {
 func (g *game) refreshFrom(x, y int) {
 	g.refreshSquare(x, y)
 
-	for i := 1; i < fyne.Max(g.board.width, g.board.height); i++ {
+	for i := 1; i < int(fyne.Max(float32(g.board.width), float32(g.board.height))); i++ {
 		g.refreshAround(x, y, i)
 	}
 }
@@ -152,6 +153,7 @@ func (g *game) CreateRenderer() fyne.WidgetRenderer {
 	}
 
 	renderer.grid = fyne.NewContainerWithLayout(layout.NewGridLayout(g.board.width), buttons...)
+	g.grid = renderer.grid
 	return renderer
 }
 

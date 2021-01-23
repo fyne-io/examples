@@ -3,10 +3,10 @@ package bugs
 import (
 	"image/color"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
-	"fyne.io/fyne/theme"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 )
 
 type bugRenderer struct {
@@ -30,7 +30,7 @@ func (b *bugRenderer) Layout(size fyne.Size) {
 	b.icon.Resize(inner)
 	b.icon.Move(fyne.NewPos(theme.Padding(), theme.Padding()))
 
-	textSize := int(float32(size.Height) * .67)
+	textSize := size.Height * .67
 	textMin := fyne.CurrentApp().Driver().RenderedTextSize(b.label.Text, textSize, fyne.TextStyle{Bold: true})
 
 	b.label.TextSize = textSize

@@ -14,10 +14,11 @@ import (
 	"strings"
 	"time"
 
-	"fyne.io/fyne"
-	"fyne.io/fyne/canvas"
-	"fyne.io/fyne/layout"
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/layout"
+	"fyne.io/fyne/v2/widget"
 )
 
 // XKCD is an app to get xkcd images and display them
@@ -152,8 +153,8 @@ func Show(win fyne.Window) fyne.CanvasObject {
 	submit := widget.NewButton("Submit", func() {
 		x.Submit()
 	})
-	submit.Style = widget.PrimaryButton
-	buttons := widget.NewHBox(
+	submit.Importance = widget.HighImportance
+	buttons := container.NewHBox(
 		layout.NewSpacer(),
 		widget.NewButton("Random", func() {
 			x.iDEntry.Text = ""

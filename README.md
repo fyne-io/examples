@@ -15,16 +15,8 @@ Here we will gather example apps that use the [Fyne](http://fyne.io) toolkit.
 You can start the main example app that links to all the others by running
 
 ```bash 
-go run main.go
+go run .
 ```
-
-or you can specify a particular example by naming it in the parameter list, like:
-
-```bash
-go run main.go -fractal
-```
-
-Alternatively each app has a direct main executable in the cmd/* folders.
 
 All these examples are fully scalable - try setting the `FYNE_SCALE`
 environment variable to override the detection of your screen's density.
@@ -77,3 +69,4 @@ Moved to [solitaire repository](https://github.com/fyne-io/solitaire/)
 ### Life
 
 Moved to [life repository](https://github.com/fyne-io/life/)
+

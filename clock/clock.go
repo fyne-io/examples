@@ -17,7 +17,7 @@ type clockLayout struct {
 	stop   bool
 }
 
-func (c *clockLayout) rotate(hand fyne.CanvasObject, middle fyne.Position, facePosition float64, offset, length float32) {
+func (c *clockLayout) rotate(hand *canvas.Line, middle fyne.Position, facePosition float64, offset, length float32) {
 	rotation := math.Pi * 2 / 60 * facePosition
 	x2 := length * float32(math.Sin(rotation))
 	y2 := -length * float32(math.Cos(rotation))
@@ -29,8 +29,9 @@ func (c *clockLayout) rotate(hand fyne.CanvasObject, middle fyne.Position, faceP
 		offY += -offset * float32(math.Cos(rotation))
 	}
 
-	hand.Move(fyne.NewPos(middle.X+offX, middle.Y+offY))
-	hand.Resize(fyne.NewSize(x2, y2))
+	hand.Position1 = fyne.NewPos(middle.X+offX, middle.Y+offY)
+	hand.Position2 = fyne.NewPos(middle.X+offX+x2, middle.Y+offY+y2)
+	hand.Refresh()
 }
 
 func (c *clockLayout) Layout(_ []fyne.CanvasObject, size fyne.Size) {

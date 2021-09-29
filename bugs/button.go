@@ -31,7 +31,7 @@ func (b *bugRenderer) Layout(size fyne.Size) {
 	b.icon.Move(fyne.NewPos(theme.Padding(), theme.Padding()))
 
 	textSize := size.Height * .67
-	textMin := fyne.CurrentApp().Driver().RenderedTextSize(b.label.Text, textSize, fyne.TextStyle{Bold: true})
+	textMin := fyne.MeasureText(b.label.Text, textSize, fyne.TextStyle{Bold: true})
 
 	b.label.TextSize = textSize
 	b.label.Resize(fyne.NewSize(size.Width, textMin.Height))

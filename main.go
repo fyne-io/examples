@@ -7,6 +7,7 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
 	"github.com/fyne-io/examples/bugs"
@@ -14,6 +15,7 @@ import (
 	"github.com/fyne-io/examples/fractal"
 	"github.com/fyne-io/examples/img/icon"
 	"github.com/fyne-io/examples/textedit"
+	"github.com/fyne-io/examples/tictactoe"
 	"github.com/fyne-io/examples/xkcd"
 )
 
@@ -29,7 +31,9 @@ var apps = []appInfo{
 	{"Text Editor", icon.TextEditorBitmap, false, textedit.Show},
 	{"XKCD", icon.XKCDBitmap, false, xkcd.Show},
 	{"Clock", icon.ClockBitmap, true, clock.Show},
-	{"Fractal", icon.FractalBitmap, true, fractal.Show}}
+	{"Fractal", icon.FractalBitmap, true, fractal.Show},
+	{"Tic Tac Toe", theme.ViewFullScreenIcon(), true, tictactoe.Show},
+}
 
 func main() {
 	a := app.New()

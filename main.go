@@ -32,7 +32,7 @@ var apps = []appInfo{
 	{"XKCD", icon.XKCDBitmap, false, xkcd.Show},
 	{"Clock", icon.ClockBitmap, true, clock.Show},
 	{"Fractal", icon.FractalBitmap, true, fractal.Show},
-	{"Tic Tac Toe", theme.ViewFullScreenIcon(), true, tictactoe.Show},
+	{"Tic Tac Toe", theme.RadioButtonIcon(), true, tictactoe.Show},
 }
 
 func main() {

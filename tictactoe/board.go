@@ -31,7 +31,7 @@ func (b *board) result() uint8 {
 		}
 
 		// Check for a win in the vertical direction.
-		if b.pieces[0][i] != 0 && b.pieces[1][i] == b.pieces[1][i] && b.pieces[1][i] == b.pieces[2][i] {
+		if b.pieces[0][i] != 0 && b.pieces[0][i] == b.pieces[1][i] && b.pieces[1][i] == b.pieces[2][i] {
 			return b.pieces[0][i]
 		}
 	}
@@ -42,7 +42,7 @@ func (b *board) result() uint8 {
 func (b *board) newClick(row, column int) {
 	b.pieces[row][column] = b.turn%2 + 1
 
-	if b.turn > 3 && b.turn < 9 {
+	if b.turn > 3 && b.turn < 8 {
 		winner := b.result()
 		if winner == 0 {
 			return
@@ -51,12 +51,10 @@ func (b *board) newClick(row, column int) {
 		number := string(winner + 48) // Number 1 is ascii #49 and 2 is ascii #50.
 		dialog.ShowInformation("Player "+number+" has won!", "Congratulations to player "+number+" for winning.", fyne.CurrentApp().Driver().AllWindows()[0])
 		b.finished = true
-	} else if b.turn == 9 {
+	} else if b.turn == 8 {
 		dialog.ShowInformation("It is a tie!", "Nobody has won. Better luck next time.", fyne.CurrentApp().Driver().AllWindows()[0])
 		b.finished = true
 	}
-
-	return
 }
 
 func (b *board) Reset() {
@@ -82,9 +80,9 @@ func (i *boardIcon) Tapped(ev *fyne.PointEvent) {
 	}
 
 	if i.board.turn%2 == 0 {
-		i.SetResource(theme.VisibilityIcon())
+		i.SetResource(theme.RadioButtonIcon())
 	} else {
-		i.SetResource(theme.VisibilityOffIcon())
+		i.SetResource(theme.CancelIcon())
 	}
 
 	i.board.newClick(i.row, i.column)

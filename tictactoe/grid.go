@@ -14,7 +14,7 @@ func Show(win fyne.Window) fyne.CanvasObject {
 	grid := container.NewGridWithColumns(3)
 	for r := 0; r < 3; r++ {
 		for c := 0; c < 3; c++ {
-			grid.AddObject(newBoardIcon(r, c, board))
+			grid.Add(newBoardIcon(r, c, board))
 		}
 	}
 

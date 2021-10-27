@@ -6,6 +6,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 )
 
@@ -25,15 +26,15 @@ func (f *fractal) MinSize(objects []fyne.CanvasObject) fyne.Size {
 	return fyne.NewSize(320, 240)
 }
 
-func (f *fractal) refresh() {
-	if f.currScale >= 1.0 {
-		f.currIterations = 100
-	} else {
-		f.currIterations = uint(100 * (1 + math.Pow((math.Log10(1/f.currScale)), 1.25)))
-	}
-
-	f.window.Canvas().Refresh(f.canvas)
-}
+// func (f *fractal) refresh() {
+// if f.currScale >= 1.0 {
+// f.currIterations = 100
+// } else {
+// f.currIterations = uint(100 * (1 + math.Pow((math.Log10(1/f.currScale)), 1.25)))
+// }
+//
+// f.window.Canvas().Refresh(f.canvas)
+// }
 
 func (f *fractal) scaleChannel(c float64, start, end uint32) uint8 {
 	if end >= start {
@@ -74,33 +75,33 @@ func (f *fractal) mandelbrot(px, py, w, h int) color.Color {
 	mu := (float64(i) / float64(f.currIterations))
 	c := math.Sin((mu / 2) * math.Pi)
 
-	return f.scaleColor(c, theme.PrimaryColor(), theme.TextColor())
+	return f.scaleColor(c, theme.PrimaryColor(), theme.ForegroundColor())
 }
 
-func (f *fractal) fractalRune(r rune) {
-	if r == '+' {
-		f.currScale /= 1.1
-	} else if r == '-' {
-		f.currScale *= 1.1
-	}
+// func (f *fractal) fractalRune(r rune) {
+// if r == '+' {
+// f.currScale /= 1.1
+// } else if r == '-' {
+// f.currScale *= 1.1
+// }
+//
+// f.refresh()
+// }
 
-	f.refresh()
-}
-
-func (f *fractal) fractalKey(ev *fyne.KeyEvent) {
-	delta := f.currScale * 0.2
-	if ev.Name == fyne.KeyUp {
-		f.currY -= delta
-	} else if ev.Name == fyne.KeyDown {
-		f.currY += delta
-	} else if ev.Name == fyne.KeyLeft {
-		f.currX += delta
-	} else if ev.Name == fyne.KeyRight {
-		f.currX -= delta
-	}
-
-	f.refresh()
-}
+// func (f *fractal) fractalKey(ev *fyne.KeyEvent) {
+// delta := f.currScale * 0.2
+// if ev.Name == fyne.KeyUp {
+// f.currY -= delta
+// } else if ev.Name == fyne.KeyDown {
+// f.currY += delta
+// } else if ev.Name == fyne.KeyLeft {
+// f.currX += delta
+// } else if ev.Name == fyne.KeyRight {
+// f.currX -= delta
+// }
+//
+// f.refresh()
+// }
 
 // Show loads a Mandelbrot fractal example window for the specified app context
 func Show(win fyne.Window) fyne.CanvasObject {
@@ -112,8 +113,8 @@ func Show(win fyne.Window) fyne.CanvasObject {
 	fractal.currX = -0.75
 	fractal.currY = 0.0
 
-	return fyne.NewContainerWithLayout(fractal, fractal.canvas)
-	//TODO register, and unregister, these keys
+	return container.New(fractal, fractal.canvas)
+	// TODO: Register, and unregister, these keys:
 	//window.Canvas().SetOnTypedRune(fractal.fractalRune)
 	//window.Canvas().SetOnTypedKey(fractal.fractalKey)
 }

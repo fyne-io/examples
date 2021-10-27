@@ -6,8 +6,8 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
-	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
@@ -132,8 +132,7 @@ func (g *game) CreateRenderer() fyne.WidgetRenderer {
 	title := widget.NewLabel("Hunt bugs!")
 	g.remain = widget.NewLabel("")
 	g.updateRemain()
-	renderer.header = fyne.NewContainerWithLayout(layout.NewBorderLayout(nil, nil, title, g.remain),
-		title, g.remain)
+	renderer.header = container.NewBorder(nil, nil, title, g.remain)
 
 	var buttons []fyne.CanvasObject
 	for y := 0; y < g.board.height; y++ {
@@ -152,7 +151,7 @@ func (g *game) CreateRenderer() fyne.WidgetRenderer {
 		}
 	}
 
-	renderer.grid = fyne.NewContainerWithLayout(layout.NewGridLayout(g.board.width), buttons...)
+	renderer.grid = container.NewGridWithColumns(g.board.width, buttons...)
 	g.grid = renderer.grid
 	return renderer
 }

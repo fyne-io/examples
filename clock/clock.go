@@ -6,6 +6,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 )
 
@@ -72,15 +73,15 @@ func (c *clockLayout) MinSize(_ []fyne.CanvasObject) fyne.Size {
 }
 
 func (c *clockLayout) render() *fyne.Container {
-	c.hourDot = &canvas.Circle{StrokeColor: theme.TextColor(), StrokeWidth: 5}
+	c.hourDot = &canvas.Circle{StrokeColor: theme.ForegroundColor(), StrokeWidth: 5}
 	c.secondDot = &canvas.Circle{StrokeColor: theme.PrimaryColor(), StrokeWidth: 3}
-	c.face = &canvas.Circle{StrokeColor: theme.TextColor(), StrokeWidth: 1}
+	c.face = &canvas.Circle{StrokeColor: theme.ForegroundColor(), StrokeWidth: 1}
 
-	c.hour = &canvas.Line{StrokeColor: theme.TextColor(), StrokeWidth: 5}
-	c.minute = &canvas.Line{StrokeColor: theme.TextColor(), StrokeWidth: 3}
+	c.hour = &canvas.Line{StrokeColor: theme.ForegroundColor(), StrokeWidth: 5}
+	c.minute = &canvas.Line{StrokeColor: theme.ForegroundColor(), StrokeWidth: 3}
 	c.second = &canvas.Line{StrokeColor: theme.PrimaryColor(), StrokeWidth: 1}
 
-	container := fyne.NewContainer(c.hourDot, c.secondDot, c.face, c.hour, c.minute, c.second)
+	container := container.NewWithoutLayout(c.hourDot, c.secondDot, c.face, c.hour, c.minute, c.second)
 	container.Layout = c
 
 	c.canvas = container
@@ -99,12 +100,12 @@ func (c *clockLayout) animate(co fyne.CanvasObject) {
 }
 
 func (c *clockLayout) applyTheme(_ fyne.Settings) {
-	c.hourDot.StrokeColor = theme.TextColor()
+	c.hourDot.StrokeColor = theme.ForegroundColor()
 	c.secondDot.StrokeColor = theme.PrimaryColor()
-	c.face.StrokeColor = theme.TextColor()
+	c.face.StrokeColor = theme.ForegroundColor()
 
-	c.hour.StrokeColor = theme.TextColor()
-	c.minute.StrokeColor = theme.TextColor()
+	c.hour.StrokeColor = theme.ForegroundColor()
+	c.minute.StrokeColor = theme.ForegroundColor()
 	c.second.StrokeColor = theme.PrimaryColor()
 }
 

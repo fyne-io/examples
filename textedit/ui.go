@@ -38,15 +38,10 @@ func (e *textEdit) buildToolbar() *widget.Toolbar {
 		e.entry.SetText("")
 	}),
 		widget.NewToolbarSeparator(),
-		widget.NewToolbarAction(theme.ContentCutIcon(), func() {
-			e.cut()
-		}),
-		widget.NewToolbarAction(theme.ContentCopyIcon(), func() {
-			e.copy()
-		}),
-		widget.NewToolbarAction(theme.ContentPasteIcon(), func() {
-			e.paste()
-		}))
+		widget.NewToolbarAction(theme.ContentCutIcon(), e.cut),
+		widget.NewToolbarAction(theme.ContentCopyIcon(), e.copy),
+		widget.NewToolbarAction(theme.ContentPasteIcon(), e.paste),
+	)
 }
 
 // Show loads a new text editor
@@ -66,12 +61,9 @@ func Show(win fyne.Window) fyne.CanvasObject {
 	status := container.NewHBox(layout.NewSpacer(),
 		widget.NewLabel("Cursor Row:"), cursorRow,
 		widget.NewLabel("Col:"), cursorCol)
-	content := fyne.NewContainerWithLayout(layout.NewBorderLayout(toolbar, status, nil, nil),
-		toolbar, status, container.NewScroll(entry))
+	content := container.NewBorder(toolbar, status, nil, nil, container.NewScroll(entry))
 
-	editor.entry.OnCursorChanged = func() {
-		editor.updateStatus()
-	}
+	editor.entry.OnCursorChanged = editor.updateStatus
 
 	return content
 }

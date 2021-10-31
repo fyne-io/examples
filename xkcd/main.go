@@ -162,7 +162,5 @@ func Show(win fyne.Window) fyne.CanvasObject {
 		}),
 		submit)
 	x.image = &canvas.Image{FillMode: canvas.ImageFillOriginal}
-	return fyne.NewContainerWithLayout(
-		layout.NewBorderLayout(form, buttons, nil, nil),
-		form, buttons, x.image)
+	return container.NewBorder(form, buttons, nil, nil, x.image)
 }

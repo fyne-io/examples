@@ -6,6 +6,7 @@ import (
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
+	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 )
 
@@ -25,6 +26,7 @@ func (f *fractal) MinSize(objects []fyne.CanvasObject) fyne.Size {
 	return fyne.NewSize(320, 240)
 }
 
+//lint:ignore U1000  See TODO inside the .Show() method.
 func (f *fractal) refresh() {
 	if f.currScale >= 1.0 {
 		f.currIterations = 100
@@ -74,9 +76,10 @@ func (f *fractal) mandelbrot(px, py, w, h int) color.Color {
 	mu := (float64(i) / float64(f.currIterations))
 	c := math.Sin((mu / 2) * math.Pi)
 
-	return f.scaleColor(c, theme.PrimaryColor(), theme.TextColor())
+	return f.scaleColor(c, theme.PrimaryColor(), theme.ForegroundColor())
 }
 
+//lint:ignore U1000 See TODO inside the .Show() method.
 func (f *fractal) fractalRune(r rune) {
 	if r == '+' {
 		f.currScale /= 1.1
@@ -87,6 +90,7 @@ func (f *fractal) fractalRune(r rune) {
 	f.refresh()
 }
 
+//lint:ignore U1000 See TODO inside the .Show() method.
 func (f *fractal) fractalKey(ev *fyne.KeyEvent) {
 	delta := f.currScale * 0.2
 	if ev.Name == fyne.KeyUp {
@@ -112,8 +116,8 @@ func Show(win fyne.Window) fyne.CanvasObject {
 	fractal.currX = -0.75
 	fractal.currY = 0.0
 
-	return fyne.NewContainerWithLayout(fractal, fractal.canvas)
-	//TODO register, and unregister, these keys
+	return container.New(fractal, fractal.canvas)
+	// TODO: Register, and unregister, these keys:
 	//window.Canvas().SetOnTypedRune(fractal.fractalRune)
 	//window.Canvas().SetOnTypedKey(fractal.fractalKey)
 }

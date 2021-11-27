@@ -16,6 +16,7 @@ import (
 	"github.com/fyne-io/examples/img/icon"
 	"github.com/fyne-io/examples/textedit"
 	"github.com/fyne-io/examples/tictactoe"
+	"github.com/fyne-io/examples/widgets"
 	"github.com/fyne-io/examples/xkcd"
 )
 
@@ -33,6 +34,7 @@ var apps = []appInfo{
 	{"Clock", icon.ClockBitmap, true, clock.Show},
 	{"Fractal", icon.FractalBitmap, true, fractal.Show},
 	{"Tic Tac Toe", theme.RadioButtonIcon(), true, tictactoe.Show},
+	{"Widgets", icon.WidgetsBitmap, true, widgets.Show},
 }
 
 func main() {

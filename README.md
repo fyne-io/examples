@@ -14,7 +14,7 @@ Here we will gather example apps that use the [Fyne](http://fyne.io) toolkit.
 
 You can start the main example app that links to all the others by running
 
-```bash 
+```bash
 go run .
 ```
 
@@ -70,3 +70,16 @@ Moved to [solitaire repository](https://github.com/fyne-io/solitaire/)
 
 Moved to [life repository](https://github.com/fyne-io/life/)
 
+### Widgets
+
+Examples of fyne widgets created from scratch.
+
+1) An animated widget. This is a simple example of a widget that has a Renderer and an Animator
+2) A Clock widget. This is a widget that draws a clock and updates the hands each second according to the system time.
+
+The source code for these widgets is fully annotated. See:
+
+├── widgets
+│   ├── widgetAnimate.go	// The animated widget source
+│   ├── widgetClock.go		// The clock widget source
+│   └── widgets.go				// Example code to create each of the above

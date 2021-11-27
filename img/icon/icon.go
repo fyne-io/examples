@@ -26,3 +26,6 @@ var TextEditorBitmap = textEditorBitmap
 
 // XKCDBitmap an icon for the XKCD example
 var XKCDBitmap = xkcdBitmap
+
+// WidgetsBitmap an icon for the Widgets example
+var WidgetsBitmap = widgetBitmap

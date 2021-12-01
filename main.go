@@ -14,7 +14,6 @@ import (
 	"github.com/fyne-io/examples/clock"
 	"github.com/fyne-io/examples/fractal"
 	"github.com/fyne-io/examples/img/icon"
-	"github.com/fyne-io/examples/textedit"
 	"github.com/fyne-io/examples/tictactoe"
 	"github.com/fyne-io/examples/xkcd"
 )
@@ -28,7 +27,6 @@ type appInfo struct {
 
 var apps = []appInfo{
 	{"Bugs", icon.BugBitmap, false, bugs.Show},
-	{"Text Editor", icon.TextEditorBitmap, false, textedit.Show},
 	{"XKCD", icon.XKCDBitmap, false, xkcd.Show},
 	{"Clock", icon.ClockBitmap, true, clock.Show},
 	{"Fractal", icon.FractalBitmap, true, fractal.Show},

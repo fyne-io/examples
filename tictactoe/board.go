@@ -42,17 +42,18 @@ func (b *board) result() uint8 {
 func (b *board) newClick(row, column int) {
 	b.pieces[row][column] = b.turn%2 + 1
 
-	if b.turn > 3 && b.turn < 8 {
+	if b.turn > 3 {
 		winner := b.result()
 		if winner == 0 {
+			if b.turn == 8 {
+				dialog.ShowInformation("It is a tie!", "Nobody has won. Better luck next time.", fyne.CurrentApp().Driver().AllWindows()[0])
+				b.finished = true
+			}
 			return
 		}
 
 		number := string(winner + 48) // Number 1 is ascii #49 and 2 is ascii #50.
 		dialog.ShowInformation("Player "+number+" has won!", "Congratulations to player "+number+" for winning.", fyne.CurrentApp().Driver().AllWindows()[0])
-		b.finished = true
-	} else if b.turn == 8 {
-		dialog.ShowInformation("It is a tie!", "Nobody has won. Better luck next time.", fyne.CurrentApp().Driver().AllWindows()[0])
 		b.finished = true
 	}
 }

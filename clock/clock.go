@@ -12,6 +12,7 @@ import (
 
 type clockLayout struct {
 	hour, minute, second     *canvas.Line
+	pips 					 [12]*canvas.Line
 	hourDot, secondDot, face *canvas.Circle
 
 	canvas fyne.CanvasObject
@@ -66,6 +67,11 @@ func (c *clockLayout) Layout(_ []fyne.CanvasObject, size fyne.Size) {
 	c.secondDot.Resize(fyne.NewSize(smallDotRadius*2, smallDotRadius*2))
 	c.secondDot.Move(fyne.NewPos(middle.X-smallDotRadius, middle.Y-smallDotRadius))
 	c.face.StrokeWidth = smallStroke
+
+	for i, p := range c.pips {
+		c.rotate(p, middle, float64((i)*5), radius/8*7, radius/8)
+		p.StrokeWidth = smallStroke
+	}
 }
 
 func (c *clockLayout) MinSize(_ []fyne.CanvasObject) fyne.Size {
@@ -75,13 +81,19 @@ func (c *clockLayout) MinSize(_ []fyne.CanvasObject) fyne.Size {
 func (c *clockLayout) render() *fyne.Container {
 	c.hourDot = &canvas.Circle{StrokeColor: theme.ForegroundColor(), StrokeWidth: 5}
 	c.secondDot = &canvas.Circle{StrokeColor: theme.PrimaryColor(), StrokeWidth: 3}
-	c.face = &canvas.Circle{StrokeColor: theme.ForegroundColor(), StrokeWidth: 1}
+	c.face = &canvas.Circle{StrokeColor: theme.DisabledColor(), StrokeWidth: 1}
 
 	c.hour = &canvas.Line{StrokeColor: theme.ForegroundColor(), StrokeWidth: 5}
 	c.minute = &canvas.Line{StrokeColor: theme.ForegroundColor(), StrokeWidth: 3}
 	c.second = &canvas.Line{StrokeColor: theme.PrimaryColor(), StrokeWidth: 1}
 
-	container := container.NewWithoutLayout(c.hourDot, c.secondDot, c.face, c.hour, c.minute, c.second)
+	container := container.NewWithoutLayout(c.hourDot, c.secondDot)
+	for i, _ := range c.pips {
+		pip := &canvas.Line{StrokeColor: theme.DisabledColor(), StrokeWidth: 1}
+		container.Add(pip)
+		c.pips[i] = pip
+	}
+	container.Objects = append(container.Objects, c.face, c.hour, c.minute, c.second)
 	container.Layout = c
 
 	c.canvas = container
@@ -102,11 +114,15 @@ func (c *clockLayout) animate(co fyne.CanvasObject) {
 func (c *clockLayout) applyTheme(_ fyne.Settings) {
 	c.hourDot.StrokeColor = theme.ForegroundColor()
 	c.secondDot.StrokeColor = theme.PrimaryColor()
-	c.face.StrokeColor = theme.ForegroundColor()
+	c.face.StrokeColor = theme.DisabledColor()
 
 	c.hour.StrokeColor = theme.ForegroundColor()
 	c.minute.StrokeColor = theme.ForegroundColor()
 	c.second.StrokeColor = theme.PrimaryColor()
+
+	for _, p := range c.pips {
+		p.StrokeColor = theme.DisabledColor()
+	}
 }
 
 // Show loads a clock example window for the specified app context

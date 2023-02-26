@@ -33,7 +33,6 @@ func (c *clockLayout) rotate(hand *canvas.Line, middle fyne.Position, facePositi
 
 	hand.Position1 = fyne.NewPos(middle.X+offX, middle.Y+offY)
 	hand.Position2 = fyne.NewPos(middle.X+offX+x2, middle.Y+offY+y2)
-	hand.Refresh()
 }
 
 func (c *clockLayout) Layout(_ []fyne.CanvasObject, size fyne.Size) {
@@ -105,7 +104,9 @@ func (c *clockLayout) animate(co fyne.CanvasObject) {
 	go func() {
 		for !c.stop {
 			c.Layout(nil, co.Size())
-			canvas.Refresh(c.canvas)
+			c.hour.Refresh()
+			c.minute.Refresh()
+			c.second.Refresh()
 			<-tick.C
 		}
 	}()

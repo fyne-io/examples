@@ -30,7 +30,7 @@ var apps = []appInfo{
 	{"XKCD", icon.XKCDBitmap, false, xkcd.Show},
 	{"Clock", icon.ClockBitmap, true, clock.Show},
 	{"Fractal", icon.FractalBitmap, true, fractal.Show},
-	{"Tic Tac Toe", theme.RadioButtonIcon(), true, tictactoe.Show},
+	{"Tic Tac Toe", nil, true, tictactoe.Show},
 }
 
 func main() {
@@ -40,6 +40,7 @@ func main() {
 	content := container.NewMax()
 	w := a.NewWindow("Examples")
 
+	apps[4].icon = theme.RadioButtonIcon() // lazy load Fyne resource to avoid error
 	appList := widget.NewList(
 		func() int {
 			return len(apps)

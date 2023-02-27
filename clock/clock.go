@@ -12,7 +12,7 @@ import (
 
 type clockLayout struct {
 	hour, minute, second     *canvas.Line
-	pips 					 [12]*canvas.Line
+	pips                     [12]*canvas.Line
 	hourDot, secondDot, face *canvas.Circle
 
 	canvas fyne.CanvasObject

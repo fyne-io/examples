@@ -87,7 +87,7 @@ func (c *clockLayout) render() *fyne.Container {
 	c.second = &canvas.Line{StrokeColor: theme.PrimaryColor(), StrokeWidth: 1}
 
 	container := container.NewWithoutLayout(c.hourDot, c.secondDot)
-	for i, _ := range c.pips {
+	for i := range c.pips {
 		pip := &canvas.Line{StrokeColor: theme.DisabledColor(), StrokeWidth: 1}
 		container.Add(pip)
 		c.pips[i] = pip

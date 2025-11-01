@@ -103,10 +103,12 @@ func (c *clockLayout) animate(co fyne.CanvasObject) {
 	tick := time.NewTicker(time.Second)
 	go func() {
 		for !c.stop {
-			c.Layout(nil, co.Size())
-			c.hour.Refresh()
-			c.minute.Refresh()
-			c.second.Refresh()
+			fyne.Do(func() {
+				c.Layout(nil, co.Size())
+				c.hour.Refresh()
+				c.minute.Refresh()
+				c.second.Refresh()
+			})
 			<-tick.C
 		}
 	}()

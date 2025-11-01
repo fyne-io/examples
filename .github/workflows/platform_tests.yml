@@ -7,13 +7,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        go-version: [1.14.x, 1.17.x]
+        go-version: [1.19.x, 1.24.x]
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-    - uses: actions/checkout@v2
-    - uses: WillAbides/setup-go-faster@v1.5.0
-      id: setup-go-faster
+    - uses: actions/checkout@v5
+    - uses: actions/setup-go@v6
       with:
         go-version: ${{ matrix.go-version }}
 

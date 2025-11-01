@@ -33,6 +33,7 @@ func (c *clockLayout) rotate(hand *canvas.Line, middle fyne.Position, facePositi
 
 	hand.Position1 = fyne.NewPos(middle.X+offX, middle.Y+offY)
 	hand.Position2 = fyne.NewPos(middle.X+offX+x2, middle.Y+offY+y2)
+	hand.Refresh()
 }
 
 func (c *clockLayout) Layout(_ []fyne.CanvasObject, size fyne.Size) {
@@ -105,9 +106,6 @@ func (c *clockLayout) animate(co fyne.CanvasObject) {
 		for !c.stop {
 			fyne.Do(func() {
 				c.Layout(nil, co.Size())
-				c.hour.Refresh()
-				c.minute.Refresh()
-				c.second.Refresh()
 			})
 			<-tick.C
 		}
@@ -131,21 +129,16 @@ func (c *clockLayout) applyTheme(_ fyne.Settings) {
 // Show loads a clock example window for the specified app context
 func Show(win fyne.Window) fyne.CanvasObject {
 	clock := &clockLayout{}
-	//clockWindow.SetOnClosed(func() {
-	//	clock.stop = true
-	//})
+	win.SetOnClosed(func() {
+		clock.stop = true
+	})
 
 	content := clock.render()
 	go clock.animate(content)
 
-	listener := make(chan fyne.Settings)
-	fyne.CurrentApp().Settings().AddChangeListener(listener)
-	go func() {
-		for {
-			settings := <-listener
-			clock.applyTheme(settings)
-		}
-	}()
+	fyne.CurrentApp().Settings().AddListener(func(settings fyne.Settings) {
+		clock.applyTheme(settings)
+	})
 
 	return content
 }

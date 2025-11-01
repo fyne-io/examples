@@ -42,6 +42,9 @@ type XKCD struct {
 
 func (x *XKCD) newLabel(name string) *widget.Label {
 	w := widget.NewLabel("")
+	if name == "alt" || name == "transcript" {
+		w.Wrapping = fyne.TextWrapWord
+	}
 	x.labels[name] = w
 	return w
 }
@@ -94,8 +97,11 @@ func (x *XKCD) downloadImage(url string) {
 		log.Fatal(err)
 	}
 
-	x.image.File = file.Name()
-	canvas.Refresh(x.image)
+	fyne.Do(func() {
+		x.image.Image = nil
+		x.image.File = file.Name()
+		canvas.Refresh(x.image)
+	})
 }
 
 // DataToScreen copies the data model to the screen

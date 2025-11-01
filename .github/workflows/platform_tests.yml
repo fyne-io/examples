@@ -25,7 +25,7 @@ jobs:
 
     - name: Update coverage
       run: |
-        GO111MODULE=off go get github.com/mattn/goveralls
+        go get github.com/mattn/goveralls@latest
         set -e
         go test -tags ci -covermode=atomic -coverprofile=coverage.out ./...
         if [ $coverage -lt 69 ]; then echo "Test coverage lowered"; exit 1; fi

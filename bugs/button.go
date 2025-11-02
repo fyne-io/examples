@@ -40,12 +40,12 @@ func (b *bugRenderer) Layout(size fyne.Size) {
 
 // ApplyTheme is called when the bugButton may need to update it's look
 func (b *bugRenderer) ApplyTheme() {
-	b.label.Color = theme.ForegroundColor()
+	b.label.Color = theme.Color(theme.ColorNameForeground)
 	b.Refresh()
 }
 
 func (b *bugRenderer) BackgroundColor() color.Color {
-	return theme.ButtonColor()
+	return theme.Color(theme.ColorNameButton)
 }
 
 func (b *bugRenderer) Refresh() {
@@ -87,7 +87,7 @@ func (b *bugButton) TappedSecondary(ev *fyne.PointEvent) {
 }
 
 func (b *bugButton) CreateRenderer() fyne.WidgetRenderer {
-	text := canvas.NewText(b.text, theme.ForegroundColor())
+	text := canvas.NewText(b.text, theme.Color(theme.ColorNameForeground))
 	text.Alignment = fyne.TextAlignCenter
 	text.TextStyle.Bold = true
 

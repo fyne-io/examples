@@ -37,7 +37,7 @@ func main() {
 	a := app.New()
 	a.SetIcon(resourceIconPng)
 
-	content := container.NewMax()
+	content := container.NewStack()
 	w := a.NewWindow("Examples")
 
 	apps[4].icon = theme.RadioButtonIcon() // lazy load Fyne resource to avoid error

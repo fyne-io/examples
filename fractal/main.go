@@ -70,13 +70,13 @@ func (f *fractal) mandelbrot(px, py, w, h int) color.Color {
 	}
 
 	if i == f.currIterations {
-		return theme.BackgroundColor()
+		return theme.Color(theme.ColorNameBackground)
 	}
 
 	mu := (float64(i) / float64(f.currIterations))
 	c := math.Sin((mu / 2) * math.Pi)
 
-	return f.scaleColor(c, theme.PrimaryColor(), theme.ForegroundColor())
+	return f.scaleColor(c, theme.Color(theme.ColorNamePrimary), theme.Color(theme.ColorNameForeground))
 }
 
 //lint:ignore U1000 See TODO inside the .Show() method.

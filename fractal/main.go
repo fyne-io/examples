@@ -118,6 +118,6 @@ func Show(win fyne.Window) fyne.CanvasObject {
 
 	return container.New(fractal, fractal.canvas)
 	// TODO: Register, and unregister, these keys:
-	//window.Canvas().SetOnTypedRune(fractal.fractalRune)
-	//window.Canvas().SetOnTypedKey(fractal.fractalKey)
+	// window.Canvas().SetOnTypedRune(fractal.fractalRune)
+	// window.Canvas().SetOnTypedKey(fractal.fractalKey)
 }

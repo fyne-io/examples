@@ -30,7 +30,7 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
 
       - name: Test
-        run: go test -tags ci -covermode=atomic -coverprofile=coverage.out ./...
+        run: go test -tags ci -covermode=atomic -coverprofile="coverage.out" ./...
 
       - name: Update coverage
         run: |

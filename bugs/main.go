@@ -43,7 +43,7 @@ func (g *gameRenderer) ApplyTheme() {
 }
 
 func (g *gameRenderer) BackgroundColor() color.Color {
-	return theme.BackgroundColor()
+	return theme.Color(theme.ColorNameBackground)
 }
 
 func (g *gameRenderer) Refresh() {

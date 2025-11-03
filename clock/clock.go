@@ -79,17 +79,17 @@ func (c *clockLayout) MinSize(_ []fyne.CanvasObject) fyne.Size {
 }
 
 func (c *clockLayout) render() *fyne.Container {
-	c.hourDot = &canvas.Circle{StrokeColor: theme.ForegroundColor(), StrokeWidth: 5}
-	c.secondDot = &canvas.Circle{StrokeColor: theme.PrimaryColor(), StrokeWidth: 3}
-	c.face = &canvas.Circle{StrokeColor: theme.DisabledColor(), StrokeWidth: 1}
+	c.hourDot = &canvas.Circle{StrokeColor: theme.Color(theme.ColorNameForeground), StrokeWidth: 5}
+	c.secondDot = &canvas.Circle{StrokeColor: theme.Color(theme.ColorNamePrimary), StrokeWidth: 3}
+	c.face = &canvas.Circle{StrokeColor: theme.Color(theme.ColorNameDisabled), StrokeWidth: 1}
 
-	c.hour = &canvas.Line{StrokeColor: theme.ForegroundColor(), StrokeWidth: 5}
-	c.minute = &canvas.Line{StrokeColor: theme.ForegroundColor(), StrokeWidth: 3}
-	c.second = &canvas.Line{StrokeColor: theme.PrimaryColor(), StrokeWidth: 1}
+	c.hour = &canvas.Line{StrokeColor: theme.Color(theme.ColorNameForeground), StrokeWidth: 5}
+	c.minute = &canvas.Line{StrokeColor: theme.Color(theme.ColorNameForeground), StrokeWidth: 3}
+	c.second = &canvas.Line{StrokeColor: theme.Color(theme.ColorNamePrimary), StrokeWidth: 1}
 
 	container := container.NewWithoutLayout(c.hourDot, c.secondDot)
 	for i := range c.pips {
-		pip := &canvas.Line{StrokeColor: theme.DisabledColor(), StrokeWidth: 1}
+		pip := &canvas.Line{StrokeColor: theme.Color(theme.ColorNameDisabled), StrokeWidth: 1}
 		container.Add(pip)
 		c.pips[i] = pip
 	}
@@ -113,16 +113,16 @@ func (c *clockLayout) animate(co fyne.CanvasObject) {
 }
 
 func (c *clockLayout) applyTheme(_ fyne.Settings) {
-	c.hourDot.StrokeColor = theme.ForegroundColor()
-	c.secondDot.StrokeColor = theme.PrimaryColor()
-	c.face.StrokeColor = theme.DisabledColor()
+	c.hourDot.StrokeColor = theme.Color(theme.ColorNameForeground)
+	c.secondDot.StrokeColor = theme.Color(theme.ColorNamePrimary)
+	c.face.StrokeColor = theme.Color(theme.ColorNameDisabled)
 
-	c.hour.StrokeColor = theme.ForegroundColor()
-	c.minute.StrokeColor = theme.ForegroundColor()
-	c.second.StrokeColor = theme.PrimaryColor()
+	c.hour.StrokeColor = theme.Color(theme.ColorNameForeground)
+	c.minute.StrokeColor = theme.Color(theme.ColorNameForeground)
+	c.second.StrokeColor = theme.Color(theme.ColorNamePrimary)
 
 	for _, p := range c.pips {
-		p.StrokeColor = theme.DisabledColor()
+		p.StrokeColor = theme.Color(theme.ColorNameDisabled)
 	}
 }
 

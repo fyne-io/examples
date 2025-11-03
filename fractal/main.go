@@ -70,13 +70,13 @@ func (f *fractal) mandelbrot(px, py, w, h int) color.Color {
 	}
 
 	if i == f.currIterations {
-		return theme.BackgroundColor()
+		return theme.Color(theme.ColorNameBackground)
 	}
 
 	mu := (float64(i) / float64(f.currIterations))
 	c := math.Sin((mu / 2) * math.Pi)
 
-	return f.scaleColor(c, theme.PrimaryColor(), theme.ForegroundColor())
+	return f.scaleColor(c, theme.Color(theme.ColorNamePrimary), theme.Color(theme.ColorNameForeground))
 }
 
 //lint:ignore U1000 See TODO inside the .Show() method.
@@ -118,6 +118,6 @@ func Show(win fyne.Window) fyne.CanvasObject {
 
 	return container.New(fractal, fractal.canvas)
 	// TODO: Register, and unregister, these keys:
-	//window.Canvas().SetOnTypedRune(fractal.fractalRune)
-	//window.Canvas().SetOnTypedKey(fractal.fractalKey)
+	// window.Canvas().SetOnTypedRune(fractal.fractalRune)
+	// window.Canvas().SetOnTypedKey(fractal.fractalKey)
 }

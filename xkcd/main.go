@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -71,7 +70,7 @@ func (x *XKCD) Submit() {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode == http.StatusOK {
-		data, _ := ioutil.ReadAll(resp.Body)
+		data, _ := io.ReadAll(resp.Body)
 		json.Unmarshal(data, x)
 		x.DataToScreen()
 	} else {
@@ -86,7 +85,7 @@ func (x *XKCD) downloadImage(url string) {
 	}
 	defer response.Body.Close()
 
-	file, err := ioutil.TempFile(os.TempDir(), "xkcd.png")
+	file, err := os.CreateTemp(os.TempDir(), "xkcd.png")
 	if err != nil {
 		log.Fatal(err)
 	}

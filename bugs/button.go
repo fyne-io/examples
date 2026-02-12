@@ -54,6 +54,7 @@ func (b *bugRenderer) Refresh() {
 	b.icon.Hidden = b.button.icon == nil
 	if b.button.icon != nil {
 		b.icon.Resource = b.button.icon
+		b.icon.Refresh()
 	}
 
 	b.Layout(b.button.Size())

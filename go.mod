@@ -1,6 +1,6 @@
 module github.com/fyne-io/examples
 
-go 1.19
+go 1.25.0
 
 require (
 	fyne.io/fyne/v2 v2.7.0
@@ -34,9 +34,9 @@ require (
 	github.com/srwiley/oksvg v0.0.0-20221011165216-be6e8873101c // indirect
 	github.com/srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef // indirect
 	github.com/yuin/goldmark v1.7.8 // indirect
-	golang.org/x/image v0.24.0 // indirect
+	golang.org/x/image v0.41.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
-	golang.org/x/text v0.22.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
